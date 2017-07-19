@@ -1,0 +1,41 @@
+﻿@model string[]
+
+@{
+    ViewBag.Title = "Переименование улиц";
+}
+
+<ul class="streets">
+    @foreach (var street in Model)
+    {
+        if (!string.IsNullOrEmpty(street))
+        {
+            <li><a href="javascript:void(0)">@street</a></li>
+        }
+    }
+</ul>
+
+<script type="text/javascript">
+    $(function() {
+        $('.streets a').click(function() {
+            var street = $(this).text();
+
+            editValue('Переименование улицы', street, 'Сохранить', 'btn-primary', -1, function (value) {
+                var json = JSON.stringify({ Street: street, NewName: value });
+                $.ajax({
+                    url: '@Url.Action("RenameStreet", "Admin")',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: json,
+                    success: function(result) {
+                        if (result['Success']) {
+                            location.reload();
+                        } else {
+                            alert('не верные данные');
+                        }
+                    }
+                });
+            });
+        });
+    });
+</script>

@@ -1,0 +1,24 @@
+﻿@model OshBusinessModel.Da.JsonMeterDa[]
+
+<div class="form-horizontal">
+    <input type="hidden" id="metersCount" value="@Model.Length"/>
+    <input type="hidden" id="setValues-contractId" value="@Model[0].ContractId"/>
+    
+    @for (int i = 0; i < Model.Length; i++)
+    {
+        <b>Счетчик @(i+1)</b>
+        <input type="hidden" id="meter-id-@i" value="@Model[i].MeterId"/>
+        <div class="control-group">
+            <label class="control-label" for="cur-value-@i">Текущее значение</label>
+            <div class="controls">
+                <input type="text" id="cur-value-@i" value="@Model[i].Value.ToString("0.00")" disabled="disabled"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="value-@i">Новое значение</label>
+            <div class="controls">
+                <input type="text" id="value-@i" value="" />
+            </div>
+        </div>
+    }
+</div>

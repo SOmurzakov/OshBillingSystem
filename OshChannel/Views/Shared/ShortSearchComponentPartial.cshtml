@@ -1,0 +1,58 @@
+﻿@model OshBusinessModel.Da.ContractsSearchResult
+
+<div class="searchContract">
+    
+    <form action="@Url.Action("Search", "Contracts")" method="POST" class="form-inline contract-google-search" @Html.If(Model != null && !Model.SearchByKey, "style=\"display:none;\"")>
+        <input type="text" name="Key" id="searchContract" placeholder="Поиск абонента/контракта" value="@(Model == null ? "" : Model.Key)"/>
+        <button type="submit" class="btn" id="searchContractButton">Найти</button>
+    </form>
+
+    <form action="@Url.Action("Search", "Contracts")" method="POST" class="form-inline contract-search-by-address" @Html.If(Model == null || Model.SearchByKey || Model.SearchByBill, "style=\"display:none;\"")>
+        <input type="text" name="Street" id="search-contract-street" placeholder="Улица" value="@(Model == null ? "" : Model.Street)" class="span2"/>
+        <input type="text" name="Building" id="search-contract-street" placeholder="Дом" value="@(Model == null ? "" : Model.Building)" class="span1"/>
+        <input type="text" name="Appartment" id="search-contract-street" placeholder="Квартира" value="@(Model == null ? "" : Model.Appartment)" class="span1"/>
+        <button type="submit" class="btn" id="searchContractButton">Найти</button>
+    </form>
+    
+    <form action="@Url.Action("Search", "Contracts")" method="POST" class="form-inline contract-search-bill" @Html.If(Model == null || !Model.SearchByBill, "style=\"display:none;\"")>
+        <input type="text" name="Bill" id="searchBill" placeholder="Поиск платежа / квитации" value="@(Model == null ? "" : Model.Bill)"/>
+        <button type="submit" class="btn" id="searchContractButton">Найти</button>
+    </form>
+
+    @if (Model == null || !Model.HideLinkToDictionary)
+    {
+        <div class="search-contract-options">
+            <a href="#" class="show-google-search none-decoration"><i class="icon-search" style="float: none; margin: 2px 5px 0 0;"></i><span>простой поиск</span></a>
+            <a href="#" class="show-search-by-address none-decoration"><i class="icon-search" style="float: none; margin: 2px 5px 0 0;"></i><span>поиск по адресу</span></a>
+            <a href="#" class="show-search-bill none-decoration"><i class="icon-search" style="float: none; margin: 2px 5px 0 0;"></i><span>поиск платежа / квитанции</span></a>
+            <a href="@Url.Action("Dictionary", "Subscribers")"><i class="icon-user" style="float: none; margin: 2px 5px 0 0;"></i>справочник абонентов</a>
+        </div>
+    }
+    
+</div>
+
+<script type="text/javascript">
+
+    $(function () {
+
+        $('.show-google-search').click(function () {
+            $('.contract-google-search').show();
+            $('.contract-search-by-address').hide();
+            $('.contract-search-bill').hide();
+        });
+
+        $('.show-search-by-address').click(function() {
+            $('.contract-google-search').hide();
+            $('.contract-search-by-address').show();
+            $('.contract-search-bill').hide();
+        });
+
+        $('.show-search-bill').click(function() {
+            $('.contract-google-search').hide();
+            $('.contract-search-by-address').hide();
+            $('.contract-search-bill').show();
+        });
+
+    });
+
+</script>

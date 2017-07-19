@@ -1,0 +1,113 @@
+﻿@{
+    ViewBag.Title = "Абонентский отдел";
+}
+
+<div class="userMenu" style="margin-bottom: 50px;">
+    
+    @Html.Partial("ShortSearchComponentPartial", new ViewDataDictionary())
+    
+    <div class="row bottomMargin">
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("Dictionary", "Subscribers")">Справочник абонентов</a></h2>
+            <p>Посмотреть абонентов своего участка</p>
+        </div>
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("Dictionary", "Subscribers", new {type = "le"})">Юр лица</a></h2>
+            <p>Справочник юр лиц</p>
+        </div>
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("Dictionary", "Subscribers", new {type = "prs"})">Физ лица</a></h2>
+            <p>Справочник физ лиц</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("ReportByAreas", "Accountant")">Отчет по участкам</a></h2>
+            <p>Финансовый отчет по участкам за указанный период</p>
+        </div>
+    </div>
+
+    <div class="row bottomMargin">
+        <div class="span3">
+            <h2><a href="@Url.Action("Debtors", "Contracts", new { threshold = Settings.Get("Debtors.DefaultFilterValue") })">Сводный отчет</a></h2>
+            <p>Сводный отчет по контрактам</p>
+        </div>
+
+        <div class="span3">
+            <h2>@Helpers.Link(Url.Action("BulkPayments", "CustomerCare"), "Принятие платежей")</h2>
+            <p>Форма регистрации платежей</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("Create", "Contracts")">Новый контракт </a></h2>
+            <p>Завести нового абонента</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("PrintBillsByAddress", "CustomerCare")">Печать чеков по адресу</a></h2>
+            <p>Печать чеков по адресу</p>
+        </div>
+    </div>
+
+    <div class="row bottomMargin">
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("HasAllowanceReport", "CustomerCare")">Льготники</a></h2>
+            <p>Сведения о льготных абонентах</p>
+        </div>
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("Rootings", "CustomerCare")">Обходные листы</a></h2>
+            <p>Подготовка обходных листов</p>
+        </div>
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("PrintBills", "CustomerCare")">Печать чеков</a></h2>
+            <p>Печать чеков</p>
+        </div>
+        
+        <div class="span3">
+            <h2>@Helpers.Link(Url.Action("PrintInvoices", "CustomerCare"), "Печать счет-фактур")</h2>
+            <p>Печать счет-фактур</p>
+        </div>
+        
+    </div>
+
+    <div class="row bottomMargin">
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("WithoutAllowanceReport", "CustomerCare")">Сведения</a></h2>
+            <p>Сведения об абонентах и количестве человек по контроллерам</p>
+        </div>
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("Reconciliation", "Accountant")">Сверка касс</a></h2>
+            <p>Сверка финансовых поступлений по кассам, контроллерам и субагентам</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("ReconciliationByControllers", "Accountant")">Расш. сверка касс</a></h2>
+            <p>Ведомость о поступлении доходов</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("Transactions", "Accountant", new {userId = OshChannel.Helpers.Auth.User.UserId, subagentId = -1})">Персональная сверка касс</a></h2>
+            <p>Сверка наличных денег с бухгалтерией</p>
+        </div>
+
+    </div>
+
+    <div class="row bottomMargin">
+        <div class="span3 offset3">
+            <h2><a href="@Url.Action("ReportByControllers", "Accountant")">Отчет по контроллерам</a></h2>
+            <p>Финансовый отчет по контроллерам за указанный период</p>
+        </div>
+    </div>
+
+</div>
+<script>
+    var streets = [@(new MvcHtmlString(string.Join(", ", Model.Streets.Select(s => "\"" + s + "\""))))];
+	$('#search-contract-street').typeahead({ source: streets });
+</script>

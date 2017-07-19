@@ -1,0 +1,18 @@
+﻿@model OshBusinessModel.Da.Bills.GetBillsForPrintingModel
+           
+@if (Model.Bills == null || Model.Bills.Length == 0)
+{
+    <p class="noprint"><b>Контрактов не найдено</b></p>
+}
+else
+{
+    <p class="noprint">Выставлено счетов: @Model.Bills.Length шт.</p>
+    <div class="printCanvas">
+        @foreach (var bill in Model.Bills)
+        {
+            <div class="preBillDiv">
+                @Html.Partial("NewContractBillPartial", bill)
+            </div>
+        }
+    </div>
+}

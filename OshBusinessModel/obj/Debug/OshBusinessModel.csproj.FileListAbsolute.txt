@@ -1,0 +1,10 @@
+d:\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshBusinessModel\bin\Debug\OshBusinessModel.dll
+d:\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshBusinessModel\bin\Debug\OshBusinessModel.pdb
+d:\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshBusinessModel\obj\Debug\OshBusinessModel.csprojResolveAssemblyReference.cache
+d:\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshBusinessModel\obj\Debug\OshBusinessModel.dll
+d:\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshBusinessModel\obj\Debug\OshBusinessModel.pdb
+d:\Work\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshBusinessModel\bin\Debug\OshBusinessModel.dll
+d:\Work\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshBusinessModel\bin\Debug\OshBusinessModel.pdb
+d:\Work\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshBusinessModel\obj\Debug\OshBusinessModel.dll
+d:\Work\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshBusinessModel\obj\Debug\OshBusinessModel.pdb
+d:\Work\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshBusinessModel\obj\Debug\OshBusinessModel.csprojResolveAssemblyReference.cache

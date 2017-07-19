@@ -1,0 +1,270 @@
+﻿@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model IEnumerable<OshBusinessModel.Da.SubagentsDictionaryDa>
+
+@{
+    ViewBag.Title = "Субагенты";
+
+    var hasBalancedSubagents = Model.Count(s => s.HasBalance) > 0;
+}
+
+<ul class="breadcrumb">
+    @ViewBag.Title
+</ul>
+
+@if (Auth.HasPermission(Permission.SubagentsChange))
+{
+    <button class="btn btn-success" id="createSubagent">Создать</button>
+}
+
+@if (Auth.HasPermission(Permission.SubagentsPopup) && hasBalancedSubagents)
+{
+    <button class="btn btn-success" id="registerPopup">Зачислить деньги</button>
+}
+
+@{
+    if (Model.Count() == 0)
+    {
+        <h3 class="h2margin">Субагенты не созданы</h3>
+    }
+    else
+    {
+        <table class="table table-striped table-bordered h2margin">
+            <tr>
+                <th style="width: 300px;">Субагент</th>
+                <th>Примечание</th>
+                <th>Текущий баланс</th>
+            </tr>
+            @foreach (var subagent in Model)
+            {
+                <tr>
+                    <td@Html.LineThrought(!subagent.Enabled)>
+                        @if (Auth.HasPermission(Permission.SubagentsChange))
+                        {
+                            <a href="javascript:void(0)" class="changeSubagent" subagent-id="@subagent.Id" subagent-name="@subagent.Name">@subagent.Name</a>
+                        }
+                        else
+                        {
+                            @Url.Subagent(subagent.Id, subagent.Name)
+                        }
+                    </td>
+                    <td>@subagent.Remarks</td>
+                    <td>@Html.If(subagent.HasBalance, subagent.CurrentBalance.ToString())</td>
+                </tr>
+            }
+        </table>
+    }
+}
+
+@if (Auth.HasPermission(Permission.SubagentsChange))
+{
+    
+    <div id="modal-createSubagent" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3>Создать субагента</h3>
+        </div>
+        <div class="modal-body">
+            <div class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="createSubagent-name">Субагент</label>
+                    <div class="controls">
+                        <input type="text" id="createSubagent-name"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="createSubagent-remarks">Примечание</label>
+                    <div class="controls">
+                        <input type="text" id="createSubagent-remarks"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <label class="checkBoxLabel">
+                            <input type="checkbox" id="createSubagent-hasBalance"/>Балансовый
+                        </label>
+                    </div>
+                </div>
+                <div class="control-group hide" id="div-createSubagent-hasBalance">
+                    <label class="control-label" for="createSubagent-currentBalance">Текущий баланс</label>
+                    <div class="controls">
+                        <input type="text" id="createSubagent-currentBalance"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Отмета</button>
+            <button class="btn btn-primary" id="save-createSubagent">Создать</button>
+        </div>
+    </div>
+    
+    using (var dlg = Html.Dialog("changeSubagent", "Изменить", "Сохранить", true, "callingButtonId"))
+    {
+        dlg.Hiddent("id", "");
+        dlg.InputText("Название", "name", "");
+    }
+
+    <script type="text/javascript">
+        
+        function createSubagent() {
+            var name = $('#createSubagent-name').val();
+            var remarks = $('#createSubagent-remarks').val();
+            var hasBalance = $('#createSubagent-hasBalance').prop('checked') ? 1 : 0;
+            var currentBalance = hasBalance > 0 ? $('#createSubagent-currentBalance').val() : 0;
+
+            var dto = { Name: name, Remarks: remarks, HasBalance: hasBalance, CurrentBalance: currentBalance };
+            var json = JSON.stringify(dto);
+
+            $.ajax({
+                url: '@Url.Action("CreateSubagentAjax", "Subagents")',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: json,
+                success: function (result) {
+                    if (result['Success']) {
+                        location.reload();
+                    } else {
+                        alert(result['Message']);
+                    }
+                },
+                error: function (a, b, c) {
+                    alert('Проверьте данные и повторите попытку');
+                }
+            });
+        }
+        
+        function hasBalanceChanged() {
+            var checked = $('#createSubagent-hasBalance').prop('checked');
+            
+            if (checked) {
+                $('#div-createSubagent-hasBalance').show('fast');
+            } else {
+                $('#div-createSubagent-hasBalance').hide('fast');
+            }
+        }
+
+        function save_changeSubagent() {
+            var subagentId = $('#changeSubagent-id').val();
+            var subagentName = $('#changeSubagent-name').val();
+            
+            if (!subagentName) {
+                alert('Задайте название субагенту');
+                return;
+            }
+            
+            var dto = { Id: subagentId, Name: subagentName };
+            @Html.Ajax(Url.Action("ChangeInfoAjax", "Subagents"))
+        }
+        
+        function changeSubagent(id, name) {
+            $('#changeSubagent-id').val(id);
+            $('#changeSubagent-name').val(name);
+            $('#modal-changeSubagent').modal('show');
+        }
+        
+        $(function () {
+
+            $('#createSubagent').click(function () {
+                $('#modal-createSubagent').modal('show');
+            });
+
+            $('#save-createSubagent').click(function () {
+                createSubagent();
+            });
+
+            $('#createSubagent-hasBalance').click(function () {
+                hasBalanceChanged();
+            });
+
+            $('.changeSubagent').click(function () {
+                var id = $(this).attr('subagent-id');
+                var name = $(this).attr('subagent-name');
+                changeSubagent(id, name);
+            });
+
+        });
+    </script>
+}
+
+@if (Auth.HasPermission(Permission.SubagentsPopup) && hasBalancedSubagents)
+{
+    
+    <div id="modal-registerPopup" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3>Зачисление</h3>
+        </div>
+        <div class="modal-body">
+            <div class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="registerPopup-id">Субагент</label>
+                    <div class="controls">
+                        <select id="registerPopup-id" class="span3">
+                            @foreach(var subagent in Model.Where(s => s.HasBalance))
+                            {
+                                <option value="@subagent.Id">@subagent.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="registerPopup-amount">Сумма к зачислению</label>
+                    <div class="controls">
+                        <input type="text" id="registerPopup-amount" class="span3"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="registerPopup-remarks">Основание</label>
+                    <div class="controls">
+                            <textarea id="registerPopup-remarks" rows="3" cols="50" class="span3"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Отмета</button>
+            <button class="btn btn-primary" id="save-registerPopup">Зачислить</button>
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+        function registerPopup() {
+            var subagentId = $('#registerPopup-id').val();
+            var amount = $('#registerPopup-amount').val();
+            var remarks = $('#registerPopup-remarks').val();
+
+            var dto = { SubagentId: subagentId, Amount: amount, Remarks: remarks };
+            var json = JSON.stringify(dto);
+
+            $.ajax({
+                url: '@Url.Action("RegisterPopupAjax", "Subagents")',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: json,
+                success: function(result) {
+                    if (result['Success']) {
+                        location.reload();
+                    } else {
+                        alert(result['Message']);
+                    }
+                },
+                error: function(a, b, c) {
+                    alert('Проверьте данные и повторите попытку');
+                }
+            });
+        }
+
+        $(function () {
+            $('#registerPopup').click(function () {
+                $('#modal-registerPopup').modal('show');
+            });
+
+            $('#save-registerPopup').click(function() {
+                registerPopup();
+            } );
+        });
+    </script>
+}

@@ -1,0 +1,39 @@
+﻿@model OshBusinessModel.Da.ClosingPeriods.BillingPeriodDa[]
+
+@{
+    ViewBag.Title = "Закрытые периоды";
+}
+
+<ul class="breadcrumb">
+    @ViewBag.Title
+</ul>
+
+@if (Model.Length == 0)
+{
+    <h3 class="h2margin">Счета не выставлялись</h3>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th>Период</th>
+            <th>Сальдо на начало месяца (сом)</th>
+            <th>Долги при регистрации контрактов (сом)</th>
+            <th>Выставлено счетов (сом)</th>
+            <th>Оплачено (сом)</th>
+            <th>Сальдо на конец месяца (сом)</th>
+        </tr>
+        @foreach (var period in Model)
+        {
+            <tr>
+                <td>@period.Name</td>
+                <td>@period.StartBalance.ToString("0.00")</td>
+                <td>@period.ContractsRegistrationDebts.ToString("0.00")</td>
+                <td>@period.BilledAmount.ToString("0.00")</td>
+                <td>@period.PayedAmount.ToString("0.00")</td>
+                <td>@period.EndBalance.ToString("0.00")</td>
+            </tr>
+        }
+    </table>
+    
+}

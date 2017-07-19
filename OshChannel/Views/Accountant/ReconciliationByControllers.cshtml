@@ -1,0 +1,182 @@
+﻿@using OshChannel.Controllers
+@model OshBusinessModel.Da.Accountant.ReconciliationByControllersReport
+
+@{
+    ViewBag.Title = "Расширенная сверка кассы ";
+
+    var systemSubagents = Model.Subagents.Where(s => s.IsSystem);
+    var paymentTerminals = Model.Subagents.Where(s => !s.IsSystem);
+
+    var cashiers = Model.Users.Where(r => r.Role == UserType.Cashier.SemanticId);
+    var controllers = Model.Users.Where(r => r.Role == UserType.Controller.SemanticId);
+    
+    var transactionsByAnyController = from t in Model.Transactions
+                                      join u in Model.Users on t.UserId equals u.UserId
+                                      where u.Role == UserType.Controller.SemanticId
+                                      select t;
+    var sumOfAllTrasnactions = transactionsByAnyController.Sum(t => t.Amount);
+}
+
+<div class="well">
+    <form class="form-inline" action="@Url.Action("ReconciliationByControllers", "Accountant")" style="margin-bottom: 0;">
+        <h3 style="margin-bottom: 20px; margin-top: 0;">@ViewBag.Title</h3>
+        <div class="pull-right">
+            <button type="submit" class="btn btn-primary">Обновить</button>
+        </div>
+        
+        <label for="dateStart" style="margin-right: 20px;">Период </label>
+        <label for="dateStart">с</label>
+        <input type="text" value="@Model.DateStart.ToShortDateString()" name="dateStart" class="span2" id="dateStart" style="margin-right: 20px;"/>
+        <label for="dateEnd">по</label>
+        <input type="text" value="@Model.DateEnd.ToShortDateString()" name="dateEnd" class="span2" id="dateEnd"/>
+    </form>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        datetimepicker('#dateStart');
+        datetimepicker('#dateEnd');
+    });
+</script>
+
+<div class="noprint">
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th></th>
+            @foreach(var cashier in cashiers)
+            {
+                <th>@cashier.Name</th>
+            }
+            <th>Контроллер</th>
+            @foreach(var paymentTerminal in paymentTerminals)
+            {
+                <th>@paymentTerminal.Name</th>
+            }
+            @foreach(var subagent in systemSubagents)
+            {
+                <th>@subagent.Name</th>   
+            }
+        </tr>
+        @foreach (var controller in controllers)
+        {
+            var transactionsByControllers = from t in Model.Transactions
+                join u in Model.Users on t.UserId equals u.UserId
+                where t.ControllerId == controller.UserId && u.Role == UserType.Controller.SemanticId
+                select t;
+                                                                     
+            <tr>
+                <td>@controller.Name</td>
+                @foreach(var cashier in cashiers)
+                {
+                    var transaction = Model.Transactions.FirstOrDefault(t => t.ControllerId == controller.UserId && t.UserId == cashier.UserId);
+                    <td style="text-align: right;">@(transaction == null ? "0" : transaction.Amount.ToString("0.00"))</td>
+                }
+                <td style="text-align: right;">@transactionsByControllers.Sum(t => t.Amount).ToString("0.00")</td>
+                @foreach(var terminal in paymentTerminals)
+                {
+                    var transaction = Model.Transactions.FirstOrDefault(t => t.ControllerId == controller.UserId && t.SubagentId == terminal.Id);
+                    <td style="text-align: right;">@(transaction == null ? "0" : transaction.Amount.ToString("0.00"))</td>
+                }
+                @foreach(var subagent in systemSubagents)
+                {
+                    var transaction = Model.Transactions.FirstOrDefault(t => t.ControllerId == controller.UserId && t.SubagentId == subagent.Id);
+                    <td style="text-align: right;">@(transaction == null ? "0" : transaction.Amount.ToString("0.00"))</td>
+                }
+            </tr>   
+        }
+        <tr class="bold">
+            <td>Итого</td>
+            @foreach (var cashier in cashiers)
+            {
+                var sum = Model.Transactions.Where(t => t.UserId == cashier.UserId).Sum(t => t.Amount);
+                <td style="text-align: right;">@sum.ToString("0.00")</td>
+            }
+            <td style="text-align: right;">@sumOfAllTrasnactions.ToString("0.00")</td>
+            @foreach (var terminal in paymentTerminals)
+            {
+                var sum = Model.Transactions.Where(t => t.SubagentId == terminal.Id).Sum(t => t.Amount);
+                <td style="text-align: right;">@sum.ToString("0.00")</td>
+            }
+            @foreach (var subagent in systemSubagents)
+            {
+                var sum = Model.Transactions.Where(t => t.SubagentId == subagent.Id).Sum(t => t.Amount);
+                <td style="text-align: right;">@sum.ToString("0.00")</td>
+            }
+        </tr>
+    </table>
+</div>
+
+<div class="print-only">
+    <h4>Расширенная сверка касс на период с @Model.DateStart.ToShortDateString() по @Model.DateEnd.ToShortDateString()</h4>
+    
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th></th>
+            @foreach(var cashier in cashiers)
+            {
+                <th>@cashier.Name</th>
+            }
+            <th>Контроллер</th>
+            @foreach(var paymentTerminal in paymentTerminals)
+            {
+                <th>@paymentTerminal.Name</th>
+            }
+        </tr>
+        @foreach (var controller in controllers)
+        {
+            var transactionsByControllers = from t in Model.Transactions
+                join u in Model.Users on t.UserId equals u.UserId
+                where t.ControllerId == controller.UserId && u.Role == UserType.Controller.SemanticId
+                select t;
+                                                                     
+            <tr>
+                <td>@controller.Name</td>
+                @foreach(var cashier in cashiers)
+                {
+                    var transaction = Model.Transactions.FirstOrDefault(t => t.ControllerId == controller.UserId && t.UserId == cashier.UserId);
+                    <td style="text-align: right;">@(transaction == null ? "0" : transaction.Amount.ToString("0.00"))</td>
+                }
+                <td style="text-align: right;">@transactionsByControllers.Sum(t => t.Amount).ToString("0.00")</td>
+                @foreach(var terminal in paymentTerminals)
+                {
+                    var transaction = Model.Transactions.FirstOrDefault(t => t.ControllerId == controller.UserId && t.SubagentId == terminal.Id);
+                    <td style="text-align: right;">@(transaction == null ? "0" : transaction.Amount.ToString("0.00"))</td>
+                }
+            </tr>   
+        }
+        <tr class="bold">
+            <td>Итого</td>
+            @foreach (var cashier in cashiers)
+            {
+                var sum = Model.Transactions.Where(t => t.UserId == cashier.UserId).Sum(t => t.Amount);
+                <td style="text-align: right;">@sum.ToString("0.00")</td>
+            }
+            <td style="text-align: right;">@sumOfAllTrasnactions.ToString("0.00")</td>
+            @foreach (var terminal in paymentTerminals)
+            {
+                var sum = Model.Transactions.Where(t => t.SubagentId == terminal.Id).Sum(t => t.Amount);
+                <td style="text-align: right;">@sum.ToString("0.00")</td>
+            }
+        </tr>
+    </table>
+    
+</div>
+
+<div class="print-only">
+    <div class="row printable">
+        <div class="span6 printable">
+            <table class="table fixed-table">
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>Подпись</th>
+                </tr>
+                <tr><td colspan="2">Оператор</td></tr>
+                <tr><td colspan="2">Кассир</td></tr>
+                <tr><td colspan="2">Бухгалтер</td></tr>
+
+                <tr><td colspan="2"></td></tr>
+            </table>
+        </div>
+    </div>
+
+</div>

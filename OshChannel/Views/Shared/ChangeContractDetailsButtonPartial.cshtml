@@ -1,0 +1,180 @@
+﻿@using OshBusinessModel.Da.ShowContract
+@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.ShowContract.ShowContractModel
+
+@{
+    ViewBag.Title = Model != null ? Model.Details.ContractNumber : "Детали контракта";
+    string type = Model != null ? Model.Subscriber.Type : "";
+    bool isPersonal = type == "prs";
+
+    bool showMeters = Model != null && (Model.Meters.Length > 0 || (Model.Options.Length == 0 && Model.PossibleOptions.Length == 0));
+}
+
+
+@if (Auth.HasPermission(Permission.ContractsChange))
+{
+    <div class="pull-right">
+        <button class="btn btn-primary btn-mini" id="contractChangeInfo">Изменить</button>
+    </div>
+
+<div id="modal-contractChangeInfo" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Изменить данные</h3>
+    </div>
+    <div class="modal-body" style="max-height: 1000px;">
+                
+        <div class="form-horizontal">
+            
+            <div class="control-group">
+                <label class="control-label" for="archiveId">Лицевой счет (Архив)</label>
+                <div class="controls">
+                    <input type="text" id="archiveId" value="@Model.Details.ArchiveId" class="span3"/>
+                </div>
+            </div>
+                   
+            @if (!isPersonal)
+            {
+                <div class="control-group">
+                    <label class="control-label" for="contractName">Субъект</label>
+                    <div class="controls">
+                        <input type="text" id="contractName" value="@Model.Details.ContractName" class="span3"/>
+                    </div>
+                </div>
+            }
+                    
+            <div class="control-group">
+                <label class="control-label" for="areaId">Участок</label>
+                <div class="controls">
+                    <select id="areaId" class="span3" style="border-radius: 3px">
+                        <option value="0">Выбрать потом...</option>
+                        @foreach (var area in Model.Areas)
+                        {
+                            <option value="@area.Id"@(area.Id == Model.Details.AreaId ? " selected=\"selected\"" : "")>@area.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label" for="contractAddressStreet">Улица</label>
+                <div class="controls">
+                    <input type="text" id="contractAddressStreet" value="@Model.Details.AddressStreet" class="span3"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="contractAddressBuilding">Дом</label>
+                <div class="controls">
+                    <input type="text" style="width: 95px;" id="contractAddressBuilding" value="@Model.Details.AddressBuilding"/>
+                    <label class="control-description" style="width: 32px;" for="contractAddressFlat">Кв.</label>
+                    <input type="text" style="width: 95px;" id="contractAddressFlat" value="@Model.Details.AddressFlat"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="contractPhone">Телефон</label>
+                <div class="controls">
+                    <input type="text" value="@Model.Details.Phone" id="contractPhone" class="span3"/>
+                </div>
+            </div>
+            
+            @if (Model.Subscriber.Type == "bgt")
+            {
+                <div class="control-group" id="div-budgetType">
+                    <label class="control-label">Бюджет</label>
+                    <div class="controls">
+                        @foreach (var tt in OshBusinessModel.Data.BudgetType.BudgetTypes)
+                        {
+                            var isChecked = tt.SemanticId == Model.Details.BudgetType ? " checked=\"checked\"" : "";
+
+                            <label class="radio"><input type="radio" name="budgetType" value="@tt.SemanticId" @isChecked/> @tt.Name</label>
+                        }
+                    </div>
+                </div>
+            }
+            
+            <hr/>
+            
+            <div class="control-group">
+                <label class="control-label" for="contractChangeRemarks">Основание</label>
+                <div class="controls">
+                    <textarea id="contractChangeRemarks" rows="3" cols="50" class="span3"></textarea>
+                </div>
+            </div>
+        </div>
+                    
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Отмета</button>
+        <button class="btn btn-primary" id="save-contractChangeInfo">Сохранить</button>
+    </div>
+</div>
+
+    <script type="text/javascript">
+        function contractChangeInfo() {
+
+            // contract
+            var contractId = @Model.Details.ContractId;
+            var type = '@Model.Subscriber.Type';
+            var contractName = type == 'prs' ? '' : $('#contractName').val();
+            var contractAreaId = $('#areaId').val();
+            var contractAddressStreet = $('#contractAddressStreet').val();
+            var contractAddressBuilding = $('#contractAddressBuilding').val();
+            var contractAddressFlat = $('#contractAddressFlat').val();
+            var contractPhone = $('#contractPhone').val();
+            var changeRemarks = $('#contractChangeRemarks').val();
+            var archiveId = $('#archiveId').val();
+            var budgetType = @(Model.Subscriber.Type == "bgt" ? new MvcHtmlString("$('input:radio[name=budgetType]:checked').val()") : new MvcHtmlString("''"));
+
+            var contractDto =
+                {
+                    ContractId: contractId,
+                    ContractName: contractName,
+                    AreaId: contractAreaId,
+                    AddressStreet: contractAddressStreet,
+                    AddressBuilding: contractAddressBuilding,
+                    AddressFlat: contractAddressFlat,
+                    Phone: contractPhone,
+                    ChangeRemarks: changeRemarks,
+                    ArchiveId: archiveId,
+                    BudgetType: budgetType
+                };
+                    
+            var json = JSON.stringify(contractDto);
+
+            $.ajax({
+                url: '@Url.Action("ChangeInfoAjax", "Contracts")',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: json,
+                success: function(result) {
+
+                    if (result['Success']) {
+                        location.reload();
+                    } else {
+                        alert(result['Message']);
+                    }
+
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert(jqXHR);
+                    alert(textStatus);
+                    alert(errorThrown);
+                }
+            });
+
+        }
+
+        $(function() {
+            $('#contractChangeInfo').click(function() {
+                $('#modal-contractChangeInfo').modal('show');
+            });
+
+            $('#save-contractChangeInfo').click(function() {
+                contractChangeInfo();
+            });
+        });  
+    </script>
+
+}

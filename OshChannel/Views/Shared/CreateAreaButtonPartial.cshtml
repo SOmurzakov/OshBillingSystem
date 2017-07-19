@@ -1,0 +1,120 @@
+﻿@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.Areas.AreasDictionaryModel
+
+
+@{
+    if (Auth.HasPermission(Permission.AreasCreate))
+    {
+        <button class="btn btn-success" id="createArea">Новый участок</button>
+    
+        <div id="modal-createArea" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="myModalLabel">Создать участок</h3>
+            </div>
+            <div class="modal-body">
+                
+                <div class="form-horizontal">
+                    
+                    <input type="hidden" value="-1" id="areaId"/>
+
+                    <div class="control-group">
+                        <label class="control-label" for="areaName">Участок</label>
+                        <div class="controls">
+                            <input type="text" value="" id="areaName"/>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="remarks">Замечания</label>
+                        <div class="controls">
+                            <input type="text" id="remarks"/>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label" for="controllerId">Контроллер</label>
+                        <div class="controls">
+                            <select style="border-radius: 3px;" id="controllerId">
+                                <option value="0">Выбрать потом...</option>
+                                @foreach (var controller in Model.Controllers)
+                                {
+                                    <option value="@controller.UserId">@controller.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Отмета</button>
+                <button class="btn btn-primary" id="save-createArea">Сохранить</button>
+            </div>
+        </div>
+        
+        <script type="text/javascript">
+
+            function createArea() {
+                var areaId = $('#areaId').val();
+                var areaName = $('#areaName').val();
+                var remarks = $('#remarks').val();
+                var controllerId = $('#controllerId').val();
+
+                var json = JSON.stringify({ AreaId: areaId, AreaName: areaName, Remarks: remarks, ControllerId: controllerId });
+
+                $.ajax({
+                    url: '@Url.Action("CreateAreaAjax", "Areas")',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: json,
+                    success: function (result) {
+
+                        if (result['Success']) {
+                            location.reload();
+                        } else {
+                            alert(result['Message']);
+                        }
+
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert(jqXHR);
+                        alert(textStatus);
+                        alert(errorThrown);
+                    }
+                });
+            }
+
+            function showCreateAreaDialog() {
+                $('#areaId').val(-1);
+                $('#areaName').val('');
+                $('#remarks').val('');
+                $('#controllerId').val(0);
+                $('#modal-createArea').modal('show');
+            }
+
+            function editArea(id, name, remarks, controllerId) {
+                $('#areaId').val(id);
+                $('#areaName').val(name);
+                $('#remarks').val(remarks);
+                $('#controllerId').val(controllerId);
+                $('#modal-createArea').modal('show');
+            }
+
+            $(function () {
+                $('#createArea').click(function () {
+                    showCreateAreaDialog();
+                });
+
+                $('#save-createArea').click(function () {
+                    createArea();
+                });
+            });
+
+        </script>
+        
+    }
+}    

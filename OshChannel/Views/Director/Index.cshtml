@@ -1,0 +1,115 @@
+﻿@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.Director.DirectorIndexModel
+           
+@{
+    ViewBag.Title = "Директор";
+}
+
+@Html.Partial("NextClosingPeriodPartial")
+
+<div class="userMenu">
+
+    @Html.Partial("ShortSearchComponentPartial", new ViewDataDictionary())
+    
+    <div class="row bottomMargin">
+        
+        <div class="span3 offset3">
+            <h2><a href="@Url.Action("Dictionary", "Subscribers")">Справочник абонентов</a></h2>
+            <p>Посмотреть абонентов своего участка</p>
+        </div>
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("Dictionary", "Subscribers", new {type = "le"})">Юр лица</a></h2>
+            <p>Справочник юр лиц</p>
+        </div>
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("Dictionary", "Subscribers", new {type = "prs"})">Физ лица</a></h2>
+            <p>Справочник физ лиц</p>
+        </div>
+    </div>
+
+    <div class="row bottomMargin">
+        <div class="span3 offset3">
+            <h2><a href="@Url.Action("CloseMonth", "Director")">Закрытые периоды</a></h2>
+            <p>Статистика по закрытым периодам</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("SubagentsBillingPeriods", "Subagents")">Субагенты - Закрытые периоды</a></h2>
+            <p>Статистика по закрытым периодам по субагентам</p>
+        </div>
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("VisaRequired", "Director")">Визы руководства</a></h2>
+            <p>Выдача виз для спорных операций</p>
+        </div>
+    </div>
+
+    <div class="row bottomMargin">
+        
+        <div class="span3 offset3">
+            <h2><a href="@Url.Action("Debtors", "Contracts", new { threshold = Settings.Get("Debtors.DefaultFilterValue") })">Сводный отчет</a></h2>
+            <p>Сводный отчет по контрактам</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("FundRaisingPlan", "Accountant")">План по сбору денег</a></h2>
+            <p>Отчет по выполнению плана по сбору денег</p>
+        </div>
+
+@*
+        <div class="span3">
+            <h2><a href="@Url.Action("Debtors", "Contracts", new { threshold = Settings.Get("Debtors.DefaultFilterValue") })">Должники - Участки</a></h2>
+            <p>Отчет по должникам с группировкой по участкам</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("Debtors", "Contracts", new { threshold = Settings.Get("Debtors.DefaultFilterValue") })">Должники - Размер долга</a></h2>
+            <p>Отчет по должникам с группировкой по размеру долга</p>
+        </div>
+*@
+    </div>
+    
+    <div class="row bottomMargin">
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("Index", "Areas")">Участки</a></h2>
+            <p>Просмотр участков и выбор начальников участков</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("AreasControllers", "Areas")">Участки - Контроллеры</a></h2>
+            <p>Распределиние участков города между контроллерами</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("AreasHouses", "Areas")">Участки - Дома</a></h2>
+            <p>Распределение домов и участков</p>
+        </div>
+
+    </div>
+    
+    <div class="row bottomMargin">
+        <div class="span3">
+            <h2><a href="@Url.Action("Index", "Tariffs")">Тарифы</a></h2>
+            <p>Управление установленной тарифной сеткой</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("Archive", "Tariffs")">Архив тарифов</a></h2>
+            <p>Посмотреть действующие до этого тарифы</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("Index", "Settings")">Настройки системы</a></h2>
+            <p>Конфигурирования поведения системы, переменные системы</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("Index", "Users")">Пользователи</a></h2>
+            <p>Управление правами доступа к системе, создание и редактирование учетных записей</p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+﻿@model OshBusinessModel.Da.Mobiles.MakePaymentModel
+
+@{
+    ViewBag.Title = "Оплатить";
+    Layout = "~/Views/Shared/_LayoutMobile.cshtml";
+}
+
+<form action="@Url.Action("ContractMakePayment")" method="POST">
+    <input type="hidden" value="@Model.ContractId" name="ContractId"/>
+    <table width="100%" border="1">
+        <tr>
+            <td width="50%">Сумма к оплате</td>
+            <td><input type="text" value="@Model.Amount" name="Amount"/></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td><input type="submit" value="Оплатить"/></td>
+        </tr>
+    </table>
+</form>

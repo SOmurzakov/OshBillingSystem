@@ -1,0 +1,120 @@
+﻿@using OshBusinessModel.Da.ShowContract
+@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.ShowContract.ShowContractModel
+           
+@{
+    string type = Model != null ? Model.Subscriber.Type : "";
+    bool isPersonal = type == "prs";
+}
+
+<table class="table table-striped table-bordered">
+    <tr>
+        <th>Изменение</th>
+        <th>Данные</th>
+        <th>Виза</th>
+    </tr>
+
+    @foreach (var change in Model.Changings)
+    {
+        <tr@Url.VisaRequiredCss(change.VisaRequired, change.VisaGivenUserId)>
+            <td>
+                @change.ChangedDate.ToShortDateString()<br/>
+                @Url.User(change.ChangedUserId, change.ChangedUserName)<br/>
+                @change.ChangeRemarks
+            </td>
+            <td>
+                @{
+                    if (change is ContractChangeDetailsDa)
+                    {
+                        var c = change as ContractChangeDetailsDa;
+                                        
+                        <span>
+                            Архив: @Html.If(c.ArchiveId > 0, c.ArchiveId.ToString()) <br/>
+                            Участок: @Url.Area(c.AreaId, c.AreaName) <br/>
+                            Адрес: @c.FullAddress <br/>
+                            Телефон: @c.Phone 
+                            @Html.If(Model.Subscriber.Type == "bgt", string.Format("<br/>Бюджет: {0}", BudgetType.GetBudgetTypeById(c.BudgetType).Name))
+                        </span>
+                    }
+                    else if (change is ContractParametersDa)
+                    {
+                        var c = change as ContractParametersDa;
+
+                        if (isPersonal)
+                        {
+                            <span>
+                                Прописано человек: @c.PeopleRegistered
+                            </span> 
+                        }
+                        else
+                        {
+                            <span>
+                                Фикс. потр. (куб. м.): вода: @c.FixedConsumption.ToString("0.##"), канализация: @c.FixedConsumptionSewage.ToString("0.##")
+                            </span>
+                        }
+                        <br />
+                        <span>
+                            Канализация: @(c.HasSewage ? "Есть" : "Нет") <br/>
+                            Льгота: @(c.Allowance <= 0 ? "Нет" : string.IsNullOrWhiteSpace(c.AllowanceReason) ? c.Allowance.ToString("0.##") + "%" : string.Format("{0:0.##}% - {1}", c.Allowance, c.AllowanceReason))
+                        </span> <br/>
+                    
+                    }
+                    else if (change is ContractChangeMeterActionDa)
+                    {
+                        var ma = change as ContractChangeMeterActionDa;
+                        <span>
+                            @(ma.Action == "enabled" ? "Установлен" : "Снят")
+                            водомер
+                            @ma.SerialNumber
+                        </span>
+                    }
+                    else if (change is ContractChangeMeterDetailsDa)
+                    {
+                        var md = change as ContractChangeMeterDetailsDa;
+                        <span>
+                            Задан серийный номер @md.SerialNumber
+                        </span>
+                    }
+                    else if (change is ContractChangeTariffOptionActionDa)
+                    {
+                        var ta = change as ContractChangeTariffOptionActionDa;
+                        <span>
+                            @ta.ActionToString тарифная опция @Url.TariffOption(ta.SemanticId, ta.VariableBillName)
+                        </span>
+                    }
+                    else if (change is ContractChangeTariffOptionValueDa)
+                    {
+                        var ov = change as ContractChangeTariffOptionValueDa;
+                        if (ov.UsePeopleRegistered)
+                        {
+                            <span>
+                                @Url.TariffOption(ov.SemanticId, ov.VariableBillName): Есть
+                            </span>
+                        }
+                        else
+                        {
+                            <span>
+                                @Url.TariffOption(ov.SemanticId, ov.VariableBillName): @ov.Value (@ov.VariableDescription) 
+                            </span>
+                        }
+                        
+                        @(ov.HasSewage ? "(с канализацией)" : "")
+                    }
+                    else if (change is ContractChangeActionDa)
+                    {
+                        var ca = change as ContractChangeActionDa;
+                        <span>
+                            Контракт @ca.ActionToString
+                        </span>
+                    }
+                }
+            </td>
+            <td>
+                @Url.VisaInfo(change.VisaRequired, change.VisaGivenUserId, change.VisaGivenUserName, change.VisaGivenDate, Permission.ContractsGiveVisa, change.Id, "Contracts", change.Subcategory)
+            </td>
+        </tr>
+    }
+
+</table>
+

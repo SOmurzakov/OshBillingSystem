@@ -1,0 +1,130 @@
+﻿@model OshBusinessModel.Da.Bills.GetBillsForPrintingModel
+
+@{
+    ViewBag.Title = "Печать чеков по адресу";
+
+    if (Model == null)
+    {
+        <h3>Счета не выставлялись</h3>
+    }
+    else
+    {
+
+        <div class="well">
+
+            <h3 style="margin-top: 0; margin-bottom: 20px;">@ViewBag.Title</h3>
+            
+            <div class="form-horizontal">
+    
+                <div class="control-group">
+                    <label class="control-label" for="rootingPeriod">Период: </label>
+                    <div class="controls">
+                        <select id="rootingPeriod">
+                            <option value="-1">Выберите период...</option>
+                            @foreach (var period in Model.BillingPeriods)
+                            {
+                                <option value="@period.BillingPeriodId"@Html.If(Model.PeriodId == period.BillingPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label" for="street">Улица: </label>
+                    <div class="controls">
+                        <select id="street">
+                            <option value="no-street">Выберите улицу...</option>
+
+                            @foreach (var street in Model.Streets)
+                            {
+                                <option value="@street">@street</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="control-group buildings hide">
+                    <label class="control-label" for="buildings">Дома: </label>
+                    <div class="controls">
+                        <select multiple="multiple" id="buildings"></select>
+                    </div>
+                </div>
+        
+                <div class="control-group">
+                    <div class="controls">
+                        <button class="btn btn-large btn-primary" id="applyFilter">Построить</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            $(function () {
+
+                $('#street').change(function() {
+                    var street = $(this).val();
+
+                    if (street == 'no-street') return;
+
+                    $.ajax({ url: '@Url.Action("GetBuildings", "CustomerCare")', data: { street: street }, method: 'POST' }).success(function(data) {
+
+                        $('.buildings').show();
+                        $('#buildings option').remove();
+                        $('#buildings').append('<option value="all" selected="selected">Все</option>');
+                        for (var i = 0; i < data.length; i++) {
+                            var sValue = data[i];
+                            var sTitle = sValue ? sValue : "<не назначен>";
+                            $('#buildings').append('<option value="' + sValue + '">' + sTitle + '</option>');
+                        }
+
+                    });
+                });
+
+                $('#applyFilter').click(function () {
+                    var periodId = $('#rootingPeriod').val();
+                    var street = $('#street').val();
+
+                    if (periodId <= 0) {
+                        alert('Выберите период');
+                        return;
+                    }
+
+                    if (street == 'no-street') {
+                        alert('Выберите улицу');
+                        return;
+                    }
+
+                    var buildings = [];
+                    var allBuildings = false;
+
+                    $('#buildings option:selected').each(function () {
+                        var build = $(this).attr('value');
+                        buildings.push({ AddressBuilding: build });
+
+                        if (build == 'all') {
+                            allBuildings = true;
+                        }
+                    });
+
+                    if (buildings.length == 0) {
+                        alert('Выберите дом/дома из списка');
+                        return;
+                    }
+
+                    if (allBuildings) {
+                        buildings = [];
+                    }
+
+                    var request = {PeriodId: periodId, Street: street, AllBuildings: allBuildings, Buildings: buildings};
+
+                    $.ajax({ url: '@Url.Action("GetBillsForAddress", "CustomerCare")', data: JSON.stringify(request), contentType: 'application/json; charset=utf-8', type: 'POST' }).success(function (result) {
+                        $('.results').html(result);
+                    });
+                });
+            });
+        </script>
+
+        <div class="results printable"></div>
+    }
+}

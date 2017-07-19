@@ -1,0 +1,113 @@
+﻿@using OshChannel.Helpers
+
+@{
+    ViewBag.Title = "Панель администратора";
+}
+
+<div class="userMenu">
+    
+    <h1>Панель администратора</h1>
+    <p class="intro">Управление поведением системы</p>
+
+    @Html.Partial("ShortSearchComponentPartial")
+
+    <div class="row bottomMargin">
+        
+        <div class="span3">&nbsp;</div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("Index", "Users")">Пользователи</a></h2>
+            <p>Управление правами доступа к системе, создание и редактирование учетных записей</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("Index", "Settings")">Настройки системы</a></h2>
+            <p>Конфигурирования поведения системы, переменные системы</p>
+        </div>
+
+    </div>
+
+    <div class="row bottomMargin">
+        
+        <div class="span3">&nbsp;</div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("Index", "Areas")">Участки города</a></h2>
+            <p>Управление раойнами города</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("AreasControllers", "Areas")">Участки - Контроллеры</a></h2>
+            <p>Распределиние участков города между контроллерами</p>
+        </div>
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("Streets", "Admin")">Переименование улиц</a></h2>
+            <p>Переименование улиц</p>
+        </div>
+
+    </div>
+
+    <div class="row bottomMargin">
+        
+        <div class="span3">&nbsp;</div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("Index", "Tariffs")">Тарифы</a></h2>
+            <p>Управление установленной тарифной сеткой</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("Archive", "Tariffs")">Архив тарифов</a></h2>
+            <p>Посмотреть действующие до этого тарифы</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("Index", "Subagents")">Субагенты</a></h2>
+            <p>Список зарегистрированных субагентов</p>
+        </div>
+
+    </div>
+    
+    @if (OshBusinessLogic.GlobalSettings.DebugMode)
+    {
+        <div class="well">
+            <div class="pull-right">
+                <button class="btn btn-primary" id="debugClearBilling">Скинуть биллинг</button>
+                
+                <script type="text/javascript">
+                    
+                    function clearBilling() {
+
+                        $.ajax({
+                            url: '@Url.Action("ClearBillingAjax", "Debug")',
+                            type: 'POST',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            data: JSON.stringify({ }),
+                            success: function(result) {
+                                if (result['Success']) {
+                                    alert('успешно');
+                                    location.reload();
+                                } else {
+                                    alert(result['Message']);
+                                }
+                            },
+                            error: function(a, b, ctx) {
+                                alert('что-то не так');
+                            }
+                        });
+                    }
+
+                    $(function() {
+                        $('#debugClearBilling').click(function() {
+                            clearBilling();
+                        });
+                    });
+                </script>
+            </div>
+            <h2>Отладка</h2>
+        </div>
+    }
+    
+</div>

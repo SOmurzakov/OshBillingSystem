@@ -1,0 +1,926 @@
+﻿@using OshChannel.Helpers
+@model OshBusinessModel.Da.CreateContract.CreateContractModel
+
+@{
+    ViewBag.Title = "Создать контракт";
+    string disabled = Model.Subscriber == null ? "" : " disabled=\"disabled\"";
+    string empty = "";
+}
+
+<script type="text/javascript">
+
+    function changeOptionsByTariff() {
+        var tariff = $('#contractTariff').val();
+        var sewageOnly = $('option[value="' + tariff + '"]', '#contractTariff').attr('data-sewage-only');
+        if (sewageOnly) {
+            $('#hasSewage').prop('checked', true);
+            $('#hasSewage').prop('disabled', true);
+        } else {
+            $('#hasSewage').prop('disabled', false);
+        }
+        
+        var name = '#optionsFor-' + tariff;
+        
+        if ($(name)) {
+            $('#div-options').html($(name).html());
+        } else {
+            $('#div-options').html('');
+        }
+
+        var optionsCount = $('.tariffOption', '#div-options').size();
+
+        if (optionsCount > 0) {
+            $('#div-meters').hide('fast');
+        } else {
+            $('#div-meters').show('fast');
+        }
+
+    }
+
+    function changeTariffsByType(type) {
+        var name = '#tariffsFor-' + type;
+        $('#div-selectTariff').html($(name).html());
+
+        changeOptionsByTariff();
+        $('#contractTariff').change(function () {
+            changeOptionsByTariff();
+        });
+    }
+    
+    function typeChanged() {
+        var type = $('#subscriberType').val();
+
+        if (type == 'prs') {
+            
+            $('label[for=subscriberName]').html('ФИО абонента');
+            $('#passportTitle').html('Паспорт');
+            $('label[for=passportNumber]').html('Серия, номер');
+            $('#passportWhereLabel').html('Выдан');
+
+            $('#div-contractName').hide('fast');
+            $('.non-personal').hide('fast');
+            $('#div-peopleRegistered').show('fast');
+
+            $('#checkbox-takeAddressFromTheContract').prop('checked', true);
+            takeAddressFromTheContractChanged();
+
+            $('#div-fixedConsumption').hide('fast');
+            //$('#div-meters').hide('fast');
+
+            $('#div-options').show('fast');
+
+            $('#div-budgetType').hide('fast');
+        } else {
+            
+            $('label[for=subscriberName]').html('Название компании');
+            $('#passportTitle').html('Свидетельство о регистрации');
+            $('label[for=passportNumber]').html('Номер свидетельства');
+            $('#passportWhereLabel').html('Выдано');
+            
+            $('#div-contractName').show('fast');
+            $('.non-personal').show('fast');
+            $('#div-peopleRegistered').hide('fast');
+
+            $('#checkbox-takeAddressFromTheContract').prop('checked', false);
+            takeAddressFromTheContractChanged();
+
+            $('#div-fixedConsumption').show('fast');
+            //$('#div-meters').show('fast');
+
+            $('#div-options').hide('fast');
+            
+            if (type == 'bgt') {
+                $('#div-budgetType').show('fast');
+            } else {
+                $('#div-budgetType').hide('fast');
+            }
+        }
+
+        changeTariffsByType(type);
+
+    }
+    
+    function takeAddressFromTheContractChanged() {
+        var checked = $('#checkbox-takeAddressFromTheContract').prop('checked');
+        
+        if (checked) {
+            $('#div-takeAddressFromContract').hide('fast');
+        } else {
+            $('#div-takeAddressFromContract').show('fast');
+        }
+        
+    }
+
+</script>
+
+<h1 style="text-align: center; margin: 30px;">@ViewBag.Title</h1>
+
+<div class="row">
+    <div class="span6">
+        
+        <div class="form-horizontal">
+            <legend>Абонент</legend>
+            <div class="control-group">
+                <label class="control-label" for="registrationDate">Дата регистрации</label>
+                <div class="controls">
+                    <input type="text" class="span4 disabled" value="@(Model.Subscriber == null ? DateTime.Today.ToShortDateString() : Model.Subscriber.RegistrationDate.ToShortDateString())" id="registrationDate" disabled="disabled"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="subscriberType">Тип абонента</label>
+                <div class="controls">
+                    <select id="subscriberType" class="span4" style="border-radius: 3px"@disabled>
+                        @{
+                            if (Model.Subscriber == null)
+                            {
+                                foreach (var t in OshBusinessModel.Data.SubscriberType.SubscriberTypes)
+                                {
+                                    <option value="@t.SemanticId">@t.Name</option>
+                                }
+                            }
+                            else
+                            {
+                                <option value="@Model.Subscriber.Type">@OshBusinessModel.Data.SubscriberType.GetById(Model.Subscriber.Type).Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="subscriberName">ФИО абонента</label>
+                <div class="controls">
+                    <input type="text" class="span4" id="subscriberName" value="@(Model.Subscriber == null ? "" : Model.Subscriber.Name)"@disabled/>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <b id="passportTitle">Паспорт</b>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="passportNumber">Серия, номер</label>
+                <div class="controls">
+                    <input type="text" class="span4" id="passportNumber" value="@(Model.Subscriber == null ? "" : Model.Subscriber.PassportNumber)"@disabled/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="passportWhere" id="passportWhereLabel">Выдан</label>
+                <div class="controls">
+                    <label class="control-description" style="width: 30px;" for="passportWhere">Кем</label>
+                    <input type="text" style="width: 95px" id="passportWhere" value="@(Model.Subscriber == null ? "" : Model.Subscriber.PassportWhere)"@disabled/>
+                    <label class="control-description" style="width: 88px;" for="passportDate">Когда</label>
+                    <input type="text" style="width: 95px" id="passportDate" value="@(Model.Subscriber == null ? "" : Model.Subscriber.PassportDateAsString)"@disabled/>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                </div>
+            </div>
+            
+            
+            <div class="control-group">
+                <div class="controls">
+                    <b style="display: inline-block !important; line-height: 18px; vertical-align: middle; height: 18px; margin: 0 5px 0 0;">Адрес</b> 
+                    @if (Model.Subscriber == null)
+                    {
+                        <label class="checkBoxLabel">
+                            <input type="checkbox" id="checkbox-takeAddressFromTheContract" value="" checked="checked"/>
+                            Взять из контракта
+                        </label>
+                    }
+                </div>
+            </div>
+            
+            <div id="div-takeAddressFromContract" style="display: none;">
+                <div class="control-group">
+                    <label class="control-label" for="subscriberAddressStreet">Улица</label>
+                    <div class="controls">
+                        <input type="text" class="span4" id="subscriberAddressStreet" value="@(Model.Subscriber != null ? Model.Subscriber.AddressStreet : "")"@disabled/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <label class="control-description" style="width: 30px;" for="subscriberAddressBuilding">Дом</label>
+                        <input type="text" style="width: 95px;" id="subscriberAddressBuilding" value="@(Model.Subscriber != null ? Model.Subscriber.AddressBuilding : "")"@disabled />
+                        <label class="control-description" style="width: 88px;" for="subscriberAddressFlat">Квартира</label>
+                        <input type="text" style="width: 95px;" id="subscriberAddressFlat" value="@(Model.Subscriber != null ? Model.Subscriber.AddressFlat : empty)"@disabled/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="subscriberPhone">Телефон</label>
+                    <div class="controls">
+                        <input type="text" class="span4" value="@(Model.Subscriber != null ? Model.Subscriber.Phone : empty)" id="subscriberPhone"@disabled/>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <div class="controls">
+                    <b id="passportTitle">Налоговая</b>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="inn">ИНН</label>
+                <div class="controls">
+                    <input type="text" class="span4" id="inn" value="@(Model.Subscriber != null ? Model.Subscriber.Inn : empty)"@disabled/>
+                </div>
+            </div>
+
+            <div class="non-personal" style="display: none;">
+            
+                <div class="control-group">
+                    <label class="control-label" for="ugkns">УГКНС</label>
+                    <div class="controls">
+                        <label class="control-description" style="width: 30px;" for="ugkns">Код</label>
+                        <input type="text" style="width: 45px;" id="ugkns" value="@(Model.Subscriber != null ? Model.Subscriber.Ugkns : empty)"@disabled />
+                        <label class="control-description" style="width: 88px;" for="ugknsName">Название</label>
+                        <input type="text" style="width: 145px;" id="ugknsName" value="@(Model.Subscriber != null ? Model.Subscriber.UgknsName : empty)"@disabled/>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label" for="mfo">Код МФО</label>
+                <div class="controls">
+                    <input type="text" class="span4" id="mfo" value="@(Model.Subscriber != null ? Model.Subscriber.Mfo : empty)"@disabled/>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <div class="controls">
+                    <label style="height:18px; vertical-align: middle; display: inline-block;">
+                        <input type="checkbox" id="invoice" style="margin: 0 5px 0 0;" @Html.If(Model.Subscriber != null && Model.Subscriber.InvoiceRequired, "checked=\"checked\"") @disabled/>Выдавать счет фактуру
+                    </label>
+                </div>
+            </div>
+            
+            <div class="non-personal" style="display: none;">
+                
+                <div class="control-group">
+                    <div class="controls">
+                        <b>Банк</b>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="bankCode">Код</label>
+                    <div class="controls">
+                        <input type="text" class="span4" id="bankCode" value="@(Model.Subscriber != null ? Model.Subscriber.BankCode : empty)"@disabled/>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="bankName">Название</label>
+                    <div class="controls">
+                        <input type="text" class="span4" id="bankName" value="@(Model.Subscriber != null ? Model.Subscriber.BankName : empty)"@disabled/>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="bankAccount">Номер счета</label>
+                    <div class="controls">
+                        <input type="text" class="span4" id="bankAccount" value="@(Model.Subscriber != null ? Model.Subscriber.BankAccount : empty)"@disabled/>
+                    </div>
+                </div>
+            </div>    
+            
+        </div>
+    </div>
+    
+    <div class="span6">
+        <legend>Контракт</legend>
+        <div class="form-horizontal">
+            
+            <div class="control-group">
+                <label class="control-label" for="archiveId">Л/С Архив</label>
+                <div class="controls">
+                    <input type="text" class="span4" id="archiveId"/>
+                </div>
+            </div>
+
+            <div id="div-contractName" style="display: none;">
+                <div class="control-group" id="divContractName">
+                    <label class="control-label" for="contractName">Субъект</label>
+                    <div class="controls">
+                        <input type="text" class="span4" id="contractName"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <div class="controls">
+                    <b>Адрес</b>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="areaId">Участок</label>
+                <div class="controls">
+                    <select id="areaId" class="span4" style="border-radius: 3px">
+                        <option value="0">Выбрать потом...</option>
+                        @foreach (var area in Model.Areas)
+                        {
+                            <option value="@area.Id">Уч. @area.Name @area.ControllerName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="contractAddressStreet">Улица</label>
+                <div class="controls">
+                    <input type="text" id="contractAddressStreet" class="span4" value=""/>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <label class="control-description" style="width: 30px;" for="contractAddressBuilding">Дом</label>
+                    <input type="text" style="width: 95px;" id="contractAddressBuilding" value=""/>
+                    <label class="control-description" style="width: 88px;" for="contractAddressFlat">Квартира</label>
+                    <input type="text" style="width: 95px;" id="contractAddressFlat" value=""/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="contractPhone">Телефон</label>
+                <div class="controls">
+                    <input type="text" id="contractPhone" class="span4" value=""/>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Тариф</label>
+                <div class="controls" id="div-selectTariff">
+                </div>
+            </div>
+            
+            <div class="control-group" id="div-budgetType" style="display: none">
+                <label class="control-label">Бюджет</label>
+                <div class="controls">
+                    @{
+                        var firstBudgetType = true;
+                        foreach(var type in OshBusinessModel.Data.BudgetType.BudgetTypes)
+                        {
+                            var isChecked = firstBudgetType ? " checked=\"checked\"" : "";
+                            firstBudgetType = false;
+                            
+                            <label class="radio"><input type="radio" name="budgetType" value="@type.SemanticId" @isChecked/> @type.Name</label>
+                        }
+                    }
+                </div>
+            </div>
+            <div id="div-peopleRegistered">
+                <div class="control-group">
+                    <label class="control-label" for="peopleRegistered">Прописано человек</label>
+                    <div class="controls">
+                        <input type="text" class="span4" value="" id="peopleRegistered"/>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="div-fixedConsumption" style="display: none;">
+                <div class="control-group">
+                    <label class="control-label" for="fixedConsumption">Фикс. потр. (куб. м.)</label>
+                    <div class="controls">
+                        <label class="control-description" style="width: 30px;" for="fixedConsumption">Вода</label>
+                        <input type="text" style="width: 100px;" id="fixedConsumption"/>
+                        <label class="control-description" style="width: 88px;" for="fixedConsumptionSewage">Стоки</label>
+                        <input type="text" style="width: 100px;" id="fixedConsumptionSewage"/>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label" for="hasSewage">Канализация</label>
+                <div class="controls">
+                    <label class="checkbox">
+                        <input type="checkbox" id="hasSewage" checked="checked"/>
+                        Есть 
+                    </label>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label" for="allowance">Льгота</label>
+                <div class="controls">
+                    <label class="control-description" style="width: 15px;" for="allowance">%</label>
+                    <input type="text" style="width: 50px;" id="allowance" value="0"/>
+                    <label class="control-description" style="width: 88px;" for="allowanceReason">Основание</label>
+                    <input type="text" style="width: 165px;" id="allowanceReason" value=""/>
+                </div>
+            </div>
+
+            <div id="div-meters">
+                <div class="control-group">
+                    <div class="controls">
+                        <b>Установленные водомеры</b>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="controls">
+                        <div id="meters">
+                            Водомеры не установлены
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="controls">
+                        <a href="javascript:void(0)" class="linkLocal" id="addMeter">Добавить</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="div-options">
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 30px;">
+    <label>
+        Дата регистрации <br />
+        <input type="text" id="contract-registrationDate" value="@DateTime.Today.ToShortDateString()"/>
+    </label>
+
+    <label>
+        Долг на момент регистрации (сом) <br/> 
+        <input type="text" id="registrationDebt"/>
+    </label>
+</div>
+
+<div style="text-align: center; margin-top: 10px; margin-bottom: 50px;">
+    <a href="javascript:void(0)" class="btn btn-primary btn-large" id="createContract" style="font-size: 24px;">Создать</a>
+</div>
+
+<div class="metersSampleFirst" style="display: none; visibility: hidden;">
+    <div></div>
+    <div class="pull-left" style="margin-right: 20px; width: 125px;">
+        <label>Серийный номер</label>
+    </div>
+    <div class="pull-left">
+        <label>Показания</label>
+    </div>
+    <div class="clearfix"></div>
+</div>
+
+<div class="metersSample" style="display: none; visibility: hidden;">
+    <div class="meter{i} meter" style="margin: 10px 0;">
+        <div></div>
+        <div class="pull-left" style="margin-right: 20px;">
+            <input type="text" class="serialNumber" value="" style="width: 115px;"/>
+        </div>
+        <div class="pull-left" style="margin-right: 20px;">
+            <input type="text" class="initValue" value="" style="width: 80px;"/>
+        </div>
+        <div class="pull-left">
+            <a href="javascript:void(0)" class="deleteMeter linkLocal">Удалить</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var metersRunningNumber = 0;
+
+    function meterDeleted() {
+        var serials = $('.serialNumber', '#meters').get();
+
+        if (serials.length == 0) {
+            $('#meters').html('Водомеры не установлены');
+        }
+    }
+
+    function addMeter() {
+
+        metersRunningNumber++;
+
+        var meterHtml = $('.metersSample').html();
+
+        meterHtml = meterHtml.replace('{i}', metersRunningNumber);
+
+        var serials = $('.serialNumber', '#meters').get();
+
+        if (serials.length == 0) {
+            var html = $('.metersSampleFirst').html();
+            $('#meters').html(html + meterHtml);
+        } else {
+            $('#meters').append(meterHtml);
+        }
+
+        $('.deleteMeter', '.meter' + metersRunningNumber).click(function () {
+            $(this).parents('.meter').html('');
+            meterDeleted();
+        });
+    }
+
+    $(function () {
+        $('#addMeter').click(function () {
+            addMeter();
+        });
+    });
+</script>
+
+@{
+
+    var tariffsBySubscriberType = Model.Tariffs.Select(tariff => tariff.SubscriberType).Distinct().ToDictionary(key => key, value => Model.Tariffs.Where(tariff => tariff.SubscriberType == value));
+
+    foreach (var tariff in tariffsBySubscriberType)
+    {
+        var tariffSelectDisabled = tariff.Value.Count() <= 1 ? " disabled=\"disabled\"" : "";
+        
+        <div id="tariffsFor-@tariff.Key" class="hidden">
+            <select id="contractTariff" class="span4" style="border-radius: 3px;"@tariffSelectDisabled>
+                @{
+                                                                            if (tariff.Value.Count() > 1)
+                                                                            {
+                        <option value="-1">Выберите тариф из списка</option>
+                                                                            }
+                }
+                @foreach (var t in tariff.Value)
+                {
+                    <option value="@t.SemanticId"@Html.If(t.IsSewageOnly, " data-sewage-only='true'")>@t.Name</option>
+                }
+            </select>
+        </div>
+    }
+
+    var tariffsOptionsByTariffs = Model.Tariffs.ToDictionary(key => key, value => Model.Options.Where(option => option.TariffSubtype == value.Subtype));
+
+    foreach (var tariff in tariffsOptionsByTariffs)
+    {
+        <div id="optionsFor-@tariff.Key.SemanticId" class="hidden">
+            
+            @foreach (var option in tariff.Value)
+            {
+                <div class="control-group">
+                    <label class="control-label" for="option-@option.SemanticId">@option.VariableBillName (@option.VariableDescription)</label>
+                    <div class="controls">
+                        @{
+                            if (option.UsePeopleRegistered)
+                            {
+                                <label style="display: inline-block !important; line-height: 23px; height: 23px; vertical-align: bottom; margin: 0; width: 70px;">
+                                    <input type="checkbox" id="option-@option.SemanticId" style="display: inline-block !important; line-height: 23px; height: 23px;" class="tariffOption" use-people-registered="1" />
+                                    Есть
+                                </label>
+                            }
+                            else
+                            {
+                                <input type="text" id="option-@option.SemanticId" class="span1 tariffOption" use-people-registered="0"/>
+                            }
+
+                            if (option.SewageAvailable)
+                            {
+                                <label style="display: inline-block !important; line-height: 23px; height: 23px; vertical-align: bottom; margin: 0; margin-left: 25px;">
+                                    <input type="checkbox" id="option-@option.SemanticId-sewage" style="display: inline-block !important; line-height: 23px; height: 23px;" class="tariffOptionSewage" />
+                                    Включить канализацию
+                                </label>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+
+        </div>
+    }
+}
+
+<script type="text/javascript">
+    $(function () {
+        
+        $('#checkbox-takeAddressFromTheContract').change(function () {
+            takeAddressFromTheContractChanged();
+        });
+        
+        $('#subscriberType').change(function () {
+            typeChanged();
+        });
+        
+    });
+    
+    $(function () {
+        typeChanged();
+    });
+</script>
+
+<script type="text/javascript">
+
+    function getMeters() {
+        if ($('#div-meters').css('display') == 'none') {
+            return null;
+        }
+
+        var meters = [];
+        var serials = $('.serialNumber', '#meters').get();
+        var initValues = $('.initValue', '#meters').get();
+
+        if (serials.length > 0) {
+            for (var i = 0; i < serials.length; i++) {
+                var s = serials[i].value;
+                var v = initValues[i].value;
+
+                var meter = { SerialNumber: s, InitialValue: v };
+                meters.push(meter);
+            }
+        }
+
+        return meters;
+    }
+    
+    function getOptions() {
+        var options = [];
+
+        var inputs = $('.tariffOption', '#div-options').get();
+
+        if (inputs.length > 0) {
+            for (var i = 0; i < inputs.length; i++) {
+
+                var id = inputs[i].id;
+                var jId = '#' + id;
+                var usePeopleRegistered = $(jId).attr('use-people-registered');
+                var value = usePeopleRegistered > 0 ? $(jId).prop('checked') : $(jId).val();
+
+                if (value) {
+                    if (id.substring(0, 6) == 'option') {
+                        id = id.substring(7);
+                    }
+                    
+                    if (usePeopleRegistered > 0) {
+                        value = '1';
+                    }
+
+                    //alert('Id: ' + id + '\nValue: ' + value + '\nUsePeopleRegistered: ' + usePeopleRegistered);
+
+                    var sewageJId = '#option-' + id + '-sewage';
+
+                    var sewage = $(sewageJId) && $(sewageJId).prop('checked');
+
+                    var option = { SemanticId: id, Value: value, Sewage: sewage };
+                    options.push(option);
+                }
+            }
+        }
+
+        return options;
+    }
+</script>
+
+@if (Model.Subscriber == null)
+{
+    <script type="text/javascript">
+        function createContract() {
+
+            var type = $('#subscriberType').val();
+
+            $('#createContract').addClass('disabled');
+
+            // contract
+            var archiveId = $('#archiveId').val();
+            var contractName = type == 'prs' ? '' : $('#contractName').val();
+            var contractAreaId = $('#areaId').val();
+            var contractAddressStreet = $('#contractAddressStreet').val();
+            var contractAddressBuilding = $('#contractAddressBuilding').val();
+            var contractAddressFlat = $('#contractAddressFlat').val();
+            var contractPhone = $('#contractPhone').val();
+            var contractTariff = $('#contractTariff').val();
+            var peopleRegistered = type == 'prs' ? $('#peopleRegistered').val() : '0';
+            var fixedConsumption = type == 'prs' ? '0' : $('#fixedConsumption').val();
+            var fixedConsumptionSewage = type == 'prs' ? '0' : $('#fixedConsumptionSewage').val();
+            var budgetType = type == 'bgt' ? $('input:radio[name=budgetType]:checked').val() : '';
+            var hasSewage = $('#hasSewage').prop('checked') ? '1' : '0';
+            var allowance = $('#allowance').val();
+            var allowanceReason = $('#allowanceReason').val();
+
+            var contractDto =
+                {
+                    ArchiveId: archiveId,
+                    Name: contractName,
+                    AreaId: contractAreaId,
+                    AddressStreet: contractAddressStreet,
+                    AddressBuilding: contractAddressBuilding,
+                    AddressFlat: contractAddressFlat,
+                    Phone: contractPhone,
+                    Tariff: contractTariff,
+                    PeopleRegistered: peopleRegistered,
+                    FixedConsumption: fixedConsumption,
+                    BudgetType: budgetType,
+                    HasSewage: hasSewage,
+                    Allowance: allowance,
+                    AllowanceReason: allowanceReason,
+                    FixedConsumptionSewage: fixedConsumptionSewage
+                };
+
+            // meters
+            var meters = getMeters();
+
+            // options
+            var options = getOptions();
+
+            // subscriber
+            var subscriberType = type;
+            var subscriberName = $('#subscriberName').val();
+            var subscriberPassportNumber = $('#passportNumber').val();
+            var subscriberPassportWhere = $('#passportWhere').val();
+            var subscriberPassportDate = $('#passportDate').val();
+
+            var addressTakeFromContract = $('#checkbox-takeAddressFromTheContract').prop('checked');
+
+            var subscriberAddressStreet = "";
+            var subscriberAddressBuilding = "";
+            var subscriberAddressFlat = "";
+            var subscriberPhone = "";
+
+            if (!addressTakeFromContract) {
+                subscriberAddressStreet = $('#subscriberAddressStreet').val();
+                subscriberAddressBuilding = $('#subscriberAddressBuilding').val();
+                subscriberAddressFlat = $('#subscriberAddressFlat').val();
+                subscriberPhone = $('#subscriberPhone').val();
+            } else {
+                subscriberAddressStreet = contractAddressStreet;
+                subscriberAddressBuilding = contractAddressBuilding;
+                subscriberAddressFlat = contractAddressFlat;
+                subscriberPhone = contractPhone;
+            }
+
+            var inn = $('#inn').val();
+            var ugkns = type == 'prs' ? '' : $('#ugkns').val();
+            var mfo = type == 'prs' ? '' : $('#mfo').val();
+            var invoice = type == 'prs' ? '0' : $('#invoice').prop('checked') ? '1' : '0';
+            var ugknsName = type == 'prs' ? '' : $('#ugknsName').val();
+            var bankCode = type == 'prs' ? '' : $('#bankCode').val();
+            var bankName = type == 'prs' ? '' : $('#bankName').val();
+            var bankAccount = type == 'prs' ? '' : $('#bankAccount').val();
+
+            var subscriberDto =
+                {
+                    Type: subscriberType,
+                    Name: subscriberName,
+                    PassportNumber: subscriberPassportNumber,
+                    PassportWhere: subscriberPassportWhere,
+                    PassportDate: subscriberPassportDate,
+                    AddressStreet: subscriberAddressStreet,
+                    AddressBuilding: subscriberAddressBuilding,
+                    AddressFlat: subscriberAddressFlat,
+                    Phone: subscriberPhone,
+                    Inn: inn,
+                    Ugkns: ugkns,
+                    Mfo: mfo,
+                    Invoice: invoice,
+                    UgknsName: ugknsName,
+                    BankCode: bankCode,
+                    BankName: bankName,
+                    BankAccount: bankAccount
+                };
+
+            // registration debt
+            var debt = $('#registrationDebt').val();
+            var registrationDate = $('#contract-registrationDate').val();
+
+            var createRequest =
+                {
+                    Subscriber: subscriberDto,
+                    Contract: contractDto,
+                    Meters: meters,
+                    Options: options,
+                    RegistrationDebt: debt,
+                    RegistrationDate: registrationDate
+                };
+
+            var json = JSON.stringify(createRequest);
+
+            $.ajax({
+                url: '@Url.Action("CreateContractAjax", "Contracts")',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: json,
+                success: function(result) {
+                    if (result['ContractId'] > 0) {
+                        window.location.replace('/Contracts/Show?contractId=' + result['ContractId']);
+                    } else {
+                        alert('Проверьте данные и повторите снова\n' + result['Message']);
+                        $('#createContract').removeClass('disabled');
+                    }
+
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert('Ошибка');
+                    $('#createContract').removeClass('disabled');
+                }
+            });
+
+        }
+    </script>
+
+}
+else
+{
+    <script type="text/javascript">
+        function createContract() {
+
+            var type = $('#subscriberType').val();
+
+            $('#createContract').addClass('disabled');
+
+            // contract
+            var contractName = type == 'prs' ? '' : $('#contractName').val();
+            var contractAreaId = $('#areaId').val();
+            var contractAddressStreet = $('#contractAddressStreet').val();
+            var contractAddressBuilding = $('#contractAddressBuilding').val();
+            var contractAddressFlat = $('#contractAddressFlat').val();
+            var contractPhone = $('#contractPhone').val();
+            var contractTariff = $('#contractTariff').val();
+            var peopleRegistered = type == 'prs' ? $('#peopleRegistered').val() : '0';
+            var fixedConsumption = type == 'prs' ? '0' : $('#fixedConsumption').val();
+            var fixedConsumptionSewage = type == 'prs' ? '0' : $('#fixedConsumptionSewage').val();
+            var budgetType = type == 'bgt' ? $('input:radio[name=budgetType]:checked').val() : '';
+            var hasSewage = $('#hasSewage').prop('checked') ? '1' : '0';
+            var allowance = $('#allowance').val();
+            var allowanceReason = $('#allowanceReason').val();
+
+            var contractDto =
+                {
+                    Name: contractName,
+                    AreaId: contractAreaId,
+                    AddressStreet: contractAddressStreet,
+                    AddressBuilding: contractAddressBuilding,
+                    AddressFlat: contractAddressFlat,
+                    Phone: contractPhone,
+                    Tariff: contractTariff,
+                    PeopleRegistered: peopleRegistered,
+                    FixedConsumption: fixedConsumption,
+                    BudgetType: budgetType,
+                    HasSewage: hasSewage,
+                    Allowance: allowance,
+                    AllowanceReason: allowanceReason,
+                    FixedConsumptionSewage: fixedConsumptionSewage
+                };
+
+            // meters
+            var meters = getMeters();
+
+            // options
+            var options = getOptions();
+
+            // subscriber
+            var subscriberId = @Model.Subscriber.SubscriberId;
+
+            // registration debt
+            var debt = $('#registrationDebt').val();
+            var registrationDate = $('#contract-registrationDate').val();
+
+            var createRequest =
+                {
+                    SubscriberId: subscriberId,
+                    Contract: contractDto,
+                    Meters: meters,
+                    Options: options,
+                    RegistrationDebt: debt,
+                    RegistrationDate: registrationDate
+                };
+
+            var json = JSON.stringify(createRequest);
+
+            $.ajax({
+                url: '@Url.Action("CreateContractAjax", "Contracts")',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: json,
+                success: function (result) {
+                    if (result['ContractId'] > 0) {
+                        window.location.replace('/Contracts/Show?contractId=' + result['ContractId']);
+                    } else {
+                        alert('Проверьте данные и повторите снова\n' + result['Message']);
+                        $('#createContract').removeClass('disabled');
+                    }
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert('Ошибка');
+                    $('#createContract').removeClass('disabled');
+                }
+            });
+
+        }
+    </script>
+}
+
+<script type="text/javascript">
+    
+    $(function () {
+        $('#createContract').click(function () {
+            createContract();
+        });
+    });
+
+    var streets = [@(new MvcHtmlString(string.Join(", ", Model.Streets.Select(s => "\"" + s + "\""))))];
+
+    $(function() {
+
+        $('#contractAddressStreet').typeahead({ source: streets });
+        $('#subscriberAddressStreet').typeahead({ source: streets });
+
+    });
+</script>

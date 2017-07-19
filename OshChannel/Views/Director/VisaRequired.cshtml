@@ -1,0 +1,79 @@
+﻿@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.VisaRequired.VisaRequiredModel
+
+@{
+    ViewBag.Title = "Визы руководства";
+}
+
+<ul class="breadcrumb">
+    @ViewBag.Title
+</ul>
+
+@if (Model.Settings.Length > 0)
+{
+    <h3>Системные настройки</h3>
+
+    <p>Данные системные настройки требуют подтверждения руководства для вступления их в силу</p>
+    
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th>Настройка</th>
+            <th>Описание</th>
+            <th>Текущее значение</th>
+        </tr>
+        @foreach(var settings in Model.Settings)
+        {
+            <tr>
+                <td>@Url.Settings(settings.KeyName, settings.KeyName)</td>
+                <td>@settings.Description</td>
+                <td>@settings.StringValue</td>
+            </tr>
+        }
+    </table>
+}
+
+<h3>Абоненты</h3>
+
+<p>Данные следующих абонентов требуют внимания руководства</p>
+
+<table class="table table-striped table-bordered">
+    <tr>
+        <th>Абонент</th>
+        <th>Форма</th>
+    </tr>
+    @foreach(var subscriber in Model.Subscribers)
+    {
+        <tr>
+            <td>@Url.Subscriber(subscriber.SubscriberId, subscriber.Name)</td>
+            <td>@SubscriberType.GetById(subscriber.Type).Name</td>
+        </tr>
+    }
+</table>
+
+<h3>Контракты</h3>
+
+<p>В данных контрактах были сделаны изменения</p>
+
+<table class="table table-striped table-bordered">
+    <tr>
+        <th>Контракт</th>
+        <th>Абонент</th>
+        <th>Тариф</th>
+        <th>Адрес</th>
+        <th>Участок</th>
+        <th>Контроллер</th>
+    </tr>
+    @foreach(var contract in Model.Contracts)
+    {
+        <tr>
+            <td>@Url.Contract(contract.ContractId, contract.ContractNumber)</td>
+            <td>@Url.Subscriber(contract.SubscriberId, contract.SubscriberName)</td>
+            <td>@Url.Tariff(contract.TariffId, contract.TariffName)</td>
+            <td>@contract.FullAddress</td>
+            <td>@Url.Area(contract.AreaId, contract.AreaName)</td>
+            <td>@Url.User(contract.ControllerId, contract.ControllerName)</td>
+        </tr>
+    }
+</table>
+

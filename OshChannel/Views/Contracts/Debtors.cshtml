@@ -1,0 +1,67 @@
+﻿@using OshChannel.Helpers
+@model OshBusinessModel.Da.Debtors.DebtorsModel
+           
+@{
+    ViewBag.Title = "Сводный отчет";
+
+    if (Model == null)
+    {
+        <h3>Счета не выставлялись</h3>
+    }
+    else
+    {
+        <div class="well">
+            <form class="form-inline" action="@Url.Action("Debtors", "Contracts")" style="margin-bottom: 0;">
+                <h3 style="margin-bottom: 20px; margin-top: 0;">@ViewBag.Title</h3>
+                <div class="pull-right">
+                    <button type="submit" class="btn btn-primary">Построить</button>
+                </div>
+
+                <label for="startPeriodId">Период с:</label>
+        
+                <select id="startPeriodId" name="startPeriodId" style="margin-right: 20px;">
+                    @foreach (var period in Model.BillingPeriods)
+                    {
+                        <option value="@period.BillingPeriodId"@Html.If(Model.StartPeriodId == period.BillingPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                    }
+                </select>
+    
+                <label for="endPeriodId">по: </label>
+        
+                <select id="endPeriodId" name="endPeriodId" style="margin-right: 20px;">
+                    @foreach (var period in Model.BillingPeriods)
+                    {
+                        <option value="@period.BillingPeriodId"@Html.If(Model.EndPeriodId == period.BillingPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                    }
+                </select>
+
+                <label style="margin-left: 10px; margin-right: 5px; font-weight: bold" for="threshold">Фильтр</label>
+                <label style="margin-right: 20px;">
+                    Задолженность выше
+                    <input type="text" name="threshold" id="threshold" value="@Model.Threshold" class="span1"/>
+                    сом
+                </label>
+            </form>
+        </div>
+
+        <h3 class="h2margin">Республиканский бюджет</h3>
+
+        @Html.Partial("DebtorsTablePartial", Model.Debtors.Where(d => d.BudgetType == "republic" && d.Type == "bgt"))
+
+        <h3 class="h2margin">Местный бюджет</h3>
+
+        @Html.Partial("DebtorsTablePartial", Model.Debtors.Where(d => d.BudgetType == "local" && d.Type == "bgt"))
+
+        <h3 class="h2margin">Прочие организации</h3>
+
+        @Html.Partial("DebtorsTablePartial", Model.Debtors.Where(d => d.Type != "prs" && d.Type != "bgt"))
+
+        <h3 class="h2margin">Население</h3>
+
+        @Html.Partial("DebtorsTablePartial", Model.Debtors.Where(d => d.Type == "prs"))
+
+
+
+    }
+}
+

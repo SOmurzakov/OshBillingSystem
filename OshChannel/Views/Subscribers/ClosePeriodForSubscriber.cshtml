@@ -1,0 +1,36 @@
+﻿@model OshBusinessModel.Da.Subscribers.SubscriberDetailsModel
+
+<button id="closePeriodForContract" class="btn btn-primary">Закрыть месяц</button>
+
+<script type="text/javascript">
+    
+    function closePeriodForSubscriber() {
+        $.ajax({
+            url: '@Url.Action("ClosePeriodAjax", "Subscribers", new {subscriberId = Model.Details.SubscriberId})',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: JSON.stringify({}),
+            success: function (result) {
+                if (result['Success']) {
+                    alert('Период был успешно закрыт');
+                    location.reload();
+                } else {
+                    alert(result['Message']);
+                }
+            },
+            error: function (a, b, c) {
+                alert('Произошла ошибка');
+            }
+        });
+        
+    }
+
+    $(function () {
+
+        $('#closePeriodForContract').click(function () {
+            closePeriodForSubscriber();
+        });
+
+    });
+</script>

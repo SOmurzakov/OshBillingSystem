@@ -1,0 +1,445 @@
+﻿@page {size: portrait; }
+
+div, .noprint {
+    visibility: hidden !important;
+    display: none !important;
+}
+
+footer {
+    visibility: hidden !important;
+    display: none !important;
+}
+
+.print-only {
+    visibility: visible !important;
+    display: block !important;
+}
+
+.printCanvas {
+    visibility: visible !important;
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+/*
+    background-color: transparent !important;
+*/
+    border: none !important;
+}
+
+.printCanvas.portrait-page {
+    width: 21.1cm;
+}
+
+.printCanvas div, .printCanvas * div, * .printCanvas, * .printCanvas div, * .printCanvas * div, .container, .printable {
+    visibility: visible !important;
+    display: block !important;
+}
+
+.newbill {
+    visibility: visible !important;
+    display: block !important;
+    border: none !important;
+    border-bottom: 0.05cm dashed black !important;
+    page-break-inside: avoid;
+    
+}
+
+.preBillDiv {
+    margin: 0 !important;
+}
+
+.newbill, .newbill div, .newbill * div, * .newbill div, * .newbill * div {
+    display: block !important;
+    visibility: visible !important;
+}
+
+.bill {
+    visibility: visible !important;
+    display: block !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: transparent !important;
+    border: none !important;
+    border-bottom: 0.05cm dotted black !important;
+
+}
+
+.bill div, .bill * div, * .bill div, * .bill * div {
+    display: block !important;
+    visibility: visible !important; 
+}
+
+.bill .their .amountToPay span {
+    background-color: transparent !important;
+}
+
+.preInvoice {
+    border: none;
+    height: auto !important;
+    margin-top: 0cm !important;
+    margin-bottom: 0 !important;
+}
+
+.invoice {
+    margin-top: 0cm;
+    margin-bottom: 1cm;
+    page-break-inside: avoid;
+    page-break-after: always;
+}
+
+.invoicesTable {
+    font-size: 6pt;
+    border: 0.06cm solid black;
+    margin-top: 0.1cm;
+}
+
+.invoicesTableHead {
+    height: 0.9cm;
+    line-height: 0.9cm;
+}
+
+.invoicesTableHead div {
+    height: 0.9cm;
+    line-height: 0.9cm;
+    display: inline-block !important;
+    text-align: center;
+    letter-spacing: normal !important;
+    vertical-align: top;
+}
+
+.invoicesTableHead div.invcol4 {
+    height: 0.9cm;
+    line-height: 0.3cm;
+}
+
+.invoicesTableRow {
+    border-top: 0.03cm solid black;
+    margin: 0;
+    padding: 0;
+    display: block;
+    height: 0.3cm !important;
+    line-height: 0.3cm !important;
+}
+
+.invoicesTableRow div {
+    display: inline-block !important;
+    height: 0.3cm !important;
+    line-height: 0.3cm !important;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+    text-align: center;
+}
+
+.invcol1, .invcol2, .invcol3, .invcol4, .invcol5, .invcol6, .invcol7, .invcol8, .invcol9, .invcol10, .invcol11 {
+    border-left: 0.03cm solid black;
+}
+
+.invcol0 { width: 1cm;text-align: right;}
+.invcol1 { width: 2.8cm;letter-spacing: 0.1cm;}
+.invcol2 { width: 1.5cm;}
+.invcol3 { width: 1.2cm;}
+.invcol4 { width: 1.4cm;}
+.invcol5 { width: 5cm;text-align: left !important;padding-left: 0.1cm !important;}
+.invcol6 { width: 3.7cm;letter-spacing: 0.1cm;}
+.invcol7 { width: 1.1cm;}
+.invcol8 { width: 2.8cm; letter-spacing: 0.1cm;}
+.invcol9 { width: 2.0cm;}
+.invcol10 { width: 1.7cm;}
+.invcol11 { width: 2.0cm;}
+
+.invcol23 { width: 2.8cm;border-left: 0.03cm solid black;margin: 0 !important;padding: 0 !important;}
+.invcol23 .invcol23line1 { display: block !important; height: 0.3cm !important;width: 100%; line-height: 0.3cm !important; border-bottom: 0.03cm solid black;margin: 0 !important;padding: 0 !important;}
+.invcol23 .invcol23line2 { display: block !important; }
+.invcol23line2, .invcol23line2 div { height: 0.6cm !important;line-height: 0.6cm !important; }
+.invcol23line2 div { display: inline-block !important;}
+.invcol23line2 div.invcol2 { border: none;}
+
+.invcol567 { width: 10.05cm;border-left: 0.03cm solid black;margin: 0 !important;padding: 0 !important;}
+.invcol567 .invcol567line1 { display: block !important;height: 0.3cm !important;width: 100%;line-height: 0.3cm !important;border-bottom: 0.03cm solid black;margin: 0 !important;padding: 0 !important;}
+.invcol567 .invcol567line2 { display: block !important;}
+.invcol567line2, .invcol567line2 div { height: 0.6cm !important;line-height: 0.6cm !important;}
+.invcol567line2 div { display: inline-block !important;}
+.invcol567line2 div.invcol5 { border: none;width: 4.9cm;}
+.invcol567line2 div.invcol7 { line-height: 0.3cm !important;width: 1cm;}
+
+.invoicesTableHead .invcol8 { width: 2.77cm !important;}
+.invoicesTableHead .invcol9 { width: 2.02cm !important;}
+
+.invcolTill9 { width: 21.23cm; }
+.invoicesTableRow div.results { font-weight: bold !important;}
+
+.invoiceAmount {
+    border: 0.06cm solid black;
+    width: 27.1cm;
+    font-size: 6pt;
+    font-weight: bold;
+    line-height: 0.3cm;
+    height: 0.3cm;
+    padding-left: 0.1cm;
+    margin-top: 0.1cm;
+}
+
+.invoicePeriod {
+    border: 0.06cm solid black;
+    width: 27.1cm;
+    font-size: 6pt;
+    font-weight: normal;
+    line-height: 0.3cm;
+    height: 0.3cm;
+    padding-left: 0.1cm;
+    margin-top: 0.1cm;
+}
+
+.invoicePeriod div {
+    display: inline-block !important;
+    line-height: 0.3cm;
+    height: 0.3cm;
+    vertical-align: top;
+}
+
+.invoicePeriod div.invcol1 { border: none; border-right: 0.03cm solid black;width: 3.8cm;letter-spacing: normal;}
+.invoicePeriod div.invcol2 { border: none; border-right: 0.03cm solid black;padding: 0 0.1cm;width: auto;}
+.invoicePeriod div.invcol3 { border: none; border-right: 0.03cm solid black;padding: 0 0.1cm;letter-spacing: 0.1cm;width: 3.1cm;text-align: center;}
+.invoicePeriod div.invcol4 { border: none; border-right: 0.03cm solid black;padding: 0 0.1cm;letter-spacing: 0.1cm;width: 3.8cm;text-align: center;}
+
+.signaturePlace {
+    text-transform: uppercase;
+    font-size: 6pt;
+    border: 0.06cm solid black;
+    margin-top: 0.4cm;
+    height: 1.9cm;
+    position: relative;
+}
+
+.signaturePlace .forSupplier .for {
+    position: absolute;
+    left: 1cm;
+    top: 0cm;
+    width: 10cm;
+    font-weight: bold;
+    line-height: 0.4cm;
+}
+
+.signaturePlace .forSupplier .stamp {
+    position: absolute;
+    left: 0;
+    top: 0.4cm;
+    width: 4.5cm;
+    height: 1.5cm;
+    line-height: 1.5cm;
+    text-align: center;
+    vertical-align: middle;
+    border-top: 0.06cm solid black;
+    border-right: 0.06cm solid black;
+}
+
+.signaturePlace .forSupplier .signature {
+    position: absolute;
+    left: 4.5cm;
+    width: 5cm;
+    height: 1.5cm;
+    top: 0.4cm;
+    text-align: left;
+    vertical-align: middle;
+    line-height: 1.5cm;
+    margin-left: 0.1cm;
+}
+
+.signaturePlace .forTax .for {
+    position: absolute;
+    left: 15.8cm;
+    top: 0cm;
+    width: 10cm;
+    font-weight: bold;
+    line-height: 0.4cm;
+}
+
+.signaturePlace .forTax .stamp {
+    position: absolute;
+    left: 14.8cm;
+    top: 0.4cm;
+    width: 4.5cm;
+    height: 1.5cm;
+    line-height: 1.5cm;
+    text-align: center;
+    vertical-align: middle;
+    border-top: 0.06cm solid black;
+    border-right: 0.06cm solid black;
+    border-left: 0.06cm solid black;
+}
+
+.signaturePlace .forTax .dateTitle {
+    position: absolute;
+    left: 19.3cm;
+    margin-left: 0.2cm;
+    top: 0.4cm;
+    height: 0.4cm;
+    line-height: 0.5cm;
+}
+
+.signaturePlace .forTax .dateNumber {
+    position: absolute;
+    left: 20.3cm;
+    margin-left: 0.1cm;
+    top: 0.4cm;
+    border: 0.03cm solid black;
+    padding: 0 0.2cm;
+    height: 0.4cm;
+    line-height: 0.4cm;
+}
+
+
+.signaturePlace .forTax .innTitle {
+    position: absolute;
+    left: 19.3cm;
+    margin-left: 0.2cm;
+    top: 1cm;
+    height: 0.4cm;
+    line-height: 0.5cm;
+}
+
+.signaturePlace .forTax .innNumber {
+    position: absolute;
+    left: 20.3cm;
+    margin-left: 0.1cm;
+    top: 1cm;
+    border: 0.03cm solid black;
+    padding: 0 0.2cm;
+    height: 0.4cm;
+    line-height: 0.4cm;
+}
+
+.invoicesHead {
+    position: relative;
+    height: 3cm;
+}
+
+.invoicesHead .docsti {
+    position: absolute;
+    top: 1cm;
+    left: 0;
+    width: 6cm;
+    text-align: center;
+    font-size: 8pt;
+    line-height: normal;
+}
+
+.invoicesHead .docTitle {
+    position: absolute;
+    top: 2cm;
+    left: 6.5cm;
+    font-weight: bold;
+    text-transform: uppercase;
+    width: 10cm;
+    font-size: 8pt;
+}
+
+.invoicesHead .application {
+    position: absolute;
+    top: 1cm;
+    right: 1cm;
+    width: 6cm;
+    font-size: 8pt;
+    line-height: normal;
+    text-align: center;
+}
+
+.invoicesDescription {
+    position: relative;
+    height: 3.7cm;
+    font-size: 7pt;
+    line-height: normal;
+}
+
+.invoicesDescription .num001{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.numberBordered {
+    border: 0.05cm solid black;
+    padding: 0 0.1cm;
+}
+
+.numDesc {
+    line-height: 0.4cm;
+}
+
+.invoicesDescription .numFirstChance {
+    position: absolute;
+    left: 1cm;
+    top: 0;
+}
+
+.invoicesDescription .firstChance {
+    position: absolute;
+    left: 1.5cm;
+    top: 0;
+}
+
+.invoicesDescription .numSecondChance {
+    position: absolute;
+    left: 3.7cm;
+    top: 0;
+}
+
+.invoicesDescription .secondChance {
+    position: absolute;
+    left: 4.2cm;
+    top: 0;
+}
+
+.invoicesDescription .leftBorder {
+    position: absolute;
+    left: 0;
+    top: 0.45cm;
+    border: 0.06cm solid black;
+    width: 8cm;
+    bottom: 0;
+}
+
+.invoicesDescription .rightBorder {
+    position: absolute;
+    left: 8.3cm;
+    top: 0;
+    right: 0cm;
+    bottom: 0cm;
+    border: 0.06cm solid black;
+}
+
+.invoicesDescription .num102 { position: absolute; left: 0; top: 0.45cm; }
+.invoicesDescription .misterWho { position: absolute;left: 0.8cm;top: 0.45cm;}
+.invoicesDescription .whaterChannelInn { position: absolute;left: 0;top: 0.95cm;width: 8cm;text-align: center;letter-spacing: 0.1cm;}
+.invoicesDescription .invdescline1 { position: absolute;left: 0;top: 1.45cm;width: 8.1cm;height: 0.1cm;border-top: 0.05cm solid black;}
+.invoicesDescription .num103 { position: absolute;left: 0;top: 1.45cm;}
+.invoicesDescription .channelName { position: absolute;left: 0.8cm;top: 1.45cm;}
+.invoicesDescription .whaterChannelName { position: absolute;left: 0;top: 1.95cm;width: 8cm;text-align: center;}
+.invoicesDescription .invdescline2 { position: absolute;left: 0;top: 2.7cm;width: 8.1cm;height: 0.1cm;border-top: 0.05cm solid black;}
+.invoicesDescription .taxPayerInformation { position: absolute;left: 8.3cm;top: 0;right: 0;padding-left: 0.1cm;height: 0.4cm;border-bottom: 0.05cm solid black;line-height: 0.5cm;vertical-align: bottom;text-transform: uppercase;}
+.invoicesDescription .num104 { position: absolute;left: 8.3cm;top: 0.4cm;}
+.invoicesDescription .taxCode { position: absolute;left: 9.3cm;top: 0.4cm;}
+.invoicesDescription .taxCodeValue { position: absolute;left: 8.3cm;top: 0.8cm;right: 0;text-align: center;border-bottom: 0.05cm solid black;height: 0.4cm;line-height: 0.5cm;}
+.invoicesDescription .num107 { position: absolute;left: 8.3cm;top: 1.2cm;}
+.invoicesDescription .okpoCode { position: absolute;left: 9.3cm;top: 1.2cm;}
+.invoicesDescription .okpoCodeValue { position: absolute;left: 8.3cm;width: 6cm;top: 1.6cm;text-align: center;letter-spacing: 0.1cm;}
+.invoicesDescription .num108 { position: absolute;left: 14.4cm;top: 1.2cm;}
+.invoicesDescription .postOffice { position: absolute;left: 15.4cm;top: 1.2cm;}
+.invoicesDescription .num109 { position: absolute;left: 17.8cm;top: 1.2cm;}
+.invoicesDescription .companyPhone { position: absolute;left: 18.8cm;top: 1.2cm;}
+.invoicesDescription .companyPhoneValue { position: absolute;left: 17.8cm;right: 0;top: 1.6cm;text-align: center;letter-spacing: 0.1cm;}
+.invoicesDescription .invdescline3 { position: absolute;left: 8.3cm;right: 0;top: 2cm;border-top: 0.05cm solid black;}
+
+.invoicesDescription .num110 { position: absolute;left: 8.3cm;top: 2cm;}
+.invoicesDescription .companyCity { position: absolute;left: 9.3cm;top: 2cm;}
+.invoicesDescription .companyCityValue { position: absolute;left: 8.3cm;top: 2.4cm;right: 0;text-align: center;border-bottom: 0.05cm solid black;height: 0.4cm;line-height: 0.5cm;}
+
+.invoicesDescription .num111 { position: absolute;left: 8.3cm;top: 2.8cm;}
+.invoicesDescription .companyLocalAddress { position: absolute;left: 9.3cm;top: 2.8cm;}
+.invoicesDescription .companyLocalAddressValue { position: absolute;left: 8.3cm;top: 3.2cm;right: 0;text-align: center;height: 0.4cm;line-height: 0.5cm;}
+
+
+.small-font-on-print, .small-font-on-print td, .small-font-on-print th { font-size: 10px;line-height: 10px;}

@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "Выполнение синхронизации 1С";
+}
+
+<ul class="breadcrumb">
+    @ViewBag.Title
+</ul>
+
+@{
+    DateTime date = DateTime.Today;
+}
+
+    <table class="table table-striped table-bordered">
+        <tr><th>Дата</th><th>Дебит</th><th>Кредит</th><th>Синхронизация</th></tr>
+
+    @for (int i = 0; i < 7; i++)
+    {
+        <tr><td>@date.ToShortDateString()</td><td></td><td></td><td>@(date == DateTime.Today ? "Не выполнена" : "Выполнена")</td></tr>
+        
+        date = date.AddDays(-1);
+    }
+
+</table>

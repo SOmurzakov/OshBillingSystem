@@ -1,0 +1,143 @@
+﻿@using OshBusinessModel.Da.ShowContract
+@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.ShowContract.ShowContractModel
+
+@{
+    ViewBag.Title = Model != null ? Model.Details.ContractNumber : "Детали контракта";
+    string type = Model != null ? Model.Subscriber.Type : "";
+    bool isPersonal = type == "prs";
+
+    bool showMeters = Model != null && (Model.Meters.Length > 0 || (Model.Options.Length == 0 && Model.PossibleOptions.Length == 0));
+}
+                
+@if (!showMeters && Model.PossibleOptions.Length > 0)
+{
+    <button class="btn btn-success" id="addTariffOption">Добавить опцию</button>
+
+    <div id="modal-addTariffOption" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Добавить опцию</h3>
+        </div>
+        <div class="modal-body">
+            <div class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="addTariffOption-semanticId">Опция</label>
+                    <div class="controls">
+                        <select id="addTariffOption-semanticId" class="span3">
+                            <option value="select-option">Выберите опцию из списка...</option>
+                            @foreach (var option in Model.PossibleOptions)
+                            {
+                                <option value="@option.SemanticId" use-people-registered="@(option.UsePeopleRegistered ? 1 : 0)" id="addTariffOption-@option.SemanticId" data-sewage-available='@(option.SewageAvailable ? 1 : 0)'>@option.VariableBillName (@option.VariableDescription)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group" id="div-addTariffOption-value">
+                    <label class="control-label" for="addTariffOption-value">Значение</label>
+                    <div class="controls">
+                        <input type="text" id="addTariffOption-value" class="span3"/>
+                    </div>
+                </div>
+                <div class="control-group" id="div-addTariffOption-sewage" style="display: none;">
+                    <label class="control-label" for="addTariffOption-sewage">Канализация</label>
+                    <div class="controls">
+                        <label style="display: inline-block !important; line-height: 23px; height: 23px; vertical-align: bottom; margin: 0; width: 70px;">
+                            <input type="checkbox" id="addTariffOption-sewage" style="display: inline-block !important; line-height: 23px; height: 23px;">
+                            Есть
+                        </label>
+                    </div>
+                </div>
+                <hr/>
+                <div class="control-group">
+                    <label class="control-label">Основание</label>
+                    <div class="controls">
+                        <textarea id="addTariffOption-changeRemarks" rows="3" cols="50" class="span3"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button>
+            <button class="btn btn-primary" id="save-addTariffOption">Сохранить</button>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function addTariffOption() {
+            var contractId = @Model.Details.ContractId;
+            var semanticId = $('#addTariffOption-semanticId').val();
+            
+            if (semanticId == 'select-option') {
+                alert('Выберите тарифную опцию из списка');
+                return;
+            }
+
+            var optionValue = $('#addTariffOption-semanticId').val();
+            var usePeopleRegistered = $('#addTariffOption-' + optionValue).attr('use-people-registered');
+            var sewageAvailable = $('#addTariffOption-' + optionValue).attr('data-sewage-available');
+            
+            var value = usePeopleRegistered > 0 ? 1 : $('#addTariffOption-value').val();
+            var sewage = sewageAvailable && $('#addTariffOption-sewage').prop('checked');
+
+            var changeRemarks = $('#addTariffOption-changeRemarks').val();
+            var dto = { ContractId: contractId, SemanticId: semanticId, Value: value, ChangeRemarks: changeRemarks, Sewage: sewage };
+            var json = JSON.stringify(dto);
+
+            $.ajax({
+                url: '@Url.Action("AddTariffOptionAjax", "Contracts")',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: json,
+
+                success: function(result) {
+                    if (result['Success']) {
+                        location.reload();
+                    } else {
+                        alert(result['Message']);
+                    }
+                },
+
+                error: function(a, b, ctx) {
+                    alert('Пожалуйста, проверьте данные');
+                }
+            });
+
+        }
+
+        function contractTariffOptionChanged() {
+            var optionValue = $('#addTariffOption-semanticId').val();
+            var usePeopleRegistered = $('#addTariffOption-' + optionValue).attr('use-people-registered');
+            if (usePeopleRegistered > 0) {
+                $('#div-addTariffOption-value').hide('fast');
+            } else {
+                $('#div-addTariffOption-value').show('fast');
+            }
+
+            var sewageAvailable = $('#addTariffOption-' + optionValue).attr('data-sewage-available');
+            if (sewageAvailable > 0) {
+                $('#div-addTariffOption-sewage').show('fast');
+            } else {
+                $('#div-addTariffOption-sewage').hide('fast');
+            }
+        }
+
+        $(function() {
+            $('#addTariffOption').click(function() {
+                contractTariffOptionChanged();
+                $('#modal-addTariffOption').modal('show');
+            });
+
+            $('#save-addTariffOption').click(function() {
+                addTariffOption();
+            });
+
+            $('#addTariffOption-semanticId').change(function() {
+                contractTariffOptionChanged();
+            });
+        });            
+                    
+    </script>
+}

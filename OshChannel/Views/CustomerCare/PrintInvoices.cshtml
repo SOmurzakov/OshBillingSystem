@@ -1,0 +1,68 @@
+﻿@model OshBusinessModel.Da.Invoices.GetInvoicesForPrintingModel
+
+@{
+    ViewBag.Title = "Печать счет-фактур";
+
+    if (Model == null)
+    {
+        <h3>Счета не выставлялись</h3>
+    }
+    else
+    {
+
+        <div class="well">
+
+            <h3 style="margin-bottom: 20px; margin-top: 0;">@ViewBag.Title</h3>
+    
+            <div class="pull-right">
+                <button class="btn btn-large btn-primary" id="applyFilter">Построить</button>
+            </div>
+
+            <div class="form-inline">
+    
+                <label for="rootingPeriod">Период: </label>
+        
+                <select id="rootingPeriod" style="margin-right: 20px;">
+                    <option value="-1">Выберите период...</option>
+                    @foreach (var period in Model.BillingPeriods)
+                    {
+                        <option value="@period.BillingPeriodId"@Html.If(Model.PeriodId == period.BillingPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                    }
+                </select>
+        
+            </div>
+    
+        </div>
+
+        <script type="text/javascript">
+            $(function() {
+                $('#applyFilter').click(function() {
+                    var periodId = $('#rootingPeriod').val();
+
+                    if (periodId <= 0) {
+                        alert('Выберите период');
+                    } else {
+                        window.location = 'PrintInvoices?periodId=' + periodId;
+                    }
+                });
+            });
+        </script>
+
+        if (Model.Invoices == null || Model.Invoices.Length == 0)
+        {
+            <p class="noprint"><b>Счетов фактур не подготовлено</b></p>
+        }
+        else
+        {
+            <p class="noprint">Подготовлено счетов фактур: @Model.Invoices.Length шт.</p>
+            <div class="printCanvas portrait-page">
+                @foreach (var invoice in Model.Invoices)
+                {
+                    @Html.Partial("InvoicePartial", invoice)
+                }
+            </div>
+        }
+
+    }
+}
+

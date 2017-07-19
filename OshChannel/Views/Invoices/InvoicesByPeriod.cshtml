@@ -1,0 +1,296 @@
+﻿@model OshBusinessModel.Da.Invoices.InvoicesByPeriodModel
+
+@section AddCss {
+        <link href="@Url.Content("~/Content/print_landscape.css")" rel="stylesheet" type="text/css" media="print"/>
+}
+
+@{
+    
+    ViewBag.Title = "Реестр счетов-фактур НДС по облагаемым поставкам";
+    
+    if (Model == null)
+    {
+        <h3>Счета не выставлялись, счет-фактуры не выписывались</h3>
+    }
+    else
+    {
+        <div class="noprint">
+            <div class="well">
+            
+                <h3 style="margin-bottom: 20px; margin-top: 0;">@ViewBag.Title</h3>
+    
+            
+                <form class="form-inline" style="margin: 0;">
+    
+                    <div class="pull-right">
+                        <input type="submit" class="btn btn-large btn-primary" value="Построить">
+                    </div>
+
+                    <label for="startPeriodId">Период: с </label>
+        
+                    <select id="startPeriodId" name="startPeriodId" style="margin-right: 20px;">
+                        <option value="-1">Выберите период...</option>
+                        @foreach (var period in Model.BillingPeriods)
+                        {
+                            <option value="@period.BillingPeriodId"@Html.If(Model.StartPeriodId == period.BillingPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                        }
+                    </select>
+
+                    <label for="rootingPeriod">по </label>
+        
+                    <select id="endPeriodId" name="endPeriodId" style="margin-right: 20px;">
+                        <option value="-1">Выберите период...</option>
+                        @foreach (var period in Model.BillingPeriods)
+                        {
+                            <option value="@period.BillingPeriodId"@Html.If(Model.EndPeriodId == period.BillingPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                        }
+                    </select>
+        
+                </form>
+    
+            </div>
+    
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>Дата</th>
+                    <th>Номер</th>
+                    <th>Абонент</th>
+                    <th>Инн</th>
+                    <th>УГКНС</th>
+                    <th>Стоимость без НДС</th>
+                    <th>Сумма НДС</th>
+                    <th>Общая стоимость</th>
+                </tr>
+                @for(int i=0; i<Model.Invoices.Length; i++)
+                {
+                    var invoice = Model.Invoices[i];
+                    <tr>
+                        <td>@(i+1)</td>
+                        <td>@invoice.Date.ToShortDateString()</td>
+                        <td>
+                            <a href="javascript:void(0)" 
+                               class="change-invoice-number" 
+                               data-invoice-id="@invoice.Id" 
+                               data-invoice-series="@invoice.SeriesNo" 
+                               data-invoice-number="@invoice.InvoiceNumber"
+                               data-invoice-subscriber="@invoice.Name">@invoice.SeriesNo-@invoice.InvoiceNumber</a>
+                        </td>
+                        <td>@invoice.Name</td>
+                        <td>@invoice.Inn</td>
+                        <td>@invoice.ContractUgknsCode</td>
+                        <td>@invoice.AmountWithoutNds.ToString("0.00")</td>
+                        <td>@invoice.AmountNds.ToString("0.00")</td>
+                        <td>@invoice.AmountAllAfterTaxes.ToString("0.00")</td>
+                    </tr>
+                }
+                <tr style="font-weight: bold;">
+                    <td colspan="6"></td>
+                    <td>@Model.TotalAmountWithoutNds.ToString("0.00")</td>
+                    <td>@Model.TotalAmountNds.ToString("0.00")</td>
+                    <td>@Model.TotalAmountAllAfterTaxes.ToString("0.00")</td>
+                </tr>
+            </table>
+        </div>
+    
+        <div class="print-only">
+            <div class="printCanvas">
+                
+                <div class="invoicesHead">
+                    <div class="docsti">DOC STI-022<br />Государственная налоговая<br />служба при Правительстве<br />Кыргызской Республики</div>
+                    <div class="docTitle">Реестр счетов-фактур НДС по облагаемым поставкам</div>
+                    <div class="application">Приложение 10 к Положению<br/>о порядке применения и учета<br/>бланков строгой отчетсности счетов-<br/>фактур НДС</div>
+                </div>
+                
+                <div class="invoicesDescription">
+                    <div class="num001 numberBordered">001</div>
+                    <div class="numFirstChance numberBordered">&nbsp;&nbsp;</div>
+                    <div class="firstChance numDesc">Первоначальный</div>
+                    <div class="numSecondChance numberBordered">&nbsp;&nbsp;</div>
+                    <div class="secondChance numDesc">Уточненный</div>
+                    <div class="leftBorder"></div>
+                    <div class="rightBorder"></div>
+                    <div class="num102 numberBordered">102</div>
+                    <div class="misterWho numDesc">Идентификационный налоговый номер налогоплательщика</div>
+                    <div class="whaterChannelInn">@Settings.Get("Company.Inn")</div>
+                    <div class="invdescline1"></div>
+                    <div class="num103 numberBordered">103</div>
+                    <div class="channelName numDesc">Ф.И.О./Наименование предприятия</div>
+                    <div class="whaterChannelName">@Settings.Get("Company.FullName")</div>
+                    <div class="invdescline2"></div>
+                    <div class="taxPayerInformation">Информация о налогоплательщике</div>
+                    <div class="num104 numberBordered">104</div>
+                    <div class="taxCode numDesc">КОД и наименование налогового органа</div>
+                    <div class="taxCodeValue">@Settings.Get("Company.UgknsCode") @Settings.Get("Company.UgknsName")</div>
+                    <div class="num107 numberBordered">107</div>
+                    <div class="okpoCode numDesc">КОД ОКПО</div>
+                    <div class="okpoCodeValue">@*@Settings.Get("Company.OkpoCode")*@</div>
+                    <div class="num108 numberBordered">108</div>
+                    <div class="postOffice numDesc">Почт. индекс</div>
+                    <div class="num109 numberBordered">109</div>
+                    <div class="companyPhone numDesc">№ телефона</div>
+                    <div class="companyPhoneValue">@Settings.Get("Company.Phone")</div>
+                    <div class="invdescline3"></div>
+                    <div class="num110 numberBordered">110</div>
+                    <div class="companyCity numDesc">Область.Город/обл. Район.село</div>
+                    <div class="companyCityValue">@*@Settings.Get("Company.City")*@</div>
+                    <div class="num111 numberBordered">111</div>
+                    <div class="companyLocalAddress numDesc">Улица/Микр.№ дома. Квартира</div>
+                    <div class="companyLocalAddressValue">@*@Settings.Get("Company.LocalAddress")*@</div>
+                </div>
+
+                <div class="invoicePeriod">
+                    <div class="invcol1">НАЛОГОВЫЙ ПЕРИОД</div>
+                    <div class="invcol2">201</div>
+                    <div class="invcol2">с</div>
+                    <div class="invcol3">@Model.StartPeriodDate.ToShortDateString()</div>
+                    <div class="invcol2">202</div>
+                    <div class="invcol2">по</div>
+                    <div class="invcol4">@Model.EndPeriodDate.ToShortDateString()</div>
+                </div>
+                <div class="invoiceAmount">СУММА НДС ПО ОБЛАГАЕМЫМ ПОСТАВКАМ</div>
+                
+                <div class="invoicesTable">
+                    <div class="invoicesTableHead">
+                        <div class="invcol0"></div>
+                        <div class="invcol1">Дата выписки</div>
+                        
+                        <div class="invcol23">
+                            <div class="invcol23line1">Счет-фактура НДС</div>
+                            <div class="invcol23line2">
+                                <div class="invcol2">№</div>
+                                <div class="invcol3">Серия</div>
+                            </div>
+                        </div>
+
+                        <div class="invcol4">Вид поставки (облагаемые нулевые)</div>
+                        
+                        <div class="invcol567">
+                            <div class="invcol567line1">Получатель</div>
+                            <div class="invcol567line2">
+                                <div class="invcol5">Наименование (ФИО)</div>
+                                <div class="invcol6">ИНН</div>
+                                <div class="invcol7">Код Нал. орг</div>
+                            </div>
+                        </div>
+
+                        <div class="invcol8">Дата поставки</div>
+                        <div class="invcol9">Стоимость без НДС</div>
+                        <div class="invcol10">Сумма НДС</div>
+                        <div class="invcol11">Общая стоимость</div>
+                    </div>
+                    @for(int i=0; i<Model.Invoices.Length; i++)
+                    {
+                        var invoice = Model.Invoices[i];
+                        <div class="invoicesTableRow">
+                            <div class="invcol0">@(i+1)</div>
+                            <div class="invcol1">@invoice.Date.ToShortDateString()</div>
+                            <div class="invcol2">@invoice.InvoiceNumber</div>
+                            <div class="invcol3">@invoice.SeriesNo</div>
+                            <div class="invcol4">облагаем.</div>
+                            <div class="invcol5">@invoice.Name</div>
+                            <div class="invcol6">@invoice.Inn</div>
+                            <div class="invcol7">@invoice.ContractUgknsCode</div>
+                            <div class="invcol8">@invoice.Date.ToShortDateString()</div>
+                            <div class="invcol9">@invoice.AmountWithoutNds.ToString("0.00")</div>
+                            <div class="invcol10">@invoice.AmountNds.ToString("0.00")</div>
+                            <div class="invcol11">@invoice.AmountAllAfterTaxes.ToString("0.00")</div>
+                        </div>
+                    }
+                    <div class="invoicesTableRow">
+                        <div class="invcolTill9"></div>
+                        <div class="invcol9" style="font-weight: bold !important;">@Model.TotalAmountWithoutNds.ToString("0.00")</div>
+                        <div class="invcol10" style="font-weight: bold !important;">@Model.TotalAmountNds.ToString("0.00")</div>
+                        <div class="invcol11" style="font-weight: bold !important;">@Model.TotalAmountAllAfterTaxes.ToString("0.00")</div>
+                    </div>
+                </div>
+                
+                <div class="signaturePlace">
+                    
+                    <div class="forSupplier">
+                        <div class="for">Для налогоплательщика</div>
+                        <div class="stamp">Печать</div>
+                        <div class="signature">Подпись</div>
+                    </div>
+                    
+                    <div class="forTax">
+                        <div class="for">Принято налоговым органом</div>
+                        <div class="stamp">Печать</div>
+                        <div class="dateTitle">Дата</div>
+                        <div class="dateNumber">901</div>
+                        <div class="innTitle">ИНН<br/> инспектора</div>
+                        <div class="innNumber">902</div>
+                    </div>
+                    
+                </div>
+
+            </div>
+        </div>
+    
+        <div id="edit-invoice" class="modal hide">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Счет фактура</h3>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-invoice-id"/>
+                <div class="form-horizontal">
+                    <div class="control-group">
+                        <label class="control-label" for="edit-invoice-subscriber">Абонент</label>
+                        <div class="controls">
+                            <input type="text" id="edit-invoice-subscriber" value="" class="span3" readonly="readonly"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="edit-invoice-series">Серия</label>
+                        <div class="controls">
+                            <input type="text" id="edit-invoice-series" value="" class="span3" readonly="readonly"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="edit-invoice-number">Номер</label>
+                        <div class="controls">
+                            <input type="text" id="edit-invoice-number" value="" class="span3"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn" data-dismiss="modal">Отмена</a>
+                <a href="#" class="btn btn-primary save-invoice">Сохранить</a>
+            </div>
+        </div>
+    
+        <script type="text/javascript">
+            $('a.save-invoice').click(function() {
+                var invoiceId = $('#edit-invoice-id').val();
+                var invoiceNumber = $('#edit-invoice-number').val();
+                var invoice = JSON.stringify({ Id: invoiceId, Number: invoiceNumber });
+                $.ajax({ url: '@Url.Action("ChangeInvoiceNumber", "Invoices")', type: 'POST', data: invoice, contentType: 'application/json' }).success(function(result) {
+                    if (result.Success) {
+                        window.location.reload();
+                    } else {
+                        alert(result.Message);
+                    }
+                }).fail(function() {
+                    alert('Произошла ошибка');
+                });
+            });
+
+            $('a.change-invoice-number').click(function () {
+                var invoiceId = $(this).attr('data-invoice-id');
+                var invoiceSeries = $(this).attr('data-invoice-series');
+                var invoiceNumber = $(this).attr('data-invoice-number');
+                var invoiceSubscriber = $(this).attr('data-invoice-subscriber');
+
+                $('#edit-invoice-id').val(invoiceId);
+                $('#edit-invoice-series').val(invoiceSeries);
+                $('#edit-invoice-number').val(invoiceNumber);
+                $('#edit-invoice-subscriber').val(invoiceSubscriber);
+
+                $('div#edit-invoice').modal('show');
+            })
+        </script>
+    }
+}
+

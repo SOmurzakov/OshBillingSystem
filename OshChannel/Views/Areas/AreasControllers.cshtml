@@ -1,0 +1,98 @@
+﻿@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.Areas.AreasDictionaryModel
+
+@{
+    ViewBag.Title = "Участки - контроллеры";
+}
+
+<ul class="breadcrumb">
+    @ViewBag.Title
+</ul>
+
+<div class="h2margin">
+    @Html.Partial("CreateAreaButtonPartial")
+    @Html.Partial("CreateControllerButtonPartial")
+</div>
+
+<div class="areasCanvas">
+    
+    <p>Управляйте районами города перемещая их между контроллерами</p>
+
+    @foreach(var controller in Model.Controllers)
+    {
+        <div class="areasList">
+            <span>@controller.Name</span>
+            
+            <ul class="areasListSortable connectedSortable droptrue" controller-id="@controller.UserId">
+                @foreach (var area in Model.Areas.Where(a => a.ControllerId == controller.UserId))
+                {
+                    <li area-id="@area.Id" class="areaItem">@area.Name</li>
+                }
+            </ul>
+        </div>
+    }
+    <div class="areasList">
+        <span style="color:red;">Не указан</span>
+        
+        <ul class="areasListSortable connectedSortable droptrue" controller-id="0">
+            @foreach (var area in Model.Areas.Where(a => a.ControllerId == 0))
+            {
+                <li area-id="@area.Id" class="areaItem">@area.Name</li>
+            }
+        </ul>
+    </div>
+    <div class="clearfix"></div>
+</div>
+
+<div class="form-actions">
+    <button class="btn btn-primary" id="save-areas">Сохранить</button>
+</div>
+
+<script type="text/javascript">
+    function saveAreas() {
+        var areas = [];
+        
+        $('.areaItem').each(function (index) {
+            var areaId = $(this).attr('area-id');
+            var parentUl = $(this).closest('ul');
+            var controllerId = parentUl.attr('controller-id');
+            areas.push({ AreaId: areaId, ControllerId: controllerId });
+        });
+
+        var dto = { Areas: areas };
+        var json = JSON.stringify(dto);
+
+        $.ajax({
+            url: '@Url.Action("SaveAreasControllersAjax", "Areas")',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: json,
+            success: function (result) {
+                if (result['Success']) {
+                    alert('Изменения сохранены');
+                    location.reload();
+                } else {
+                    alert(result['Message']);
+                }
+            },
+            error: function (a, b, c) {
+                alert('Пожалуйста, проверьте данные');
+            }
+        });
+    }
+
+    $(function () {
+        $('.areasListSortable').sortable({
+            connectWith: '.connectedSortable',
+            placeholder: 'areasListSortablePlaceholder',
+            dropOnEmpty: true
+        }).disableSelection();
+
+        $('#save-areas').click(function () {
+            saveAreas();
+        });
+    });
+</script>
+

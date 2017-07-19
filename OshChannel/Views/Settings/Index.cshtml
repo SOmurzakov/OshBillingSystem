@@ -1,0 +1,58 @@
+﻿@using OshChannel.Helpers
+@model OshBusinessModel.Da.Settings.SettingsDictionaryModel
+
+@{
+    ViewBag.Title = "Настройки системы";
+}
+
+<div class="row">
+    <div class="span6">
+        <h3 class="h2margin">@ViewBag.Title</h3>
+        <table class="table table-striped table-bordered">
+            <tr>
+                <th>Параметр</th>
+                <th>Значение</th>
+            </tr>
+            @foreach (var s in Model.Settings)
+            {
+                <tr>
+                    <td><a href="@Url.Settings(s.KeyName)">@s.Description</a></td>
+                    <td>@s.StringValue</td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div class="span6">
+        <h3 class="h2margin">Последние изменения</h3>
+        <table class="table table-striped table-bordered">
+            <tr>
+                <th style="width: 75px;">Пользователь</th>
+                <th>Настройка</th>
+                <th>Значение</th>
+                <th>Виза</th>
+            </tr>
+            @foreach(var change in Model.LastChanges)
+            {
+                <tr@Url.VisaRequiredCss(change.VisaRequired, change.VisaGivenUserId)>
+                    <td>
+                        @change.Date.ToShortDateString() <br/>
+                        @Url.User(change.UserId, change.UserName)
+                    </td>
+                    <td>@Url.Settings(change.KeyName, change.Description)</td>
+                    <td>@change.StringValue</td>
+                    <td>
+                        @Url.VisaInfo(change.VisaRequired, change.VisaGivenUserId, change.VisaGivenUserName, change.VisaGivenDate, OshBusinessModel.Data.Permission.SettingsGiveVisa, change.Id, "Settings")
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+@{
+    if (Auth.HasPermission(OshBusinessModel.Data.Permission.SettingsGiveVisa))
+    {
+        <div>@Html.Partial("GiveVisaScriptsPartial");</div>
+    }
+}
+

@@ -1,0 +1,29 @@
+﻿@model OshBusinessModel.Da.LastOrderDa
+
+
+                        <table class="table table-striped table-bordered table-condensed">
+                            <tr>
+                                <td>Начало</td>
+                                <td style="width: 300px;">@Model.DateStart.ToShortDateString()</td>
+                            </tr>
+                            <tr>
+                                <td>Конец</td>
+                                <td>@Model.DateEnd.ToShortDateString()</td>
+                            </tr>
+                            <tr>
+                                <td>Всего контрактов</td>
+                                <td>@Model.AllContracts</td>
+                            </tr>
+                            <tr>
+                                <td>Контрактов с водомерами</td>
+                                <td>@Model.ContractsWithMetersCount</td>
+                            </tr>
+                            <tr>
+                                <td>Собраны данные и выставлены счета</td>
+                                <td>@Model.BilledContractsCount</td>
+                            </tr>
+                            <tr>
+                                <td>Всего выставлено счетов</td>
+                                <td>@Model.BilledAtAll</td>
+                            </tr>
+                        </table>

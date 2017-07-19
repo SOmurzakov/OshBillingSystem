@@ -1,0 +1,169 @@
+﻿@using OshBusinessModel.Da.ShowContract
+@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.ShowContract.ShowContractModel
+
+@{
+
+    var financial = Model.Finances;
+
+    var saldo = Model.Bills.Sum(b => b.Amount) - Model.Transactions.Where(t => !t.VisaRequired || t.VisaGivenUserId > 0).Sum(t => t.Amount) + Model.Details.RegistrationDebt;
+    
+}
+
+<table class="table table-striped table-bordered">
+    <tr>
+        <th>Дата</th>
+        <th>Сумма (сом)</th>
+        <th>Основание / Субагент</th>
+        <th>Квитанция</th>
+        <th>Зарегистрировал</th>
+        <th>Виза</th>
+        <th>Сальдо (сом)</th>
+    </tr>
+    
+    @foreach (var financeItem in financial)
+    {
+        if (financeItem is ContractTransactionDa)
+        {
+            var transaction = (ContractTransactionDa)financeItem;
+            <tr@Url.VisaRequiredCss(transaction.VisaRequired, transaction.VisaGivenUserId)>
+                <td>@transaction.DateAsOf.ToShortDateString()</td>
+                <td>@transaction.Amount.ToString("0.00")</td>
+                <td>
+                    @Url.Subagent(transaction.SubagentId, transaction.SubagentName)
+                    @if (transaction.IsSystem && !string.IsNullOrWhiteSpace(transaction.Remarks))
+                    {
+                        <span>: @transaction.Remarks</span>
+                    }
+                    @Url.User(transaction.UserId, transaction.UserName)
+                </td>
+                <td>@transaction.ReceiptNo</td>
+                <td>@Url.User(transaction.RegisteredUserId, transaction.RegisteredUserName)</td>
+                <td>@Url.VisaInfo(transaction.VisaRequired, transaction.VisaGivenUserId, transaction.VisaGivenUserName, transaction.VisaGivenDate, Permission.TransactionsGiveVisa, transaction.TransactionId, "Contracts", "Transactions")</td>
+                <td>
+                    @if (!transaction.VisaRequired || transaction.VisaGivenUserId > 0)
+                    {
+                        <span>@saldo.ToString("0.00")</span>
+                        saldo += transaction.Amount;
+                    }
+                </td>
+            </tr>
+        } else
+        {
+            var bill = (ContractBillAmountDa) financeItem;
+            <tr>
+                <td>@bill.Date.ToShortDateString()</td>
+                <td>@(bill.Amount.ToString("0.00"))</td>
+                <td colspan="4">Начисление @bill.PeriodName</td>
+                <td>@saldo.ToString("0.00")</td>
+            </tr>
+            saldo -= bill.Amount;
+        }
+    }
+
+    <tr>
+        <td>@Model.Details.RegistrationDate.ToShortDateString()</td>
+        <td>@(Model.Details.RegistrationDebt.ToString("0.00"))</td>
+        <td colspan="5">Долг на момент регистрации</td>
+    </tr>
+</table>
+
+@if (Auth.HasPermission(Permission.SpecialTransactions))
+{
+    <div class="form-actions">
+        @foreach (var subagent in Model.Subagents.Where(s => s.IsSystem))
+        {
+            <button class="specialTransaction btn btn-success" subagent-id="@subagent.SubagentId">@subagent.SubagentName</button>
+        }
+    </div>
+    
+    <div id="modal-specialTransaction" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <input type="hidden" id="specialTransaction-subagentId"/>
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="specialTransaction-header"></h3>
+        </div>
+        <div class="modal-body">
+            <div class="form-horizontal">
+                <div class="control-group">
+                    <div class="controls">
+                        <label class="checkBoxLabel">
+                            <input type="radio" checked="checked" id="specialTransaction-increaseDebt" name="specialTransaction-increaseDebt"/>Увеличить долг
+                        </label>
+                        &nbsp;
+                        <label class="checkBoxLabel">
+                            <input type="radio" id="specialTransaction-decreaseDebt" name="specialTransaction-increaseDebt"/>Уменьшить долг
+                        </label>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Сумма</label>
+                    <div class="controls">
+                        <input type="text" id="specialTransaction-amount" class="span3"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="specialTransaction-remarks">Основание</label>
+                    <div class="controls">
+                        <textarea id="specialTransaction-remarks" rows="3" cols="50" class="span3"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Отмета</button>
+            <button class="btn btn-primary" id="save-specialTransaction">Сохранить</button>
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+        
+        function showSpecialTransaction(subagentId, name) {
+            $('#specialTransaction-header').html(name);
+            $('#specialTransaction-subagentId').val(subagentId);
+            $('#modal-specialTransaction').modal('show');
+        }
+
+        function saveSpecialTransaction() {
+            var contractId = @Model.Details.ContractId;
+            var subagentId = $('#specialTransaction-subagentId').val();
+            var increaseDebt = $('#specialTransaction-increaseDebt').prop('checked') ? "1" : "0";
+            var amount = $('#specialTransaction-amount').val();
+            var remarks = $('#specialTransaction-remarks').val();
+
+            var dto = { ContractId: contractId, SubagentId: subagentId, IncreaseDebt: increaseDebt, Amount: amount, Remarks: remarks };
+            var json = JSON.stringify(dto);
+
+            $.ajax({
+                url: '@Url.Action("SpecialTransactionAjax", "Contracts")',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: json,
+                success: function (result) {
+                    if (result['Success']) {
+                        location.reload();
+                    } else {
+                        alert(result['Message']);
+                    };
+                },
+                error: function (a, b, c) {
+                    alert('Некорректные данные');
+                }
+            });
+        }
+        
+        $(function () {
+
+            $(".specialTransaction").click(function () {
+                var subagentId = $(this).attr('subagent-id');
+                var name = $(this).text();
+                showSpecialTransaction(subagentId, name);
+            });
+
+            $('#save-specialTransaction').click(function() { saveSpecialTransaction(); });
+
+        });
+    </script>
+}

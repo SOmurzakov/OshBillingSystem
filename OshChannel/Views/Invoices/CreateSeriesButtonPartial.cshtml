@@ -1,0 +1,55 @@
+﻿<button class="btn btn-success" id="createSeries">Создать</button>
+
+@using (var dlg = Html.Dialog("editSeries", "Создать", "Создать", true, "someCreateSeries"))
+{
+    dlg.Hiddent("id", "-1");
+    dlg.InputText("Серия", "seriesNo", "");
+    dlg.InputText("Стартовый номер", "startId", "");
+    dlg.InputText("Размер серии", "length", "");
+}
+
+<script type="text/javascript">
+
+    function createSeries() {
+        $('#caption-editSeries').val('Создать');
+        $('#save-editSeries').html('Создать');
+        $('#editSeries-id').val("-1");
+        $('#editSeries-seriesNo').val('');
+        $('#editSeries-startId').val('');
+        $('#editSeries-length').val('');
+        
+        $('#modal-editSeries').modal('show');
+    }
+    
+    function save_editSeries() {
+        var id = $('#editSeries-id').val();
+        var seriesNo = $('#editSeries-seriesNo').val();
+        var startId = $('#editSeries-startId').val();
+        var length = $('#editSeries-length').val();
+        
+        if (!seriesNo) {
+            alert('Введите номер серии');
+            return;
+        }
+        
+        if (!startId) {
+            alert('Введите первый номер серии');
+            return;
+        }
+        
+        if (!length) {
+            alert('Введите размер серии');
+            return;
+        }
+        
+        var dto = { Id: id, SeriesNo: seriesNo, StartId: startId, Length: length };
+
+        @Html.Ajax(Url.Action("EditSeriesAjax", "Invoices"));
+    }
+
+    $(function () {
+        $('#createSeries').click(function() {
+            createSeries();
+        });
+    });
+</script>

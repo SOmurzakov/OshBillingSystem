@@ -1,0 +1,59 @@
+﻿        <script type="text/javascript">
+            function getObjId(s, action) {
+                action = action + '-';
+                var classes = s.split(' ');
+
+                for (var i = 0; i < classes.length; i++) {
+                    var c = classes[i];
+                    if (c.substring(0, action.length) == action) {
+                        return c;
+                    }
+                }
+
+                return "";
+            }
+
+            function visaAction(obj) {
+                var idClass = getObjId(obj.attr('class'), 'visa');
+
+                var ss = idClass.split('-');
+                var controller = ss[1];
+                var id = ss[2];
+                var action = 'Visa' + ss[3];
+                var subcategory = ss[4];
+                var url = '/' + controller + '/' + action;
+                
+                //alert('controller: ' + controller + '\nid: ' + id + '\naction: ' + action + '\nurl: ' + url);
+
+                var json = JSON.stringify({ ChangeId: id, Subcategory: subcategory });
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: json,
+                    success: function (result) {
+
+                        if (result['Success']) {
+                            location.reload();
+                        } else {
+                            alert('не верные данные');
+                        }
+
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert(jqXHR);
+                        alert(textStatus);
+                        alert(errorThrown);
+                    }
+                });
+
+            }
+
+            $(function () {
+                $('.visabtn').click(function () {
+                    visaAction($(this));
+                });
+            });
+        </script>

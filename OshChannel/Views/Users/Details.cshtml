@@ -1,0 +1,529 @@
+﻿@using OshBusinessModel.Da.Users
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.Users.UserDetailsModel
+           
+@{
+    
+    ViewBag.Title = "Карточка пользователя";
+    bool hasChangeDetailsPermission = Auth.HasPermission(OshBusinessModel.Data.Permission.UsersChangeDetails) || Auth.User.UserId == Model.Details.UserId;
+    bool hasSetRolePermissiion = Auth.HasPermission(OshBusinessModel.Data.Permission.UsersSetRole);
+    bool hasChangePasswordPermission = Auth.HasPermission(OshBusinessModel.Data.Permission.UsersChangePassword) || Auth.User.UserId == Model.Details.UserId;
+    bool hasBlockPermission = Auth.HasPermission(OshBusinessModel.Data.Permission.UsersBlock) && Auth.User.UserId != Model.Details.UserId;
+    
+}
+
+@{
+    if (Model == null)
+    {
+        <h3>Пользователь не найден</h3>
+    }
+    else
+    {
+        string blocked = !Model.Details.Enabled ? "(Заблокирован)" : "";
+
+        <div class="row">
+            <div class="span6">
+                <h3 class="h2margin">@Model.Details.Name @blocked</h3>
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <td style="width: 175px;">Роль</td>
+                        <td>@Model.Details.UserType.Name</td>
+                    </tr>
+                    <tr>
+                        <td>Имя</td>
+                        <td>@Model.Details.Name</td>
+                    </tr>
+                    <tr>
+                        <td>Паспортные данные</td>
+                        <td>@Model.Details.Passport</td>
+                    </tr>
+                    <tr>
+                        <td>Адрес</td>
+                        <td>@Model.Details.Address</td>
+                    </tr>
+                    <tr>
+                        <td>Телефон</td>
+                        <td>@Model.Details.Phone</td>
+                    </tr>
+                    <tr>
+                        <td>Логин</td>
+                        <td>@Model.Details.Login</td>
+                    </tr>
+                    <tr>
+                        <td>Заблокирован</td>
+                        <td>@(!Model.Details.Enabled ? "Заблокирован" : "Не заблокирован")</td>
+                    </tr>
+                    <tr>
+                        <td>Примечания</td>
+                        <td>@Model.Details.Remarks</td>
+                    </tr>
+                </table>
+                
+                @if (hasChangeDetailsPermission || hasSetRolePermissiion || hasChangePasswordPermission || hasBlockPermission)
+                {
+                    <div class="form-actions">
+                        @{
+                            if (hasChangeDetailsPermission)
+                            {
+                                <button class="btn btn-primary" id="changeDetails">Измененить данные</button>
+                            }
+                            if (hasSetRolePermissiion)
+                            {
+                                <button class="btn btn-primary" id="setRole">Задать роль</button>
+                            }
+                        }
+                        <div class="pull-right">
+                            @{
+                                if (hasChangePasswordPermission)
+                                {
+                                    <button class="btn btn-primary" id="changePassword">Сменить пароль</button>
+                                }
+                                if (hasBlockPermission)
+                                {
+                                    if (Model.Details.Enabled)
+                                    {
+                                        <button class="btn btn-danger" id="userDisable">Заблокировать</button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-success" id="userEnable">Разблокировать</button>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+
+            </div>
+            
+            <div class="span6">
+                <h3 class="h2margin">История изменений</h3>
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <th style="width: 75px;">Дата</th>
+                        <th>Пользователь</th>
+                        <th>Изменение</th>
+                    </tr>
+                    @foreach (var change in Model.Changings)
+                    {
+                        <tr>
+                            <td>@change.ChangedDate.ToShortDateString()</td>
+                            <td>@Url.User(change.ChangedByUserId, change.ChangedByName)</td>
+                            <td>
+                                @{
+                           if (change is UserActionDa)
+                           {
+                               var action = (change as UserActionDa).UserAction.Name;
+                               var remarks = (change as UserActionDa).Remarks;
+                               if (!string.IsNullOrEmpty(remarks))
+                               {
+                                   remarks = " - " + remarks;
+                               }
+
+                                        <span>
+                                            @action @remarks
+                                        </span>
+                           }
+                           else if (change is UserDetailsChangeDa)
+                           {
+                               var details = change as UserDetailsChangeDa;
+                                        <span>
+                                            Имя: @details.Name<br/>
+                                            Паспортные данные: @details.Passport<br/>
+                                            Адрес: @details.Address<br/>
+                                            Телефон: @details.Phone<br/>
+                                        </span>
+                           }
+                           else if (change is UserRoleChangeDa)
+                           {
+                                        <span>
+                                            Роль - @((change as UserRoleChangeDa).UserType.Name)
+                                        </span>
+                           }
+                           else if (change is UserChangePasswordDa)
+                           {
+                                        <span>Смена пароля</span>
+                           }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+
+
+                    if (hasChangeDetailsPermission)
+                    {
+            <div id="modal-changeDetails" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">Редактировать</h3>
+                </div>
+                <div class="modal-body">
+                
+                    <div class="form-horizontal">
+                    
+                        <div class="control-group">
+                            <label class="control-label" for="name">Имя</label>
+                            <div class="controls">
+                                <input type="text" id="name" value="@Model.Details.Name"/>
+                            </div>
+                        </div>
+                    
+                        <div class="control-group">
+                            <label class="control-label" for="passport">Паспорт</label>
+                            <div class="controls">
+                                <input type="text" id="passport" value="@Model.Details.Passport"/>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="address">Адрес</label>
+                            <div class="controls">
+                                <input type="text" id="address" value="@Model.Details.Address"/>
+                            </div>
+                        </div>
+                    
+                        <div class="control-group">
+                            <label class="control-label" for="phone">Телефон</label>
+                            <div class="controls">
+                                <input type="text" id="phone" value="@Model.Details.Phone"/>
+                            </div>
+                        </div>
+                    
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Отмета</button>
+                    <button class="btn btn-primary" id="save-changeDetails">Сохранить</button>
+                </div>
+            </div>
+
+            <script type="text/javascript">
+                function changeDetails() {
+                    var userId = @Model.Details.UserId;
+                    var name = $('#name').val();
+                    var passport = $('#passport').val();
+                    var address = $('#address').val();
+                    var phone = $('#phone').val();
+
+                    var json = JSON.stringify({ UserId: userId, Name: name, Passport: passport, Address: address, Phone: phone });
+
+                    $.ajax({
+                        url: '@Url.Action("UserChangeDetailsAjax", "Users")',
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: json,
+                        success: function(result) {
+
+                            if (result['Success']) {
+                                location.reload();
+                            } else {
+                                alert(result['Message']);
+                            }
+
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            alert(jqXHR);
+                            alert(textStatus);
+                            alert(errorThrown);
+                        }
+                    });
+                }
+
+                function showChangeDetailsDialog() {
+                    $('#modal-changeDetails').modal('show');
+                }
+
+                $(function() {
+                    $('#changeDetails').click(function() {
+                        showChangeDetailsDialog();
+                    });
+
+                    $('#save-changeDetails').click(function() {
+                        changeDetails();
+                    });
+                });
+            </script>
+                    }
+
+
+                    if (hasSetRolePermissiion)
+                    {
+            <div id="modal-setRole" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">Задать роль</h3>
+                </div>
+                <div class="modal-body">
+                
+                    <div class="form-horizontal">
+                    
+                        <div class="control-group">
+                            <label class="control-label" for="role">Роль</label>
+                            <div class="controls">
+                                <select id="role" style="border-radius: 3px">
+                                    @foreach (var userType in OshBusinessModel.Data.UserType.UserTypes)
+                                    {
+                                        string selected = userType.SemanticId == Model.Details.Role ? "selected=\"selected\"" : "";
+                                        <option value="@userType.SemanticId"@selected>@userType.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Отмета</button>
+                    <button class="btn btn-primary" id="save-setRole">Сохранить</button>
+                </div>
+            </div>
+
+            <script type="text/javascript">
+                function setRole() {
+                    var userId = @Model.Details.UserId;
+                    var role = $('#role').val();
+
+                    var json = JSON.stringify({ UserId: userId, Role: role });
+
+                    $.ajax({
+                        url: '@Url.Action("UserSetRoleAjax", "Users")',
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: json,
+                        success: function(result) {
+
+                            if (result['Success']) {
+                                location.reload();
+                            } else {
+                                alert(result['Message']);
+                            }
+
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            alert(jqXHR);
+                            alert(textStatus);
+                            alert(errorThrown);
+                        }
+                    });
+                }
+
+                function showSetRoleDialog() {
+                    $('#modal-setRole').modal('show');
+                }
+
+                $(function() {
+                    $('#setRole').click(function() {
+                        showSetRoleDialog();
+                    });
+
+                    $('#save-setRole').click(function() {
+                        setRole();
+                    });
+                });
+            </script>
+                    }
+
+                    if (hasChangePasswordPermission)
+                    {
+            <div id="modal-changePassword" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">Сменить пароль</h3>
+                </div>
+                <div class="modal-body">
+                
+                    <div class="form-horizontal">
+                    
+                        <div class="control-group">
+                            <label class="control-label" for="password">Пароль</label>
+                            <div class="controls">
+                                <input type="password" id="password"/>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label" for="password-check">Подтвердите</label>
+                            <div class="controls">
+                                <input type="password" id="password-check"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Отмета</button>
+                    <button class="btn btn-primary" id="save-changePassword">Сохранить</button>
+                </div>
+            </div>
+
+            <script type="text/javascript">
+                function changePassword() {
+                    var userId = @Model.Details.UserId;
+                    var password = $('#password').val();
+                    var passwordCheck = $('#password-check').val();
+                    
+                    if (password != passwordCheck) {
+                        alert('Аккуратно введите пароль');
+                        $('#password-check').val('');
+                        return;
+                    }
+
+                    var json = JSON.stringify({ UserId: userId, Password: password });
+
+                    $.ajax({
+                        url: '@Url.Action("UserChangePasswordAjax", "Users")',
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: json,
+                        success: function(result) {
+
+                            if (result['Success']) {
+                                location.reload();
+                            } else {
+                                alert(result['Message']);
+                            }
+
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            alert(jqXHR);
+                            alert(textStatus);
+                            alert(errorThrown);
+                        }
+                    });
+                }
+
+                function showChangePasswordDialog() {
+                    $('#modal-changePassword').modal('show');
+                }
+
+                $(function() {
+                    $('#changePassword').click(function() {
+                        showChangePasswordDialog();
+                    });
+
+                    $('#save-changePassword').click(function() {
+                        changePassword();
+                    });
+                });
+            </script>
+        }
+
+        
+        
+        
+                            if (hasBlockPermission)
+                    {
+            <div id="modal-userDisable" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">Заблокировтаь пользователя</h3>
+                </div>
+                <div class="modal-body">
+                
+                    <div class="form-horizontal">
+                    
+                        <div class="control-group">
+                            <label class="control-label" for="remarks">Основание</label>
+                            <div class="controls">
+                                <input type="text" id="remarks"/>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Отмета</button>
+                    <button class="btn btn-primary" id="save-userDisable">Сохранить</button>
+                </div>
+            </div>
+
+            <script type="text/javascript">
+                function userDisable() {
+                    var userId = @Model.Details.UserId;
+                    var remarks = $('#remarks').val();
+                    
+                    var json = JSON.stringify({ UserId: userId, Remarks: remarks});
+
+                    $.ajax({
+                        url: '@Url.Action("UserDisableAjax", "Users")',
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: json,
+                        success: function(result) {
+
+                            if (result['Success']) {
+                                location.reload();
+                            } else {
+                                alert(result['Message']);
+                            }
+
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            alert(jqXHR);
+                            alert(textStatus);
+                            alert(errorThrown);
+                        }
+                    });
+                }
+                
+                function userEnable() {
+                    var userId = @Model.Details.UserId;
+                    
+                    var json = JSON.stringify({ UserId: userId});
+
+                    $.ajax({
+                        url: '@Url.Action("UserEnableAjax", "Users")',
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: json,
+                        success: function(result) {
+
+                            if (result['Success']) {
+                                location.reload();
+                            } else {
+                                alert(result['Message']);
+                            }
+
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            alert(jqXHR);
+                            alert(textStatus);
+                            alert(errorThrown);
+                        }
+                    });
+                }
+
+                function showUserDisableDialog() {
+                    $('#modal-userDisable').modal('show');
+                }
+
+                $(function() {
+                    $('#userDisable').click(function() {
+                        showUserDisableDialog();
+                    });
+
+                    $('#save-userDisable').click(function() {
+                        userDisable();
+                    });
+
+                    $('#userEnable').click(function() {
+                        userEnable();
+                    });
+                });
+            </script>
+                    }
+
+    }
+}
+
+

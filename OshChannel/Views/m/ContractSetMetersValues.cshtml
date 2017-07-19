@@ -1,0 +1,28 @@
+﻿@model OshBusinessModel.Da.Mobiles.MobileContractModel
+
+@{
+    Layout = "~/Views/Shared/_LayoutMobile.cshtml";
+    ViewBag.Title = "Задать значения счетчика";
+}
+
+<form action="@Url.Action("ContractSetMetersValues")" method="POST">
+    
+    <input type="hidden" name="contractId" value="@Model.ContractId"/>
+    <table width="100%" border="1">
+        <tr>
+            <td width="50%">Серийный номер</td>
+            <td>Показания</td>
+        </tr>
+        @foreach(var meter in Model.Meters.Where(m => m.Enabled))
+        {
+            <tr>
+                <td>@meter.SerialNumber</td>
+                <td><input type="hidden" name="meterid" value="@meter.MeterId"/><input type="text" name="metervalue" value="@meter.MeterValue.ToString("0.00")"/></td>
+            </tr>
+        }
+        <tr>
+            <td>&nbsp;</td>
+            <td><input type="submit" value="Выставить"/></td>
+        </tr>
+    </table>
+</form>

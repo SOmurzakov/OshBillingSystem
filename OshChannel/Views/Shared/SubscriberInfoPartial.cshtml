@@ -1,0 +1,70 @@
+﻿@using OshChannel.Helpers
+@model OshBusinessModel.Da.Subscribers.SubscriberDetailsDa
+
+<table class="table table-striped table-bordered">
+    <tr>
+        <td style="width: 150px;">Абонент</td>
+        <td>@Url.Subscriber(Model.SubscriberId, Model.Name), @OshBusinessModel.Data.SubscriberType.GetById(Model.Type).Name</td>
+    </tr>
+    <tr>
+        <td>Дата регистрации</td>
+        <td>@Model.RegisteredAtSystem.ToShortDateString()</td>
+    </tr>
+    <tr>
+        <td>
+            @{
+                if (Model.Type == "prs")
+                {
+                    <span>Паспорт</span>
+                }
+                else
+                {
+                    <span>Свидетельство</span>
+                }
+            }
+        </td>
+        <td>
+            @Model.PassportNumber
+            @if (Model.PassportDate != null || !string.IsNullOrWhiteSpace(Model.PassportWhere))
+            {
+                <br/>
+                <span>от @Model.PassportDateAsString @Model.PassportWhere</span>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>Адрес</td>
+        <td>@Model.FullAddress</td>
+    </tr>
+    <tr>
+        <td>Телефон</td>
+        <td>@Model.Phone</td>
+    </tr>
+    <tr>
+        <td>ИНН</td>
+        <td>@Model.Inn</td>
+    </tr>
+    @{
+        if (Model.Type != "prs")
+        {
+            <tr>
+                <td>УГКНС</td>
+                <td>@Model.Ugkns @Model.UgknsName</td>
+            </tr>
+            <tr>
+                <td>МФО</td>
+                <td>@Model.Mfo</td>
+            </tr>
+            <tr>
+                <td>Банк</td>
+                <td>@Model.BankCode @Model.BankName @Model.BankAccount</td>
+            </tr>
+            <tr>
+                <td>Счет фактура</td>
+                <td>
+                    @(Model.InvoiceRequired ? "Требуется" : "Не треубется")
+                </td>
+            </tr>
+        }
+    }
+</table>

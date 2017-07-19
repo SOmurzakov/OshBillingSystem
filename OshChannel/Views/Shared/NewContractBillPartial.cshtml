@@ -1,0 +1,329 @@
+﻿@model OshBusinessModel.Da.Bills.Bill
+
+@{
+    var billType = Settings.Get("BillType");
+}
+
+@if (Model == null)
+{
+    <div class="newbill">
+        <div class="nobillquestion">?</div>
+        <div class="nobill">счет не выставлен</div>
+    </div>
+}
+else
+{
+    bool hasSewage = Model.BillDetails.SewagePricePerCubicMeter > 0;
+    int sewageRowspan = hasSewage && Model.BillDetails.CubicMeters == Model.BillDetails.CubicMetersSewage ? 2 : 1;
+
+    if (billType == "OshBill")
+    {
+        var oshBillRowsCount = 3 + Model.Options.Length + (Model.BillDetails.HasSewage ? 1 : 0);
+
+        <div class="newbill oshbill">
+            <table style="width: 100%; table-layout: fixed;">
+                <tr>
+                    <td>
+                        
+                        <table style="width: 100%; table-layout: fixed;">
+                            <tr>
+                                <td>
+                                    <b>@Settings.Get("Company.FullName") - Счет-извещение</b> <br/>
+                                    Контроллер: <b>@(Model.ContractDetails.ControllerName ?? "")</b>
+                                </td>
+                                <td style="text-align: right;">
+                                    <b>@Model.ContractDetails.Name</b>: @Model.ContractDetails.FullAddress <br/>
+                                    @Model.ContractDetails.ContractNumber <br/>
+                                    Период: с @Model.BillDetails.PeriodStart.ToShortDateString() по @Model.BillDetails.PeriodEnd.ToShortDateString()
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <table style="width: 100%; border: 1px; margin-top: 10px;" border="1">
+                            <tr>
+                                <td style="text-align: center;">Тариф</td>
+                                <td style="text-align: center;">Кол-во</td>
+                                <td style="text-align: center;">Ед.</td>
+                                <td style="text-align: center;">За тариф</td>
+                                <td rowspan="@oshBillRowsCount" style="text-align: center;">
+                                    Пред. долг: @Model.BillDetails.Debt.ToString("0.00") <br/>
+                                    Начислено: @Model.BillDetails.AmountTotal.ToString("0.00") <br/>
+                                    Налог: @((Model.BillDetails.AmountNds + Model.BillDetails.AmountNsp).ToString("0.00"))<br/>
+                                    Пеня: 0.00 <br/>
+                                    К оплате: @Model.BillDetails.AmountToPay.ToString("0.00")
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>@Model.BillDetails.TariffName</td>
+                                <td style="text-align: right;">@Model.BillDetails.PeopleRegistered</td>
+                                <td></td>
+                                <td style="text-align: right;">@Model.BillDetails.AmountWater.ToString("0.00")</td>
+                            </tr>
+                            @if (Model.BillDetails.HasSewage)
+                            {
+                                <tr>
+                                    <td>Стоки</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td style="text-align: right;">@Model.BillDetails.AmountSewage.ToString("0.00")</td>
+                                </tr>
+                            }
+                            @foreach (var option in Model.Options)
+                            {
+                                <tr>
+                                    <td>@option.VariableBillName</td>
+                                    <td style="text-align: right;">@option.Value</td>
+                                    <td>@option.VariableDescription</td>
+                                    <td style="text-align: right;">@option.BilledAmount.ToString("0.00")</td>
+                                </tr>
+                            }
+                            <tr>
+                                <td colspan="3">Итого</td>
+                                <td style="text-align: right;">@Model.BillDetails.AmountTotal</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="width: 5cm; vertical-align: top; text-align: center;">
+                        @Model.ContractDetails.Name <br/>
+                        @Model.ContractDetails.FullAddress <br/>
+                        <b>@Model.BillDetails.PeriodStart.ToShortDateString() по @Model.BillDetails.PeriodEnd.ToShortDateString()</b> <br/>
+                        @Model.ContractDetails.ContractNumber <br/>
+                        <b>Всего к оплате:</b> <br/>
+                        <b>@Model.BillDetails.AmountToPay.ToString("0.00")</b>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="newbill">
+                    
+            <div class="their">
+                <div class="newbillcompanyname">
+                    Счет-извещение за<br/> питьевую воду и стоки <br/>
+                    <h5>@Model.BillDetails.BillingPeriodName</h5> <br/>
+                </div>
+                    
+                <div class="newbillcompanyinfo">
+                    <b>@Settings.Get("Company.FullName")</b> <br/>
+                    @Settings.Get("Company.Address") <br/>
+                    Тел.: @Settings.Get("Company.Phone")
+                </div>
+            
+                <div class="contractInfoTable">
+                    <table>
+                        <tr>
+                            <td class="keyName">Контракт:</td>
+                            <td>@Model.ContractDetails.ContractNumber</td>
+                        </tr>
+                        <tr>
+                            <td class="keyName">Абонент:</td>
+                            <td>@Model.ContractDetails.Name</td>
+                        </tr>
+                        <tr>
+                            <td class="keyName">Адрес:</td>
+                            <td>@Model.ContractDetails.FullAddress</td>
+                        </tr>
+                        <tr>
+                            <td class="keyName">Участок:</td>
+                            <td>@Model.ContractDetails.AreaName @(Model.ContractDetails.ControllerName ?? "")</td>
+                        </tr>
+                        <tr>
+                            <td class="keyName">Период:</td>
+                            <td>
+                                с @Model.BillDetails.PeriodStart.ToShortDateString()
+                                <br/> по @Model.BillDetails.PeriodEnd.ToShortDateString()
+                                <br/>@Model.BillDetails.PeriodDays дней
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                @if (Model.Meters.Length > 0)
+                {
+                    <div class="contractBillMeters">
+                        <span>Показания счетчика</span>
+                        <table>
+                            <tr>
+                                <td>&nbsp;</td>
+                                @for (int i = 0; i < Model.Meters.Length; i++)
+                                {
+                                    <td>@(i + 1)</td>
+                                }
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>@Model.Meters[0].MeterValueDate.ToShortDateString()</td>
+                                @for (int i = 0; i < Model.Meters.Length; i++)
+                                {
+                                    <td>@Model.Meters[i].MeterValue.ToString("0.00")</td>
+                                }
+                                <td>@MeterReadingType.GetMeterReadingTypeById(Model.Meters[0].MeterValueType).Name</td>
+                            </tr>
+                            <tr>
+                                <td>@Model.Meters[0].MeterLastValueDate.ToShortDateString()</td>
+                                @for (int i = 0; i < Model.Meters.Length; i++)
+                                {
+                                    <td>@Model.Meters[i].MeterLastValue.ToString("0.00")</td>
+                                }
+                                <td>@MeterReadingType.GetMeterReadingTypeById(Model.Meters[0].LastMeterValueType).Name</td>
+                            </tr>
+                        </table>
+                    </div>
+                }
+
+                <div class="newbilltable">
+                    <table>
+                        <tr>
+                            <th class="col1">Статья</th>
+                            <th class="col2">Расход</th>
+                            <th class="col4">Тариф</th>
+                            <th class="col5">Сумма</th>
+                        </tr>
+                        <tr>
+                            <td>Питьевая вода</td>
+                            <td rowspan="@sewageRowspan">@Model.BillDetails.CubicMeters.ToString("0.00") куб. м.</td>
+                            @*
+                                <td rowspan="@sewageRowspan">
+                                    @if(Model.Meters.Length == 0)
+                                    {
+                                        if (Model.ContractDetails.IsLegalEntity)
+                                        {
+                                            <span>
+                                                Дни: @Model.BillDetails.PeriodDays <br/>
+                                                Фикс. потр.: @Model.BillDetails.FixedConsumption куб. в год
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span>
+                                                Дни: @Model.BillDetails.PeriodDays <br/>
+                                                Чел.: @Model.BillDetails.PeopleRegistered <br/>
+                                                Норма: @Model.BillDetails.LitersPerPersonPerDay л. сутки
+                                            </span>
+                                        }
+                                    }
+                                </td>
+*@
+                            <td>@Model.BillDetails.WaterPricePerCubicMeter сом / куб</td>
+                            <td class="col5">@Model.BillDetails.AmountWater.ToString("0.00")</td>
+                        </tr>
+                        @if (hasSewage)
+                        {
+                            <tr>
+                                <td>Стоки</td>
+                                @if (@sewageRowspan == 1)
+                                {
+                                    <td>@Model.BillDetails.CubicMetersSewage.ToString("0.00") куб. м.</td>
+                                }
+                                <td>@Model.BillDetails.SewagePricePerCubicMeter сом / куб</td>
+                                <td class="col5">@Model.BillDetails.AmountSewage.ToString("0.00")</td>
+                            </tr>
+                        }
+                        @foreach (var option in Model.Options)
+                        {
+                            <tr>
+                                <td>@option.VariableBillName</td>
+                                <td>@option.Value @option.VariableDescription</td>
+                                <td>@option.LitersPerDay л./сутки</td>
+                                <td class="col5">@option.BilledAmount.ToString("0.00")</td>
+                            </tr>
+                        }
+                        @if (Model.ContractDetails.IsLegalEntity)
+                        {
+                            <tr>
+                                <td colspan="3">Сумма</td>
+                                <td class="col5">@Model.BillDetails.AmountTotal.ToString("0.00")</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Льгота</td>
+                                <td>@(Model.BillDetails.Allowance > 0 ? string.Format("{0:0.##}%", Model.BillDetails.Allowance) : "Нет")</td>
+                                <td class="col5">@Model.BillDetails.AmountTotalAfterAllowance.ToString("0.00")</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">НсП</td>
+                                <td>@Settings.Get("Tax.Nsp")%</td>
+                                <td class="col5">@Model.BillDetails.AmountNsp.ToString("0.00")</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">НДС</td>
+                                <td>@Settings.Get("Tax.Nds")%</td>
+                                <td class="col5">@Model.BillDetails.AmountNds.ToString("0.00")</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">@(Model.BillDetails.Debt >= 0 ? "Долг" : "Переплата")</td>
+                                <td class="col5">@Math.Abs(Model.BillDetails.Debt).ToString("0.00")</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="3">Льгота</td>
+                                <td class="col5">@(Model.BillDetails.Allowance > 0 ? string.Format("{0:0.##}%", Model.BillDetails.Allowance) : "Нет")</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">@(Model.BillDetails.Debt >= 0 ? "Долг" : "Переплата")</td>
+                                <td class="col5">@Math.Abs(Model.BillDetails.Debt).ToString("0.00")</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Начислено за месяц</td>
+                                <td class="col5">@Model.BillDetails.AmountForMonth.ToString("0.00")</td>
+                            </tr>
+                        }
+
+                        <tr>
+                            <td colspan="3">Пеня</td>
+                            <td class="col5">@Model.BillDetails.AmountPenalty.ToString("0.00")</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">К оплате</td>
+                            <td class="col5">@Model.BillDetails.AmountToPay.ToString("0.00")</td>
+                        </tr>
+                    </table>
+                </div>
+                    
+                <div class="newbillamounttopay">
+                    <span>К оплате</span>
+                    <h5>@Model.BillDetails.AmountToPay.ToString("0.00")</h5>
+                </div>
+
+            </div>
+                
+            <div class="our">
+                <div class="newbillcompanyname">
+                    Счет-извещение за<br/> питьевую воду и стоки
+                    <h5>@Model.BillDetails.BillingPeriodName</h5> <br/>
+                </div>
+
+                <div class="contractInfo">
+                    Контракт: <br/>
+                    Абонент: <br/>
+                    Адрес: <br/>
+                    Участок: <br/>
+                    Период: <br/>
+                </div>
+                    
+                <div class="contractInfoValues">
+                    @Model.ContractDetails.ContractNumber <br/>
+                    @Model.ContractDetails.Name <br/>
+                    @Model.ContractDetails.FullAddress <br/>
+                    @Model.ContractDetails.AreaName @(Model.ContractDetails.ControllerName ?? "") <br/>
+                    с @Model.BillDetails.PeriodStart.ToShortDateString()<br/> по @Model.BillDetails.PeriodEnd.ToShortDateString()<br/>@Model.BillDetails.PeriodDays дней
+                </div>
+                    
+                <div class="newbillcompanyinfo">
+                    <b>@Settings.Get("Company.FullName")</b> <br/>
+                    @Settings.Get("Company.Address") <br/>
+                    Тел.: @Settings.Get("Company.Phone")
+                </div>
+            
+                <div class="newbillamounttopay">
+                    <span>К оплате</span>
+                    <h5>@Model.BillDetails.AmountToPay.ToString("0.00")</h5>
+                </div>
+            </div>
+
+        </div>
+    }
+}

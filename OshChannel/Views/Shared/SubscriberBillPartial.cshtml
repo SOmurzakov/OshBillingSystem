@@ -1,0 +1,102 @@
+﻿@model OshBusinessModel.Da.Bills.Bill[]
+
+@if (Model == null || Model.Length == 0)
+{
+    <div class="newbill">
+        <div class="nobillquestion">?</div>
+        <div class="nobill">счет не выставлен</div>
+    </div>
+}
+else if (Model.Length == 1)
+{
+    @Html.Partial("NewContractBillPartial", new ViewDataDictionary(Model[0]))
+}
+else
+{
+    var bill = Model[0];
+    var total = Model.Sum(b => b.BillDetails.AmountToPay);
+    
+    <div class="newbill subscriber">
+        <div class="their">
+            
+            <div class="newbillcompanyname">
+                Счет-извещение за<br/> питьевую воду и стоки <br/>
+                <h5>@bill.BillDetails.BillingPeriodName</h5> <br/>
+            </div>
+
+            <div class="subscriberName">
+                <h5>@bill.ContractDetails.Name</h5>
+            </div>            
+            
+            <div class="newbilltable">
+                <table>
+                    <tr>
+                        <th class="col1">Контракт</th>
+                        <th class="col2">Субъект</th>
+                        <th class="col3">Адресс</th>
+                        <th class="col4">Долг</th>
+                        <th class="col5">Начислено</th>
+                        <th class="col6">К оплате</th>
+                    </tr>
+                    @foreach(var oneBill in Model)
+                    {
+                        <tr>
+                            <td class="col1">@oneBill.ContractDetails.ContractNumber</td>
+                            <td class="col2">@oneBill.ContractDetails.ContractName</td>
+                            <td class="col3">@oneBill.ContractDetails.FullAddress</td>
+                            <td class="col4">@oneBill.BillDetails.Debt.ToString("0.00")</td>
+                            <td class="col5">@(oneBill.BillDetails.Billed.ToString("0.00"))</td>
+                            <td class="col6">@oneBill.BillDetails.AmountToPay.ToString("0.00")</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+
+            <div class="newbillcompanyinfo">
+                <b>@Settings.Get("Company.FullName")</b> <br/>
+                @Settings.Get("Company.Address") <br/>
+                Тел.: @Settings.Get("Company.Phone")
+            </div>
+                    
+            <div class="newbillamounttopay">
+                <span>К оплате</span>
+                <h5>@total.ToString("0.00")</h5>
+            </div>
+
+        </div>
+        <div class="our">
+            <div class="newbillcompanyname">
+                Счет-извещение за<br/> питьевую воду и стоки
+                <h5>@bill.BillDetails.BillingPeriodName</h5> <br/>
+            </div>
+
+            <div class="contractInfo">
+                Контракт: <br/>
+                Абонент: <br/>
+                Адрес: <br/>
+                Участок: <br/>
+                Период: <br/>
+            </div>
+                    
+            <div class="contractInfoValues">
+                @bill.ContractDetails.ContractNumber <br/>
+                @bill.ContractDetails.Name <br/>
+                @bill.ContractDetails.FullAddress <br/>
+                @bill.ContractDetails.AreaName @(bill.ContractDetails.ControllerName ?? "") <br/>
+                с @bill.BillDetails.PeriodStart.ToShortDateString()<br/> по @bill.BillDetails.PeriodEnd.ToShortDateString()<br/>@bill.BillDetails.PeriodDays дней
+            </div>
+                    
+            <div class="newbillcompanyinfo">
+                <b>@Settings.Get("Company.FullName")</b> <br/>
+                @Settings.Get("Company.Address") <br/>
+                Тел.: @Settings.Get("Company.Phone")
+            </div>
+
+            <div class="newbillamounttopay">
+                <span>К оплате</span>
+                <h5>@total.ToString("0.00")</h5>
+            </div>
+        </div>
+        <div class="cf"></div>
+    </div>
+}

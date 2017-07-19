@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{30B6D745-3539-4370-B16A-88317FA0C1D6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OshBusinessModel</RootNamespace>
+    <AssemblyName>OshBusinessModel</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Data\BudgetType.cs" />
+    <Compile Include="Data\MeterReadingType.cs" />
+    <Compile Include="Data\Permission.cs" />
+    <Compile Include="Data\SubscriberType.cs" />
+    <Compile Include="Data\UserAction.cs" />
+    <Compile Include="Da\Accountant\RbcSubagentDa.cs" />
+    <Compile Include="Da\Accountant\RbcTransactionDa.cs" />
+    <Compile Include="Da\Accountant\RbcUserDa.cs" />
+    <Compile Include="Da\Accountant\ReconciliationByControllersReport.cs" />
+    <Compile Include="Da\Accountant\ReconciliationByUserReport.cs" />
+    <Compile Include="Da\Accountant\SubscriberReconciliationBilingPeriodDa.cs" />
+    <Compile Include="Da\Accountant\SubscriberReconciliationReport.cs" />
+    <Compile Include="Da\AllowanceReport\AllowanceReportControllerDa.cs" />
+    <Compile Include="Da\AllowanceReport\AllowanceReportItemDa.cs" />
+    <Compile Include="Da\AllowanceReport\AllowanceReportItemOptionDa.cs" />
+    <Compile Include="Da\AllowanceReport\AllowanceReportTariffDa.cs" />
+    <Compile Include="Da\AllowanceReport\AllowanceReportTariffOptionDa.cs" />
+    <Compile Include="Da\AllowanceReport\HasAllowanceReport.cs" />
+    <Compile Include="Da\AllowanceReport\WithoutAllowanceReport.cs" />
+    <Compile Include="Da\Areas\AreasDictionaryModel.cs" />
+    <Compile Include="Da\Areas\AreasHousesDa.cs" />
+    <Compile Include="Da\Areas\AreasHousesModel.cs" />
+    <Compile Include="Da\Areas\AreasShortInfoDa.cs" />
+    <Compile Include="Da\Areas\CreateAreaControllerDa.cs" />
+    <Compile Include="Da\Areas\SaveAreasControllersDa.cs" />
+    <Compile Include="Da\Billing\BillingRequestDa.cs" />
+    <Compile Include="Da\Billing\BillingTerminalsDa.cs" />
+    <Compile Include="Da\Billing\SubscriberNameByContractIdDa.cs" />
+    <Compile Include="Da\Bills\Bill.cs" />
+    <Compile Include="Da\Bills\BillContractDetailsDa.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Da\Bills\BillDa.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Da\Bills\BillMeterDa.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Da\Bills\BillPeriodDa.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Da\Bills\BillTariffOptionDa.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Da\Bills\GetBillsForPrintingModel.cs" />
+    <Compile Include="Da\Bills\PreviousBillsModel.cs" />
+    <Compile Include="Da\Bills\ShortControllerDa.cs" />
+    <Compile Include="Da\Bills\ShortBuildingDa.cs" />
+    <Compile Include="Da\Bills\ShortStreetDa.cs" />
+    <Compile Include="Da\BulkPayments\BkciOptionsDa.cs" />
+    <Compile Include="Da\BulkPayments\BuilkPaymentsModel.cs" />
+    <Compile Include="Da\BulkPayments\BulkPaymentContractInfoDa.cs" />
+    <Compile Include="Da\BulkPayments\BulkPaymentDa.cs" />
+    <Compile Include="Da\BulkPayments\ShortSubagentOrUserInfo.cs" />
+    <Compile Include="Da\BulkPayments\StreetWrapper.cs" />
+    <Compile Include="Da\ClosingPeriods\BillingPeriodDa.cs" />
+    <Compile Include="Da\ClosingPeriods\ClosePeriodResultDa.cs" />
+    <Compile Include="Da\ContractStatement\ContractStatementDa.cs" />
+    <Compile Include="Da\ContractStatement\ContractStatementModel.cs" />
+    <Compile Include="Da\Controller\ControllerShortInfoDa.cs" />
+    <Compile Include="Da\Debtors\DebtorsModel.cs" />
+    <Compile Include="Da\Director\NextClosingPeriodDa.cs" />
+    <Compile Include="Da\ControllerBriefDa.cs" />
+    <Compile Include="Da\Controller\ControllerRootingsDa.cs" />
+    <Compile Include="Da\CreateContractModelDa.cs" />
+    <Compile Include="Da\CreateContract\CPCAM_Contract.cs" />
+    <Compile Include="Da\CreateContract\CPCAM_Subscriber.cs" />
+    <Compile Include="Da\CreateContract\CPCAM_TariffOption.cs" />
+    <Compile Include="Da\CreateContract\CPCAM_TariffOptionDa.cs" />
+    <Compile Include="Da\CreateContract\CreateContractMeterInfoDa.cs" />
+    <Compile Include="Da\CreateContract\CreateContractSubscriberDa.cs" />
+    <Compile Include="Da\CreateContract\CreateContractTariffDa.cs" />
+    <Compile Include="Da\CreateContract\CreateContractContractInfo.cs" />
+    <Compile Include="Da\CreateContract\CreateContractDa.cs" />
+    <Compile Include="Da\CreateContract\CreateContractMeterInfo.cs" />
+    <Compile Include="Da\CreateContract\CreateContractModel.cs" />
+    <Compile Include="Da\CreateContract\CreateContractSubscriber.cs" />
+    <Compile Include="Da\CreateContract\CreateContractTariffOptionDa.cs" />
+    <Compile Include="Da\CreateContract\CreateContractAjaxModel.cs" />
+    <Compile Include="Da\Debtors\DebtorDa.cs" />
+    <Compile Include="Da\Director\DirectorIndexModel.cs" />
+    <Compile Include="Da\FundRaisingPlan\FundRaisingPlanDa.cs" />
+    <Compile Include="Da\FundRaisingPlan\FundRaisingPlanModel.cs" />
+    <Compile Include="Da\Invoices\GetInvoicesForPrintingModel.cs" />
+    <Compile Include="Da\Invoices\InvoiceContractDa.cs" />
+    <Compile Include="Da\Invoices\InvoiceDa.cs" />
+    <Compile Include="Da\Invoices\InvoicesByPeriodDa.cs" />
+    <Compile Include="Da\Invoices\InvoicesByPeriodModel.cs" />
+    <Compile Include="Da\Invoices\InvoiceSeriesDa.cs" />
+    <Compile Include="Da\JsonMeterDa.cs" />
+    <Compile Include="Da\LastOrderDa.cs" />
+    <Compile Include="Da\Meters\AddMeterResultDa.cs" />
+    <Compile Include="Da\Meters\SetMetersValuesDa.cs" />
+    <Compile Include="Da\Meters\SetMetersValuesDto.cs" />
+    <Compile Include="Da\Mobiles\MakePaymentModel.cs" />
+    <Compile Include="Da\Mobiles\MobileContractModel.cs" />
+    <Compile Include="Da\ReconciliationReport.cs" />
+    <Compile Include="Da\Areas\AreasDictionaryDa.cs" />
+    <Compile Include="Da\ContractBillDa.cs" />
+    <Compile Include="Da\ContractBillMeterDa.cs" />
+    <Compile Include="Da\ContractMeterDa.cs" />
+    <Compile Include="Da\ContractSearchResultDa.cs" />
+    <Compile Include="Da\ContractsSearchResult.cs" />
+    <Compile Include="Da\ReconciliationReportItemDa.cs" />
+    <Compile Include="Da\ReportByControllers\ReportByControllersModel.cs" />
+    <Compile Include="Da\ReportByControllers\ReportByControllersDa.cs" />
+    <Compile Include="Da\ResultDa.cs" />
+    <Compile Include="Da\Rootings\RootingContractForControllerDa.cs" />
+    <Compile Include="Da\Rootings\RootingsAreasDa.cs" />
+    <Compile Include="Da\Rootings\RootingsBuildingsDa.cs" />
+    <Compile Include="Da\Rootings\RootingsBuildingsModel.cs" />
+    <Compile Include="Da\Rootings\RootingsContractsDa.cs" />
+    <Compile Include="Da\Rootings\RootingsContractsModel.cs" />
+    <Compile Include="Da\Rootings\RootingsForControllerModel.cs" />
+    <Compile Include="Da\Rootings\RootingsStreetsDa.cs" />
+    <Compile Include="Da\Rootings\RootingsStreetsModel.cs" />
+    <Compile Include="Da\Rootings\ShortBillingDa.cs" />
+    <Compile Include="Da\Settings\SettingsChangeDa.cs" />
+    <Compile Include="Da\Settings\SettingsDa.cs" />
+    <Compile Include="Da\Settings\SettingsDetailsModel.cs" />
+    <Compile Include="Da\Settings\SettingsDictionaryModel.cs" />
+    <Compile Include="Da\Settings\ShortSettingsItem.cs" />
+    <Compile Include="Da\ShowContract\AddContractOptionDa.cs" />
+    <Compile Include="Da\ShowContract\AddTariffOptionResultDa.cs" />
+    <Compile Include="Da\ShowContract\ContractBillAmountDa.cs" />
+    <Compile Include="Da\ShowContract\ContractChangeActionDa.cs" />
+    <Compile Include="Da\ShowContract\ContractChangeDetailsDa.cs" />
+    <Compile Include="Da\ShowContract\ContractChangeItemDa.cs" />
+    <Compile Include="Da\ShowContract\ContractChangeMeterActionDa.cs" />
+    <Compile Include="Da\ShowContract\ContractChangeMeterDetailsDa.cs" />
+    <Compile Include="Da\ShowContract\ContractChangeTariffOptionActionDa.cs" />
+    <Compile Include="Da\ShowContract\ContractChangeTariffOptionValueDa.cs" />
+    <Compile Include="Da\ShowContract\ContractDetailsDa.cs" />
+    <Compile Include="Da\ShowContract\ContractMeterDa.cs" />
+    <Compile Include="Da\ShowContract\ContractMeterValueDa.cs" />
+    <Compile Include="Da\ShowContract\ContractOptionsDa.cs" />
+    <Compile Include="Da\ShowContract\ContractParametersDa.cs" />
+    <Compile Include="Da\ShowContract\ContractSubagentDa.cs" />
+    <Compile Include="Da\ShowContract\ContractTransactionDa.cs" />
+    <Compile Include="Da\ShowContract\IDateable.cs" />
+    <Compile Include="Da\ShowContract\MakePaymentUserDa.cs" />
+    <Compile Include="Da\ShowContract\ShowContractModel.cs" />
+    <Compile Include="Da\ShowContract\ShowContractTariffDa.cs" />
+    <Compile Include="Da\StatementFor1CDa.cs" />
+    <Compile Include="Da\Streets\StreetDa.cs" />
+    <Compile Include="Da\SubagentsBillingPeriods\BillingPeriodDa.cs" />
+    <Compile Include="Da\SubagentsBillingPeriods\SubagentDa.cs" />
+    <Compile Include="Da\SubagentsBillingPeriods\SubagentsBillingPeriodsModel.cs" />
+    <Compile Include="Da\SubagentsDictionaryDa.cs" />
+    <Compile Include="Da\Subagents\SubagentTransactionDa.cs" />
+    <Compile Include="Da\Subagents\SubagentTransactionsModel.cs" />
+    <Compile Include="Da\SubscriberDictionaryDa.cs" />
+    <Compile Include="Da\SubscriberDictionaryFirstLetterDa.cs" />
+    <Compile Include="Da\SubscribersDictionaryItemDa.cs" />
+    <Compile Include="Da\Subscribers\SubscriberChangeDa.cs" />
+    <Compile Include="Da\Subscribers\SubscriberChangeInfoAjaxModel.cs" />
+    <Compile Include="Da\Subscribers\SubscriberContractDa.cs" />
+    <Compile Include="Da\Subscribers\SubscriberDetailsDa.cs" />
+    <Compile Include="Da\Subscribers\SubscriberDetailsModel.cs" />
+    <Compile Include="Da\Tariffs\TariffChangesDa.cs" />
+    <Compile Include="Da\Tariffs\TariffDetailsModel.cs" />
+    <Compile Include="Da\Tariffs\TariffDictionaryDa.cs" />
+    <Compile Include="Da\Tariffs\TariffOptionChangesDa.cs" />
+    <Compile Include="Da\Tariffs\TariffOptionDetailsModel.cs" />
+    <Compile Include="Da\Tariffs\TariffOptionDetalisDa.cs" />
+    <Compile Include="Da\Tariffs\TariffOptionDictionaryDa.cs" />
+    <Compile Include="Da\Tariffs\TariffOptionTariffsDa.cs" />
+    <Compile Include="Da\TransactionDa.cs" />
+    <Compile Include="Da\UserDa.cs" />
+    <Compile Include="Data\UserType.cs" />
+    <Compile Include="Da\UserExistsDa.cs" />
+    <Compile Include="Da\Users\CreateUserResultDa.cs" />
+    <Compile Include="Da\Users\UserActionDa.cs" />
+    <Compile Include="Da\Users\UserChangeItemDa.cs" />
+    <Compile Include="Da\Users\UserChangePasswordDa.cs" />
+    <Compile Include="Da\Users\UserDetailsChangeDa.cs" />
+    <Compile Include="Da\Users\UserDetailsDa.cs" />
+    <Compile Include="Da\Users\UserDetailsModel.cs" />
+    <Compile Include="Da\Users\UserDictionaryDa.cs" />
+    <Compile Include="Da\Users\UserRoleChangeDa.cs" />
+    <Compile Include="Da\VisaRequired\ContractDa.cs" />
+    <Compile Include="Da\VisaRequired\SettingsDa.cs" />
+    <Compile Include="Da\VisaRequired\SubscriberDa.cs" />
+    <Compile Include="Da\VisaRequired\VisaRequiredModel.cs" />
+    <Compile Include="J2MeDb\Dto\CloseReasonDto.cs" />
+    <Compile Include="J2MeDb\Dto\MeterDto.cs" />
+    <Compile Include="J2MeDb\Dto\MeterDtoDa.cs" />
+    <Compile Include="J2MeDb\Dto\RootingDto.cs" />
+    <Compile Include="Extentions\UserDa.Extention.cs" />
+    <Compile Include="J2MeDb\Requests\CloseRootingRequest.cs" />
+    <Compile Include="J2MeDb\Requests\GetCloseRootingReasonsRequest.cs" />
+    <Compile Include="J2MeDb\Requests\GetRootingDetailsRequest.cs" />
+    <Compile Include="J2MeDb\Requests\GetRootingsRequest.cs" />
+    <Compile Include="J2MeDb\Requests\LoginRequest.cs" />
+    <Compile Include="J2MeDb\Requests\RegisterPaymentRequest.cs" />
+    <Compile Include="J2MeDb\Requests\SetMetersValuesRequest.cs" />
+    <Compile Include="J2MeDb\Responses\CloseRootingResponse.cs" />
+    <Compile Include="J2MeDb\Responses\GetCloseRootingResponse.cs" />
+    <Compile Include="J2MeDb\Responses\GetRootingDetailsResponse.cs" />
+    <Compile Include="J2MeDb\Responses\GetRootingsResponseArrayEmbedded.cs" />
+    <Compile Include="J2MeDb\Responses\LoginResponse.cs" />
+    <Compile Include="J2MeDb\Responses\RegisterPaymentResponse.cs" />
+    <Compile Include="J2MeDb\Responses\SetMetersValuesResponse.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Da\SubscriberSearchResultDa.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

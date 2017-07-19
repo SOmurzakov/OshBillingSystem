@@ -1,0 +1,82 @@
+﻿@using OshChannel.Helpers
+@model OshBusinessModel.Da.ReportByControllers.ReportByControllersModel
+
+@{
+    ViewBag.Title = "Отчет по контроллерам";
+}
+
+@if (Model == null)
+{
+    <p>Счета не выставлялись</p>
+}
+else
+{
+ 
+    <div class="well">
+        <form class="form-inline" action="@Url.Action("ReportByControllers", "Accountant")" style="margin-bottom: 0;">
+            <h3 style="margin-bottom: 20px; margin-top: 0;">@ViewBag.Title</h3>
+            <div class="pull-right">
+                <button type="submit" class="btn btn-primary">Обновить</button>
+            </div>
+            <label style="margin-right: 20px;" for="periodStart">Период</label>
+            <label style="" for="periodStart">с</label>
+            <select name="startPeriodId" class="span2" style="margin-right: 20px;" id="periodStart">
+                @foreach (var period in Model.BillingPeriods)
+                {
+                    <option value="@period.BillingPeriodId"@Html.If(period.BillingPeriodId == Model.StartPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                }
+            </select>
+            <label style="" for="periodEnd">по</label>
+            <select name="endPeriodId" class="span2" style="margin-right: 20px;" id="periodEnd">
+                @foreach (var period in Model.BillingPeriods)
+                {
+                    <option value="@period.BillingPeriodId"@Html.If(period.BillingPeriodId == Model.EndPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                }
+            </select>
+        </form>
+    </div>   
+    
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th rowspan="2">Контроллер</th>
+            <th rowspan="2">Кол. конт.</th>
+            <th colspan="2">Нач. пер.</th>
+            <th rowspan="2">Начисл.</th>
+            <th rowspan="2">Опл.</th>
+            <th rowspan="2">Пер.</th>
+            <th colspan="2">Кон. пер.</th>
+        </tr>
+        <tr>
+            <th>Дебит</th>
+            <th>Кредит</th>
+            <th>Дебит</th>
+            <th>Кредит</th>
+        </tr>
+        @foreach(var item in Model.Report)
+        {
+            <tr>
+                <td>@(item.ControllerId > 0 ? Url.User(item.ControllerId, item.ControllerName) : new MvcHtmlString("Без контроллера"))</td>
+                <td>@item.ContractsCount</td>
+                <td>@item.StartDebit.ToString("0.00")</td>
+                <td>@item.StartCredit.ToString("0.00")</td>
+                <td>@item.BilledAmount.ToString("0.00")</td>
+                <td>@item.TransactionsAmount.ToString("0.00")</td>
+                <td>@item.SystemTransactionsAmount.ToString("0.00")</td>
+                <td>@item.EndDebit.ToString("0.00")</td>
+                <td>@item.EndCredit.ToString("0.00")</td>
+            </tr>
+        }
+        <tr>
+            <th>Итого</th>
+            <th>@Model.Total.ContractsCount</th>
+            <th>@Model.Total.StartDebit.ToString("0.00")</th>
+            <th>@Model.Total.StartCredit.ToString("0.00")</th>
+            <th>@Model.Total.BilledAmount.ToString("0.00")</th>
+            <th>@Model.Total.TransactionsAmount.ToString("0.00")</th>
+            <th>@Model.Total.SystemTransactionsAmount.ToString("0.00")</th>
+            <th>@Model.Total.EndDebit.ToString("0.00")</th>
+            <th>@Model.Total.EndCredit.ToString("0.00")</th>
+        </tr>
+    </table>
+    
+}

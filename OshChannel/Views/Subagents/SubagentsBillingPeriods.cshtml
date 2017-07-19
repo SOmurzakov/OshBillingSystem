@@ -1,0 +1,62 @@
+﻿@using OshChannel.Helpers
+@model OshBusinessModel.Da.SubagentsBillingPeriods.SubagentsBillingPeriodsModel
+
+@{
+    ViewBag.Title = Model != null ? "Начисления по субагентам за " + Model.CurrentBillingPeriodName : "Счета не выставлялись";
+    
+}
+
+<ul class="breadcrumb">
+    @ViewBag.Title
+</ul>
+
+@if (Model == null)
+{
+    <p>Счета не выставлялись</p>
+}
+else
+{
+    <form class="form-inline" action="@Url.Action("SubagentsBillingPeriods", "Subagents")">
+        <label style="margin-right: 20px;" for="period">Период</label>
+        <select name="periodId" class="span2" style="margin-right: 20px;" id="period">
+            @foreach (var period in Model.Periods)
+            {
+                <option value="@period.BillingPeriodId"@Html.If(period.BillingPeriodId == Model.CurrentBillingPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+            }
+        </select>
+        <button type="submit" class="btn btn-primary">Обновить</button>
+    </form>
+
+    <h3 class="h2margin">Не системные</h3>
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th>Субагент</th>
+            <th style="width: 300px; text-align: right;">Сумма (сом)</th>
+        </tr>
+        
+        @foreach (var subagent in Model.Subagents.Where(s => !s.IsSystem))
+        {
+            <tr>
+                <td>@subagent.SubagentName</td>
+                <td style="text-align: right;">@subagent.Amount.ToString("0.00")</td>
+            </tr>
+        }
+    </table>
+    
+    <h3 class="h2margin">Системные</h3>
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th>Субагент</th>
+            <th style="width: 300px; text-align: right;">Сумма (сом)</th>
+        </tr>
+        
+        @foreach (var subagent in Model.Subagents.Where(s => s.IsSystem))
+        {
+            <tr>
+                <td>@subagent.SubagentName</td>
+                <td style="text-align: right;">@subagent.Amount.ToString("0.00")</td>
+            </tr>
+        }
+    </table>
+}
+

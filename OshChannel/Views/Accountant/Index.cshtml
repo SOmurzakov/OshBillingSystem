@@ -1,0 +1,97 @@
+﻿@{
+    ViewBag.Title = "Бухгалтер";
+}
+
+<div class="userMenu">
+    
+    @Html.Partial("ShortSearchComponentPartial")
+    
+    <div class="row bottomMargin">
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("Debtors", "Contracts", new { threshold = Settings.Get("Debtors.DefaultFilterValue") })">Сводный отчет</a></h2>
+            <p>Сводный отчет по контрактам</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("ReportByControllers", "Accountant")">Отчет по контроллерам</a></h2>
+            <p>Финансовый отчет по контроллерам за указанный период</p>
+        </div>
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("ReportByAreas", "Accountant")">Отчет по участкам</a></h2>
+            <p>Финансовый отчет по участкам за указанный период</p>
+        </div>
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("ReportByTariffs", "Accountant")">Отчет по тарифам</a></h2>
+            <p>Финансовый отчет по тарифам за указанный период</p>
+        </div>
+
+    </div>
+
+    <div class="row bottomMargin">
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("FundRaisingPlan", "Accountant")">План по сбору денег</a></h2>
+            <p>Отчет по выполнению плана по сбору денег</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("Reconciliation", "Accountant")">Сверка касс</a></h2>
+            <p>Сверка финансовых поступлений по кассам, контроллерам и субагентам</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("StatementFor1C", "Accountant", new {date = DateTime.Today})">Выписка для 1С</a></h2>
+            <p>Выписка для 1С</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("Sync1C", "Accountant")">Синхронизация 1С</a></h2>
+            <p>Синхронизация 1С бухгалтерии</p>
+        </div>
+
+    </div>
+    
+    <div class="row bottomMargin">
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("ReconciliationByControllers", "Accountant")">Расш. сверка касс</a></h2>
+            <p>Ведомость о поступлении доходов</p>
+        </div>
+
+        <div class="span3">
+            <h2><a href='@Url.Action("Index", "Invoices")'>Серии счет-фактур</a></h2>
+            <p>Управление сериями счет-фактур</p>
+        </div>
+
+        <div class="span3">
+            <h2>@Helpers.Link(Url.Action("InvoicesByPeriod", "Invoices"), "Рееср счетов-фактур")</h2>
+            <p>Отчет по выданным счет-фактурам</p>
+        </div>
+
+        <div class="span3">
+            <h2>@Helpers.Link(Url.Action("PrintInvoices", "CustomerCare"), "Печать счет-фактур")</h2>
+            <p>Печать счет-фактур</p>
+        </div>
+
+    </div>
+
+    <div class="row bottomMargin">
+        
+        <div class="span3">&nbsp;</div>
+
+        <div class="span3">
+            <h2><a href="@Url.Action("Index", "Subagents")">Субагенты</a></h2>
+            <p>Список зарегистрированных субагентов</p>
+        </div>
+        
+        <div class="span3">
+            <h2><a href="@Url.Action("SubagentsBillingPeriods", "Subagents")">Субагенты - Закрытые периоды</a></h2>
+            <p>Статистика по закрытым периодам</p>
+        </div>
+
+    </div>
+
+</div>

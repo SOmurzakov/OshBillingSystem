@@ -1,0 +1,1075 @@
+﻿body {
+    margin-top: 10px !important;
+}
+
+.bold { font-weight: bold;}
+
+.loginFormContainer {
+    width: 300px !important;
+    margin: 50px auto !important;
+}
+
+.loginFormContainer .well {
+    padding-left: 35px;
+    padding-top: 35px;
+}
+
+.userMenu {
+    margin: 75px 0 0 0;
+}
+
+.userMenu h1 {
+    text-align: center;
+}
+
+.userMenu p.intro {
+    color: #999;
+    font-size: 18px;
+    text-align: center;
+    margin: 0 0 75px 0;
+}
+
+.userMenu i {
+    float: left;
+    margin: 7px 10px 0 0;
+    opacity: .8;
+}
+
+.userMenu h2 {
+    font-size: 22px;
+}
+
+
+.myicon-users {
+    background-image: url('Images/glyphicons_042_group.png');
+    display: block;
+    width: 35px;
+    height: 22px;
+}
+
+.myicon-settings {
+    background-image: url('Images/glyphicons_280_settings.png');
+    display: block;
+    width: 24px;
+    height: 24px;
+}
+
+.databaseFilter label {
+    line-height: 18px;
+    margin-bottom: 5px;
+}
+
+.nomargin {
+    margin: 0 !important;
+}
+
+.searchContract {
+    margin: 30px;
+    text-align: center;
+}
+
+.searchContract input {
+    margin: 0 !important;
+}
+
+.searchResults .shortHelp {
+    width: 280px;
+    margin: 0 auto;
+    margin: 0 auto;
+}
+
+.debt, .debtSuccess {
+    font-size: 20px;
+    color: white;
+    background-color: orange !important;
+}
+
+.debtSuccess {
+    background-color: yellowgreen !important;
+}
+
+.bill {
+    width: 20cm !important;
+    height: 7cm !important;
+    background-color: white !important;
+    border: 0.05cm dotted black !important;
+    font-size: 8pt;
+    line-height: 8pt;
+    position: relative;
+}
+
+.bill * .relative {
+    position: relative;
+    height: auto;
+}
+
+.bill .our,
+.bill .our .relative {
+    height: 5cm;
+    width: 7cm;
+}
+
+.bill .our {
+    position: absolute;
+    top: 1cm;
+    right: -1cm;
+    border-bottom: 0.05cm dotted black !important;
+    -webkit-transform: rotate(90deg);    
+}
+
+.bill .their,
+.bill .their .relative {
+    height: 7cm;
+    width: 15cm;
+}
+
+.bill .their {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.bill .their .company {
+    width: auto;
+    position: absolute;
+    left: 0.3cm;
+    top: 0.3cm;
+}
+
+.bill .our * .company {
+    position: absolute;
+    top: 0.3cm;
+    left: 0.3cm;
+}
+
+.bill .backcontacts {
+    position: absolute;
+    bottom: 0.3cm;
+    left: 0.3cm;
+}
+
+.bill .identifierWrap {
+    position: absolute;
+    left: 5cm;
+    top: 1.1cm;
+
+    font-size: 6pt;
+    line-height: 6pt;
+}
+
+.bill .identifier {
+    position: absolute;
+    left: 5cm;
+    top: 0.0cm;
+    
+    font-family: 'Free 3 of 9 Extended';
+    font-size: 36pt;
+    line-height: 36pt;
+}
+
+.bill .amountToPay {
+    position: absolute;
+    bottom: 0.3cm;
+    right: 0.3cm;
+    font-size: 10pt;
+    line-height: 10pt;
+}
+
+.bill .amountToPay span {
+    display: inline-block;
+    border: 0.05cm solid black;
+    padding: 0.2cm;
+    font-weight: bold;
+}
+
+.bill .their .amountToPay span {
+/*
+    background-color: orange;
+*/
+}
+
+.bill .contractDetails {
+    position: absolute;
+    left: 5cm;
+    top: 1.5cm;
+}
+
+.bill .contractDetailsValues {
+    position: absolute;
+    left: 6.5cm;
+    top: 1.5cm;
+}
+
+.bill .our .contractDetails {
+    left: 0.3cm;
+}
+
+.bill .our .contractDetailsValues {
+    left: 1.8cm;
+}
+
+.bill .their .contractDetails, .bill .their .contractDetailsValues {
+     top: 0.3cm;
+}
+
+.bill .tariff {
+    position: absolute;
+    width: 4.5cm;
+    left: 0.3cm;
+    top: 1.7cm;
+}
+
+.bill .calculator {
+    position: absolute;
+    left: 5cm;
+    top: 1.7cm;
+}
+
+.bill .calculator table {
+}
+
+.bill .calculator table td {
+    padding: 0.07cm;
+    border: 0.05cm solid black;
+    width: 1.7cm;
+}
+
+.bill .calculator table td.first{
+    width: 1cm !important;
+}
+
+.bill .calculator table td.last{
+    text-align: right;
+}
+
+.bill .calculator table tr.first td {
+    text-align: center !important;
+}
+
+
+
+.reconciliationAmount {
+    width: 150px;
+    text-align: right;
+}
+
+.bottomMargin {
+    margin-bottom: 50px;
+}
+
+.linkLocal {
+    border-bottom: 1px dashed;
+}
+
+.linkLocal:hover {
+    text-decoration: none;
+}
+
+.h2margin {
+    margin: 20px 0;
+}
+
+.control-description {
+    display: inline-block !important;
+    height: 18px !important;
+    vertical-align: bottom !important;
+    text-align: right; 
+    margin-right: 10px;
+}
+
+.footer {
+    padding: 70px 0;
+    margin-top: 70px;
+    border-top: 1px solid #E5E5E5;
+    background-color: whiteSmoke;
+}
+
+.footer p {
+    margin-bottom: 0;
+    color: #777;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.visaRequired, .visaRequired td {
+    background-color: #fcb !important;
+}
+
+.visaDeclined, .visaDeclined td {
+    background-color: #fc8 !important;
+}
+
+select {
+    border-radius: 3px !important;
+}
+
+.checkBoxLabel {
+    display: inline-block !important; 
+    line-height: 18px !important; 
+    height: 18px !important; 
+    vertical-align: bottom !important; 
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.checkBoxLabel input {
+    display: inline-block !important; 
+    line-height: 18px !important; 
+    height: 18px !important;
+    vertical-align: middle !important; 
+    margin: 0 5px 0 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.areasCanvas {
+    width: auto;
+    background-color: whitesmoke;
+    padding: 25px 50px 50px 50px;
+}
+
+.areasCanvas p {
+    margin-bottom: 25px;
+}
+
+
+.areasList {
+    border-radius: 5px;
+    border: 1px dashed white;
+    background-color: #fff;
+    padding: 20px;
+    width: 200px;
+    float: left;
+    margin-right: 20px;
+    margin-bottom: 20px;
+}
+
+.areasList ul {
+    margin: 0;
+    list-style: none;
+    padding: 5px;
+}
+
+.areasList ul li {
+    margin: 0px;
+    padding: 0px;
+    display: block;
+    border-radius: 5px;
+    margin: 5px 0;
+    padding: 10px;
+    width: auto;
+    background-color: #eee;
+}
+
+.areasListSortablePlaceholder {
+    border: 2px dashed #ccc !important;
+    background-color: white !important;
+    height: 15px;
+}
+
+.areasList span {
+    display: block;
+    font-size: 12pt;
+    font-weight: bold;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+
+
+.makePayment {
+    margin-top: 25px;
+}
+
+.preBillDiv {
+    text-align: center;
+    margin: 25px 0;
+}
+
+.newbill {
+    margin: 0 auto;
+    width: 20cm;
+    min-height: 7cm;
+    height: auto;
+    border: 0.05cm solid black;
+    position: relative;
+    font-size: 7pt;
+    line-height: 7pt;
+    text-align: left;
+    overflow: hidden;
+}
+
+.newbill.oshbill {
+    height: auto;
+    min-height: 0;
+    font-family: 'Times';
+    font-size: 12px;
+    line-height: 12px;
+}
+
+.newbill .their {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 13cm;
+    height: 7cm;
+    border-right: 0.05cm dashed black;
+}
+
+.newbill .our {
+    position: absolute;
+    top: 0;
+    left: 13cm;
+    width: 7cm;
+    height: 7cm;
+}
+
+.newbillcompanyname {
+    position: absolute;
+    left: 0.2cm;
+    top: 0.2cm;
+    width: 4cm;
+}
+
+.newbillcompanyinfo {
+    position: absolute;
+    left: 0.2cm;
+    bottom: 0.2cm;
+}
+
+.newbill h5 {
+    font-size: 10pt;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.contractInfo {
+    position: absolute;
+    left: 0.2cm;
+    top: 1.5cm;
+}
+
+.contractInfoTable {
+    position: absolute;
+    left: 0.2cm;
+    top: 1.5cm;
+}
+
+.contractInfoTable table {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    width: 4cm;
+}
+
+.contractInfoTable table td {
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+}
+
+.contractInfoTable table td.keyName {
+    width: 1.3cm;
+}
+
+.contractInfoValues {
+    position: absolute;
+    left: 1.5cm;
+    top: 1.5cm;
+}
+
+.newbill.subscriber .subscriberName {
+    position: absolute;
+    left: 3cm;
+    top: 0.7cm;
+}
+
+
+.contractBillMeters {
+    position: absolute;
+    left: 0.2cm;
+    top: 4.3cm;
+}
+
+.contractBillMeters table {
+    margin-top: 0.1cm;
+}
+
+.contractBillMeters table td {
+    border: 0.03cm solid black;
+    padding: 0.1cm;
+    text-align: center;
+}
+
+.newbilltable {
+    position: absolute;
+    right: 0.2cm;
+    top: 0.2cm;
+}
+
+.subscriber .newbilltable {
+    right: auto;
+    left: 0.2cm;
+    top: 2cm;
+}
+
+.newbilltable td, .newbilltable th {
+    border: 0.03cm solid black;
+    padding: 0.1cm;
+}
+.newbilltable th {
+    text-align: center;
+    font-weight: normal;
+}
+
+.newbill .col1 {
+    width: 2cm;
+}
+
+.newbill .col2 {
+    width: 2cm;
+}
+
+.newbill .col3 {
+    width: 2.5cm;
+}
+
+.newbill .col4 {
+    width: 2cm;
+}
+
+.newbill.subscriber td.col4, .newbill.subscriber td.col5, .newbill.subscriber td.col6 {
+    text-align: right;
+}
+
+.newbill .col5, .newbilltable table td.col5 {
+    width: 1.5cm;
+    text-align: right !important;
+}
+
+.newbill .col6 {
+    width: 1.5cm;
+}
+
+.newbillamounttopay {
+    position: absolute;
+    bottom: 0;
+    right: 0.2cm;
+    font-size: 12pt;
+}
+
+.newbillamounttopay span {
+    display: inline-block;
+    font-size: 10pt;
+}
+
+.newbillamounttopay h5 {
+    font-size: 12pt;
+    font-weight: bold;
+    display: inline-block;
+    border: 0.05cm solid black;
+    padding: 0.1cm 0.2cm;
+    margin-left: 0.2cm;
+}
+
+.our .newbillamounttopay span {
+    display: block;
+    padding-left: 10px;
+}
+
+.nobillquestion {
+    position: absolute;
+    top: 0cm;
+    left: 0cm;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    color: skyblue;
+    font-size: 200pt;
+    line-height: 200pt;
+    vertical-align: middle;
+}
+
+.nobill {
+    position: absolute;
+    top: 0cm;
+    left: 0cm;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    color: steelblue;
+    font-size: 20pt;
+    line-height: 200pt;
+    vertical-align: middle;
+}
+
+.preInvoice {
+    width: 21.1cm;
+    min-height: 29.7cm;
+    border: 0.05cm solid black;
+    margin: 0.5cm auto;
+}
+
+.invoice {
+    width: 17.4cm;
+    height: auto;
+    margin: 0 auto;
+    font: 10pt Arial;
+    margin-top: 1cm;
+}
+
+.invoicePart {
+    width: 17.34cm;
+    height: 5.4cm;
+    border: 0.3mm solid black;
+    position: relative;
+    margin-bottom: 0.1cm;
+}
+
+.invoiceRemarks {
+    font-size: 6pt;
+    margin-bottom: 1.8cm;
+    line-height: 8pt;
+}
+
+.invoiceFormName {
+    position: absolute;
+    left: 0.2cm;
+    top: 0.1cm;
+    font-size: 8pt;
+    width: 2.4cm;
+    text-align: center;
+    line-height: 9pt;
+}
+
+.invoiceTitle {
+    position: absolute;
+    left: 9.3cm;
+    top: 0.25cm;
+    font-weight: bold;
+    font-size: 8pt;
+}
+
+.invoiceKyrgyzRepublic {
+    position: absolute;
+    left: 3.4cm;
+    top: 0.25cm;
+    font-weight: bold;
+    font-size: 8pt;
+}
+
+.invoiceSeriesValue {
+    position: absolute;
+    left: 15.5cm;
+    top: 0.25cm;
+    font-weight: bold;
+    font-size: 8pt;
+}
+
+.invoiceNumberValue {
+    position: absolute;
+    left: 13.5cm;
+    top: 0.25cm;
+    font-weight: bold;
+    font-size: 8pt;
+}
+
+.invoiceEmblem {
+    position: absolute;
+    left: 8cm;
+    top: 0.05cm;
+}
+
+.invoiceEmblem img { width: 0.7cm;height: 0.7cm;}
+
+.invoicePartNumber {
+    position: absolute;
+    left: 16.9cm;
+    top: 0.175cm;
+    font-weight: bold;
+    font-size: 12pt;
+}
+
+.invoiceDate {
+    position: absolute;
+    left: 10cm;
+    top: 0.8cm;
+    font-weight: bold;
+    font-size: 9pt;
+}
+
+.invoiceNumber {
+    position: absolute;
+    left: 4.1cm;
+    top: 0.8cm;
+    font-weight: bold;
+    font-size: 9pt;
+}
+
+.invoiceLS {
+    position: absolute;
+    left: 0.15cm;
+    top: 0.8cm;
+    font-weight: bold;
+    font-size: 9pt;
+}
+
+.invoiceLSValue {
+    position: absolute;
+    left: 0.6cm;
+    padding: 0 0.1cm 0.02cm 0.1cm;
+    top: 0.8cm;
+    border: 0.05cm solid black;
+    border-top: none;
+    font-size: 9pt;
+    font-weight: bold;
+}
+
+.invoice102 {
+    position: absolute;
+    left: 3.2cm;
+    top: 0.8cm;
+    padding: 0 0.1cm 0.02cm 0.1cm;
+    border: 0.05cm solid black;
+    border-top: none;
+    font-size: 9pt;
+    font-weight: bold;
+}
+
+.invoice103 {
+    position: absolute;
+    left: 9cm;
+    top: 0.8cm;
+    padding: 0 0.1cm 0.02cm 0.1cm;
+    border: 0.05cm solid black;
+    border-top: none;
+    font-size: 9pt;
+    font-weight: bold;
+}
+
+.invoiceDateValue {
+    position: absolute;
+    left: 11.2cm;   
+    top: 0.8cm;
+    display: inline-block;
+    font-weight: normal;
+    font-size: 8pt;
+}
+
+.invoiceDateValue span {
+    padding: 0 0.02cm 0.02cm 0.1cm;
+    padding-right: 0;
+    border: 0.05cm solid black;
+    border-top: none;
+    letter-spacing: 0.1cm;
+    margin-right: 0.2cm;
+    font-weight: normal;
+    font-size: 9pt;
+}
+
+.invoiceContractsTable {
+    width: 17.4cm;
+    height: auto;
+    padding: 0;
+    margin: 0;
+/*
+    background-color: yellow;
+*/
+}
+
+.invoiceContractsTable table {
+    width: 100%;
+    border-collapse: collapse;
+    padding: 0;
+    margin: 0;
+}
+
+.invoiceContractsTable th {
+    font-size: 6pt;
+    font-weight: normal;
+    text-align: center;
+    padding: 0;
+}
+
+.invoiceContractsTable td {
+    text-align: center;
+    padding: 0;
+    font-size: 8pt;
+}
+
+.invoiceContractsTable table, .invoiceContractsTable th, .invoiceContractsTable td {
+    border: 0.3mm solid black;
+}
+
+.mpTable { font-size: 8pt;line-height: 1cm;margin-top: 0.1cm !important;}
+.mpTable td { width: 20%;}
+.mpTable, .mpTable td { border-top: none;}
+
+.horlines .line {
+    position: absolute;
+    left: 0;
+    width: 17.34cm;
+    height: 0.05cm;
+    border-top: 0.03cm solid black;
+}
+
+
+.horlines .line1 { top: 0.8cm; }
+.horlines .line2 { top: 1.3cm; }
+.horlines .line3 { top: 1.6cm; }
+.horlines .line4 { top: 2.4cm; }
+.horlines .line5 { top: 2.9cm; }
+.horlines .line6 { top: 3.5cm; }
+.horlines .line7 { top: 4.1cm; }
+.horlines .line8 { top: 4.6cm; }
+.horlines .line9 { top: 5.4cm; }
+.horlines .line10 { top: 6cm; }
+.horlines .line11 { top: 6.5cm; }
+.horlines .line12 { top: 7.1cm; }
+.horlines .line13 { top: 7.6cm; }
+.horlines .line14 { top: 8.1cm; }
+.horlines .line15 { top: 8.5cm; }
+.horlines .line16 { top: 9cm; }
+.horlines .line17 { top: 9.5cm; }
+.horlines .line18 { top: 5.7cm;left: 11.7cm;width: 2.8cm;}
+
+.vertlines .line {
+    position: absolute;
+    width: 0.05cm;
+    border-left: 0.03cm solid black;
+}
+
+.vertlines .line1 { top: 2.9cm;left: 0.6cm;height: 1.7cm;}
+.vertlines .line2 { top: 1.3cm;left: 9cm;height: 3.3cm;}
+.vertlines .line3 { top: 2.9cm;left: 10cm;height: 1.7cm;}
+
+.vertlines .line4,
+.vertlines .line5,
+.vertlines .line6,
+.vertlines .line7,
+.vertlines .line8,
+.vertlines .line9,
+.vertlines .line11
+{ top: 5.4cm;height: 4.1cm;}
+
+.vertlines .line4 { left: 1.3cm;}
+.vertlines .line5 { left: 4.7cm;}
+.vertlines .line6 { left: 5.7cm;}
+.vertlines .line7 { left: 7.6cm;}
+.vertlines .line8 { left: 10cm;}
+.vertlines .line9 { left: 11.7cm;}
+.vertlines .line10 { left: 12.6cm;top: 5.7cm;height: 3.8cm;}
+.vertlines .line11 { left: 14.5cm;}
+.vertlines .line12 { left: 3.6cm;top: 9.5cm;height: 0.8cm;}
+
+.invoiceDeliveryDate { position: absolute;left: 0.1cm;top: 4.6cm;margin-top: 0.3cm;font-size: 6pt;font-weight: bold;}
+.paymentType { position: absolute;left: 11.4cm;top: 4.6cm;margin-top: 0.3cm;font-size: 6pt;font-weight: bold;}
+.paymentTypeValue, .invoiceDeliveryDateValue, .invoiceDeliveryTypeValue { position: absolute;left: 13.7cm;top: 4.6cm;margin-top: 0.2cm;font-size: 6pt;font-weight: bold;width: 2.8cm;border: 0.05cm solid black;padding: 0.05cm 0.05cm 0.05cm 0.5cm;}
+.paymentTypeNum, .invoiceDeliveryDateNum, .invoiceDeliveryTypeNum { left: 13.7cm;top: 4.6cm;margin-top: 0.2cm;}
+
+.invoiceDeliveryDateNum, .invoiceDeliveryDateValue { left: 3.2cm;}
+.invoiceDeliveryTypeNum, .invoiceDeliveryTypeValue { left: 6.56cm;}
+
+.fieldDesc { font-size: 5pt;}
+.fieldValue { font-size: 10pt;text-align: center;vertical-align: middle;}
+.fieldValueNum { letter-spacing: 0.2cm;}
+.fieldNum { text-align: right;font-size: 5pt;border: 0.05cm solid black;border-top: none;border-left: none;position: absolute;padding: 0.01cm 0.05cm;}
+
+.invoiceSupplier, .invoiceSupplier1 { position: absolute;left: 0;top: 1.3cm;width: 2.3cm;padding: 0.05cm;border-right: 0.05cm solid black;height: 0.2cm;}
+.invoiceSupplier1 { left: 9cm;}
+.invoiceSupplierValue, .invoiceSupplierValue1 { position: absolute;left: 2.4cm;top: 1.3cm; width: 5.3cm;height: 0.3cm;line-height: 0.35cm;font-size: 8pt;}
+.invoiceSupplierValue1 { left: 11.3cm;}
+
+.invoiceSupplierName {top: 1.6cm; height: 0.7cm;}
+.invoiceSupplierAddress { top: 2.4cm; height: 0.5cm;}
+.invoiceSupplierRNI  { top: 2.9cm; height: 0.6cm;}
+.invoiceSupplierBank { top: 3.5cm;height: 0.6cm;}
+.invoiceSupplierBankAccount { top: 4.05cm;height: 0.5cm;}
+
+.rightValue, .leftValue {display: table-cell !important; position: absolute;line-height: normal; text-align: center; margin-top: 0.05cm;}
+.rightValue {position: absolute; width: 6.4cm;left: 10cm;}
+.leftValue {position: absolute; width: 8.4cm;left: 0cm;}
+.valueValue {vertical-align: bottom;}
+.margin35 { margin-top: 0.35cm;}
+.margin20 { margin-top: 0.2cm;}
+.margin15 { margin-top: 0.15cm;}
+.margin10 { margin-top: 0.1cm;}
+
+.invoiceSupplierCode, .invoiceSupplierCodeMfo, .invoiceSupplierAccount { position: absolute;left: 0;top: 4cm;width: 1.2cm;height: 0.7cm;text-align: center;line-height: 0.7cm;vertical-align: middle;}
+.invoiceSupplierCodeValue, .invoiceSupplierCodeMfoValue, .invoiceSupplierAccountValue { position: absolute;left: 1.2cm;top: 4cm;width: 1.4cm;height: 0.7cm;line-height: 0.7cm;text-align: left;padding-left: 0.2cm;}
+.invoiceSupplierCodeMfo { top: 4.7cm;}
+.invoiceSupplierCodeMfoValue { top: 4.7cm;width: 4.4cm;}
+.invoiceSupplierAccount { top: 5.4cm;line-height: normal;margin-top: 0.2cm;}
+.invoiceSupplierAccountValue { top: 5.4cm;}
+
+.num202 { left: 0cm;top: 1.6cm;width: 0.5cm;}
+.num203 { left: 0cm;top: 2.4cm;width: 0.5cm;}
+.num204 { left: 0cm;top: 2.9cm;width: 0.5cm;}
+.num205 { left: 0cm;top: 3.5cm;width: 0.5cm;}
+.num206 { left: 0cm;top: 4.1cm;width: 0.5cm;}
+.num302 { left: 9cm;top: 1.6cm;width: 0.9cm;}
+.num303 { left: 9cm;top: 2.4cm;width: 0.9cm;}
+.num304 { left: 9cm;top: 2.9cm;width: 0.9cm;}
+.num305 { left: 9cm;top: 3.5cm;width: 0.9cm;}
+.num306 { left: 9cm;top: 4.1cm;width: 0.9cm;}
+
+.invoiceTableHeader { font-size: 5pt;line-height: 5pt;text-align: center;position: absolute;}
+.invoiceCellValue {position: absolute;text-align:left;font-size: 7pt;font-weight: bold;margin-top: 0.2cm;margin-left: 0.1cm;}
+.invoiceCellValueRight {position: absolute;text-align:right;font-size: 7pt;font-weight: bold;margin-top: 0.2cm;}
+.numRow-0 { top: 5.4cm;}
+.numRow-1 { top: 6cm;}
+.numRow-2 { top: 6.5cm;}
+.numRow-3 { top: 7.1cm;}
+.numRow-4 { top: 7.6cm;}
+.numRow-5 { top: 8.1cm;}
+.numRow-6 { top: 8.5cm;}
+.numRow-7 { top: 9cm;}
+.numCol-0 { left: 0cm;}
+.numCol-1 { left: 1.3cm;}
+.numCol-2 { left: 4.7cm;}
+.numCol-3 { left: 5.7cm;}
+.numCol-4 { left: 7.6cm;}
+.numCol-5 { left: 10cm;}
+.numCol-6 { left: 11.7cm;}
+.numCol-7 { left: 12.6cm;}
+.numCol-8 { left: 14.5cm;}
+.col-0 { width: 1.3cm;}
+.col-1 { width: 3.4cm;}
+.col-2 { width: 1cm;}
+.col-3 { width: 1.9cm;}
+.col-4 { width: 2.4cm;}
+.col-5 { width: 1.7cm;}
+.col-6 { width: 0.9cm;}
+.col-7 { width: 1.9cm;}
+.col-8 { width: 2.8cm;}
+
+.invoiceSupplierGroup { position: absolute;left: 0;top: 0;}
+.invoiceClient { position: absolute;left: 9.6cm;top: 0;}
+
+.invoiceUgkns, .invoiceUgknsValue { position: absolute;left: 2.6cm;top: 4cm;width: 7cm;height: 0.7cm;line-height: 0.5cm;text-align: center;}
+.invoiceUgkns { margin-top: 0.35cm;}
+
+.invoiceBank, .invoiceBankValue { position: absolute;left: 5.6cm;top: 4.7cm;width: 4cm;height: 0.7cm;line-height: 0.5cm;text-align: center;}
+.invoiceBank { margin-top: 0.35cm;}
+
+.invoiceTh { position: absolute;left: 0cm;top: 6.6cm;font-size: 5pt;text-align: center;}
+.invoiceTh div { position: absolute;height: 1cm;}
+.th1 { left: 0cm;width: 4cm;margin-top: 0.3cm;}
+.th2 { left: 4cm;width: 1.4cm;margin-top: 0.3cm;}
+.th3 { left: 5.4cm;width: 1.5cm;margin-top: 0.3cm;}
+.th4 { left: 6.9cm;width: 1.8cm;margin-top: 0.3cm;}
+.th5 { left: 8.7cm;width: 2.3cm;margin-top: 0.3cm;}
+.th6 { left: 11.1cm;width: 2.3cm;margin-top: 0.2cm;}
+.th7 { left: 13.4cm;width: 3cm;margin-top: 0.1cm;}
+.th8 { left: 13.4cm;top: 0.4cm;width: 1cm;margin-top: 0.2cm;}
+.th9 { left: 14.4cm;top: 0.4cm;width: 2cm;margin-top: 0.2cm;}
+.th10 { left: 16.4cm;width: 3cm;margin-top: 0.2cm;}
+
+.invoiceRow1 { position: absolute;left: 0cm;top: 7.6cm;text-align: center;}
+.invoiceRow1 div { position: absolute;height: 0.7cm;}
+.td1 { left: 0cm;width: 4cm;margin-top: 0.2cm;}
+.td2 { left: 4cm;width: 1.4cm;margin-top: 0.2cm;}
+.td3 { left: 5.4cm;width: 1.5cm;margin-top: 0.2cm;}
+.td4 { left: 6.9cm;width: 1.8cm;margin-top: 0.2cm;}
+.td5 { left: 8.7cm;width: 2.3cm;margin-top: 0.2cm;}
+.td6 { left: 11.1cm;width: 2.3cm;margin-top: 0.2cm;}
+.td7 { left: 13.4cm;width: 3cm;margin-top: 0.2cm;}
+.td8 { left: 13.4cm;width: 1cm;margin-top: 0.2cm;}
+.td9 { left: 14.4cm;width: 2cm;margin-top: 0.2cm;}
+.td10 { left: 16.4cm;width: 3cm;margin-top: 0.2cm;}
+
+.invoiceRow2 { position: absolute;left: 0cm;top: 8.3cm;text-align: center;}
+.invoiceRow2 div, .invoiceRow3 div, .invoiceRow4 div, .invoiceRow5 div, .invoiceRow6 div, .invoiceRow7 div { position: absolute;height: 0.7cm;}
+
+.invoiceRow3 { position: absolute;left: 0cm;top: 8.9cm;text-align: center;}
+.invoiceRow3 .td1, .invoiceRow4 .td1, .invoiceRow5 .td1, .invoiceRow6 .td1, .invoiceRow7 .td1  { width: 5.4cm;}
+
+.invoiceRow4 { position: absolute;left: 0cm;top: 9.4cm;text-align: center;font-weight: bold;}
+.invoiceRow5 { position: absolute;left: 0cm;top: 9.9cm;text-align: center;font-weight: bold;}
+.invoiceRow6 { position: absolute;left: 0cm;top: 10.4cm;text-align: center;font-weight: bold;}
+.invoiceRow7 { position: absolute;left: 0cm;top: 10.9cm;text-align: center;font-weight: bold;}
+
+
+.invoiceLastRow { position: relative;left: 0;top: 0;width: 20cm;}
+.invoiceMP { position: absolute;left: 0;top: 0cm;width: 3.6cm;text-align: center;line-height: 0.7cm;font-size: 8pt;font-weight: bold;}
+.invoiceHead { position: absolute;left: 3.8cm;top: 0cm;text-align: left;line-height: 0.7cm;font-size: 8pt;font-weight: bold;}
+.invoiceAccountant { position: absolute;left: 9cm;top: 0cm;text-align: left;line-height: 0.7cm;font-size: 8pt;font-weight: bold;}
+
+.invoiceTaken { position: absolute;left: 0cm; top: 0.5cm;}
+.invoiceTaken .taken { position: absolute;left: 0.5cm;top: 0cm;font-weight: bold;}
+.invoiceTaken .takenName { position: absolute;left: 3.2cm;top: 0cm;}
+
+
+.bulkPaymentDiv table { width: auto;margin-bottom: 50px;}
+.bulkPaymentDiv th { text-align: left;}
+.bulkPaymentDiv td, .bulkPaymentDiv th { padding: 10px;}
+.bulkPaymentDiv label { margin-right: 5px;}
+.bulkPaymentDiv input { margin-right: 10px;margin-bottom: 0px !important;}
+
+.bulkPaymentGood { background-color: #efd; }
+.bulkPaymentBad { background-color: #fdd;}
+
+
+.print-only {
+    visibility: hidden;
+    display: none;
+}
+
+
+.makePayment.form-horizontal .control-label {
+    width: 120px;
+}
+
+.makePayment.form-horizontal .controls {
+    margin-left: 140px;
+}
+
+
+table.controllers {
+    width: 100%;
+}
+
+table.controllers th {
+    text-align: left;
+}
+table.controllers td {
+    width: 50%;
+}
+
+
+/* microclearfix */
+
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.cf:after {
+    clear: both;
+}
+
+/**
+ * For IE 6/7 only
+ * Include this rule to trigger hasLayout and contain floats.
+ */
+.cf {
+    *zoom: 1;
+}
+
+.search-contract-options {
+    margin: 10px; 
+    margin-left: -50px;
+}
+
+.search-contract-options a { margin-right: 20px;}
+.search-contract-options a span { border-bottom: 1px dotted black;}
+
+a.none-decoration:hover { text-decoration: none;}
+
+.subagent-radio { margin-right: 20px;}
+
+.fixed-table { table-layout: fixed;}

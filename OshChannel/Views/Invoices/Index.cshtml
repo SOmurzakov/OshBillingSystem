@@ -1,0 +1,58 @@
+﻿@model OshBusinessModel.Da.Invoices.InvoiceSeriesDa[]
+
+@{
+    ViewBag.Title = "Серии счет фактур";
+}
+
+<div class="well">
+    <h3 style="margin-bottom: 20px; margin-top: 0;">@ViewBag.Title</h3>
+    @Html.Partial("CreateSeriesButtonPartial")
+</div>
+
+<table class="table table-bordered table-striped">
+    <tr>
+        <th>Серия</th>
+        <th>Стартовый номер</th>
+        <th>Последний номер</th>
+        <th>Размер</th>
+        <th>Текущий номер</th>
+        <th>Уже выдано</th>
+        <th>Осталось</th>
+    </tr>
+    @foreach(var series in Model)
+    {
+        <tr>
+            <td><a href="javascript:void(0)" class="editSeries" data-seriesId="@series.Id" data-seriesNo="@series.SeriesNo" data-startId="@series.StartId" data-seriesLength="@series.SeriesLength">@series.SeriesNo</a></td>
+            <td>@series.SeriesNo-@series.StartId</td>
+            <td>@series.SeriesNo-@series.LastId</td>
+            <td>@series.SeriesLength шт.</td>
+            <td>@series.SeriesNo-@series.CurrentId</td>
+            <td>@series.AlreadyIssued шт.</td>
+            <td>@series.Left шт.</td>
+        </tr>
+    }
+</table>
+
+<script type="text/javascript">
+    
+    function editSeries(item) {
+        var id = item.attr('data-seriesId');
+        var seriesNo = item.attr('data-seriesNo');
+        var startId = item.attr('data-startId');
+        var seriesLength = item.attr('data-seriesLength');
+
+        $('#caption-editSeries').val('Изменить данные');
+        $('#save-editSeries').html('Сохранить');
+        $('#editSeries-id').val(id);
+        $('#editSeries-seriesNo').val(seriesNo);
+        $('#editSeries-startId').val(startId);
+        $('#editSeries-length').val(seriesLength);
+        $('#modal-editSeries').modal('show');
+    }
+
+    $(function () {
+        $('.editSeries').click(function () {
+            editSeries($(this));
+        });
+    });
+</script>

@@ -1,0 +1,10 @@
+d:\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshCommons\bin\Debug\OshCommons.dll
+d:\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshCommons\bin\Debug\OshCommons.pdb
+d:\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshCommons\obj\Debug\OshCommons.csprojResolveAssemblyReference.cache
+d:\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshCommons\obj\Debug\OshCommons.dll
+d:\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshCommons\obj\Debug\OshCommons.pdb
+d:\Work\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshCommons\bin\Debug\OshCommons.dll
+d:\Work\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshCommons\bin\Debug\OshCommons.pdb
+d:\Work\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshCommons\obj\Debug\OshCommons.dll
+d:\Work\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshCommons\obj\Debug\OshCommons.pdb
+d:\Work\_JA\TortoiseSources\Sources 2014-04-22\trunk\OshCommons\obj\Debug\OshCommons.csprojResolveAssemblyReference.cache

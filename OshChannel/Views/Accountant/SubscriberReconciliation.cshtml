@@ -1,0 +1,102 @@
+﻿@model OshBusinessModel.Da.Accountant.SubscriberReconciliationReport
+
+@{
+    ViewBag.Title = "Акт сверки между " + (Model != null ? Model.SubscriberName : "") + " и " + Settings.Get("Company.Name");
+    
+    if (Model == null)
+    {
+        <p>Счета не выставлялись</p>
+    }
+    else
+    {
+        <div class="well">
+            <form class="form-inline" action="@Url.Action("SubscriberReconciliation", "Accountant")" style="margin-bottom: 0;">
+                <input type="hidden" name="subscriberId" value="@Model.SubscriberId"/>
+                <h3 style="margin-bottom: 20px; margin-top: 0;">@ViewBag.Title</h3>
+                <div class="pull-right">
+                    <button type="submit" class="btn btn-primary">Обновить</button>
+                </div>
+                <label style="margin-right: 20px;" for="periodStart">Период</label>
+                <label style="" for="periodStart">с</label>
+                <select name="startPeriodId" class="span2" style="margin-right: 20px;" id="periodStart">
+                    @foreach (var period in Model.BillingPeriods)
+                    {
+                        <option value="@period.BillingPeriodId"@Html.If(period.BillingPeriodId == Model.StartPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                    }
+                </select>
+                <label style="" for="periodEnd">по</label>
+                <select name="endPeriodId" class="span2" style="margin-right: 20px;" id="periodEnd">
+                    @foreach (var period in Model.BillingPeriods)
+                    {
+                        <option value="@period.BillingPeriodId"@Html.If(period.BillingPeriodId == Model.EndPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                    }
+                </select>
+            </form>
+        </div>
+    
+        <div class="printCanvas">
+            
+            @if (Model.Bills.Length == 0)
+            {
+                <p>Счета не выставлялись</p>
+            }
+            else
+            {
+                <div class="print-only">
+                    <h3>
+                        @ViewBag.Title
+                        <br/>за период с @Model.BillingPeriods.FirstOrDefault(bp => bp.BillingPeriodId == Model.StartPeriodId).BillingPeriodName
+                         по @Model.BillingPeriods.FirstOrDefault(bp => bp.BillingPeriodId == Model.EndPeriodId).BillingPeriodName
+                    </h3>
+                </div>
+                
+                <table class="table table-bordered table-condensed">
+                    <tr>
+                        <th></th>
+                        <th colspan="2">@Settings.Get("Company.Name")</th>
+                        <th colspan="2">@Model.SubscriberName</th>
+                    </tr>
+                    <tr>
+                        <th style="width: 20%"></th>
+                        <th style="width: 20%">ДТ</th>
+                        <th style="width: 20%">КТ</th>
+                        <th style="width: 20%">ДТ</th>
+                        <th style="width: 20%">КТ</th>
+                    </tr>
+                    @for (int i=0; i<Model.Bills.Length; i++)
+                    {
+                        var bill = Model.Bills[i];
+                        <tr>
+                            <td colspan="5"><b>@bill.BillingPeriodName</b></td>
+                        </tr>
+                        if (i == 0)
+                        {
+                            <tr>
+                                <td><b>Сальдо на начало</b></td>
+                                <td>@Html.If(Model.Debt >= 0, Model.Debt.ToString("0.00"))</td>
+                                <td>@Html.If(Model.Debt < 0, Model.Debt.ToString("0.00"))</td>
+                                <td>@Html.If(Model.Debt < 0, Model.Debt.ToString("0.00"))</td>
+                                <td>@Html.If(Model.Debt >= 0, Model.Debt.ToString("0.00"))</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td>Начислено</td>
+                            <td>@bill.BilledAmount.ToString("0.00")</td>
+                            <td></td>
+                            <td></td>
+                            <td>@bill.BilledAmount.ToString("0.00")</td>
+                        </tr>
+                        <tr>
+                            <td>Оплата</td>
+                            <td></td>
+                            <td>@bill.PayedAmount.ToString("0.00")</td>
+                            <td>@bill.PayedAmount.ToString("0.00")</td>
+                            <td></td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    }
+}
+

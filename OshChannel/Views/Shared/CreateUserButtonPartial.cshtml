@@ -1,0 +1,135 @@
+﻿@using OshBusinessModel.Data
+@using OshChannel.Helpers
+
+@if (Auth.HasPermission(Permission.UsersCreate))
+{
+    <button class="btn btn-success" id="createUser">Создать</button>
+
+    <div id="modal-createUser" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Создать пользователя</h3>
+        </div>
+        <div class="modal-body">
+                
+            <div class="form-horizontal">
+                    
+                <div class="control-group">
+                    <label class="control-label" for="role">Роль</label>
+                    <div class="controls">
+                        <select id="role" style="border-radius: 3px">
+                            @foreach(var userType in UserType.UserTypes)
+                            {
+                                <option value="@userType.SemanticId">@userType.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="name">Имя</label>
+                    <div class="controls">
+                        <input type="text" id="name"/>
+                    </div>
+                </div>
+                    
+                <hr/>
+                    
+                <div class="control-group">
+                    <label class="control-label" for="passport">Паспорт</label>
+                    <div class="controls">
+                        <input type="text" id="passport"/>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="address">Адрес</label>
+                    <div class="controls">
+                        <input type="text" id="address"/>
+                    </div>
+                </div>
+                    
+                <div class="control-group">
+                    <label class="control-label" for="phone">Телефон</label>
+                    <div class="controls">
+                        <input type="text" id="phone"/>
+                    </div>
+                </div>
+                    
+                <hr/>
+
+                <div class="control-group">
+                    <label class="control-label" for="login">Логин</label>
+                    <div class="controls">
+                        <input type="text" id="login" />
+                    </div>
+                </div>
+                    
+                <div class="control-group">
+                    <label class="control-label" for="password">Пароль</label>
+                    <div class="controls">
+                        <input type="text" id="password"/>
+                    </div>
+                </div>
+                    
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Отмета</button>
+            <button class="btn btn-primary" id="save-createUser">Создать</button>
+        </div>
+    </div>
+        
+    <script type="text/javascript">
+
+        function createUser() {
+            var role = $('#role').val();
+            var name = $('#name').val();
+            var passport = $('#passport').val();
+            var address = $('#address').val();
+            var phone = $('#phone').val();
+            var login = $('#login').val();
+            var password = $('#password').val();
+
+            var json = JSON.stringify({ Role: role, Name: name, Passport: passport, Address: address, Phone: phone, Login: login, Password: password });
+
+            $.ajax({
+                url: '@Url.Action("CreateUserAjax", "Users")',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: json,
+                success: function (result) {
+
+                    if (result['Success']) {
+                        location.reload();
+                    } else {
+                        alert(result['Message']);
+                    }
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(jqXHR);
+                    alert(textStatus);
+                    alert(errorThrown);
+                }
+            });
+        }
+
+        function showModalCreateUser() {
+            $('#modal-createUser').modal('show');
+        }
+
+        $(function () {
+            $('#createUser').click(function () {
+                showModalCreateUser();
+            });
+
+            $('#save-createUser').click(function () {
+                createUser();
+            });
+        });
+
+    </script>
+}

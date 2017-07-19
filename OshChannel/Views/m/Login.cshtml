@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = "Вход в систему";
+    Layout = "~/Views/Shared/_LayoutMobile.cshtml";
+}
+
+<form action="@Url.Action("Login", "m")" method="POST">
+    <table columns="2">
+        <tr>
+            <td>Логин</td>
+            <td><input type="text" name="Login" value="controller"/></td>
+        </tr>
+        <tr>
+            <td>Пароль</td>
+            <td><input type="password" name="Password" value="controller"/></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td><input type="submit" value="Войти"/></td>
+        </tr>
+    </table>
+</form>

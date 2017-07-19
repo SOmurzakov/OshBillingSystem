@@ -1,0 +1,38 @@
+﻿@model OshBusinessModel.Da.Rootings.RootingsAreasDa[]
+
+@{
+    ViewBag.Title = "Обходной лист - выбор участка";
+}
+
+<ul class="breadcrumb">
+    @ViewBag.Title
+</ul>
+
+
+@if(Model.Length == 0)
+{
+    <p>За вами не закреплен ни один участок</p>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th></th>
+            <th>Участок</th>
+            <th>Активных абонентов</th>
+            <th>Из них с водомерами</th>
+            <th>Показания счетчика не предоставлены</th>
+        </tr>
+        @for(int i=0; i<Model.Length; i++)
+        {
+            var area = Model[i];
+            <tr>
+                <td>@(i+1)</td>
+                <td><a href="@Url.Action("RootingsStreets", "Controller", new {areaId = area.AreaId})">@area.AreaName</a></td>
+                <td>@area.OpenContractsCount</td>
+                <td>@area.ContractsWithMetersCount</td>
+                <td>@area.NoMetersValuesProvidedCount</td>
+            </tr>
+        }
+    </table>
+}

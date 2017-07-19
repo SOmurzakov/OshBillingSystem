@@ -1,0 +1,93 @@
+﻿@model OshBusinessModel.Da.FundRaisingPlan.FundRaisingPlanModel
+
+@{
+    ViewBag.Title = "План по сбору денег по населению";
+    var percent = Model.FundRaisingPlan.ToString("0.##");
+    var isPercent = Model.FundRaisingPlanIsPercent;
+}
+
+@if (Model == null)
+{
+    <h3>Счета не выставлялись</h3>
+}
+else
+{
+
+    <div class="well">
+
+        <h3 style="margin-bottom: 20px; margin-top: 0;">План по сбору денег по населению</h3>
+    
+        <div class="pull-right">
+            <button class="btn btn-primary" id="applyFilter">Построить</button>
+        </div>
+
+        <div class="form-inline">
+    
+            <label for="rootingPeriod">Период: </label>
+        
+            <select id="rootingPeriod" style="margin-right: 20px;">
+                <option value="-1">Выберите период...</option>
+                @foreach (var period in Model.BillingPeriods)
+                {
+                    <option value="@period.BillingPeriodId"@Html.If(Model.PeriodId == period.BillingPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                }
+            </select>
+        
+        </div>
+    
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#applyFilter').click(function () {
+                var periodId = $('#rootingPeriod').val();
+
+                if (periodId <= 0) {
+                    alert('Выберите период');
+                } else {
+                    window.location = 'FundRaisingPlan?periodId=' + periodId;
+                }
+            });
+        });
+    </script>
+
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th>Контроллер</th>
+            <th>Долг нач. мес.</th>
+            <th>Выставлено</th>
+            <th>
+                План
+                @if (@isPercent)
+                {
+                    <span>(@percent%)</span>
+                }
+            </th>
+            <th>Собрано (Оплачено)</th>
+            <th>Выполнение плана</th>
+        </tr>
+        @foreach(var controller in Model.Controllers)
+        {
+            <tr>
+                <td>@controller.ControllerName</td>
+                <td>@controller.StartBalance.ToString("0.00")</td>
+                <td>@controller.BilledAmount.ToString("0.00")</td>
+                <td>@controller.PlanAmount.ToString("0.00")</td>
+                <td>@controller.RaisedAmount.ToString("0.00")</td>
+                <td>@controller.Percent.ToString("0.#")%</td>
+            </tr>
+        }
+        @{
+            var total = Model.Total;
+        }
+        <tr>
+            <th>Итого</th>
+            <th>@total.StartBalance.ToString("0.00")</th>
+            <th>@total.BilledAmount.ToString("0.00")</th>
+            <th>@total.PlanAmount.ToString("0.00")</th>
+            <th>@total.RaisedAmount.ToString("0.00")</th>
+            <th>@total.Percent.ToString("0.#")%</th>
+        </tr>
+    </table>
+
+}

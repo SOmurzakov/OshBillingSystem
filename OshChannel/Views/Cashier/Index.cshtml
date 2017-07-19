@@ -1,0 +1,33 @@
+﻿@using OshChannel.Helpers
+
+@{
+    ViewBag.Title = "Кассир";
+}
+
+<div class="userMenu">
+    
+    <h1>Касса</h1>
+
+    @Html.Partial("ShortSearchComponentPartial")
+    
+    <div class="searchResults">
+    
+        <div class="shortHelp">
+            <p>Введите:</p>
+
+            <ul>
+                <li>Лицевой счет или номер контракта</li>
+                <li>Имя абонента</li>
+                <li>Адрес абонента или контракта</li>
+                <li>Номер телефона абонента или контракта</li>
+            </ul>
+        </div>
+    
+        <div class="shortHelp">
+        
+            <p>Либо воспользуйтесь <a href="@Url.Action("Dictionary", "Subscribers")">справочником абонентов</a>.</p>
+
+        </div>
+
+    </div>
+</div>

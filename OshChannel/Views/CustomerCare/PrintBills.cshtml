@@ -1,0 +1,152 @@
+﻿@model OshBusinessModel.Da.Bills.GetBillsForPrintingModel
+
+@{
+    ViewBag.Title = "Печать чеков";
+
+    if (Model == null)
+    {
+        <h3>Счета не выставлялись</h3>
+    }
+    else
+    {
+
+
+        <div class="well">
+
+            <h3 style="margin-top: 0; margin-bottom: 20px;">@ViewBag.Title</h3>
+            
+            <div class="pull-right">
+                <button class="btn btn-large btn-primary" id="applyFilter">Построить</button>
+            </div>
+
+            <div class="form-inline">
+    
+                <label for="rootingPeriod">Период: </label>
+        
+                <select id="rootingPeriod" style="margin-right: 20px;">
+                    <option value="-1">Выберите период...</option>
+                    @foreach (var period in Model.BillingPeriods)
+                    {
+                        <option value="@period.BillingPeriodId"@Html.If(Model.PeriodId == period.BillingPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                    }
+                </select>
+        
+                <label for="controller">Контроллер: </label>
+        
+                <select id="controller" style="margin-right: 20px;">
+                    <option value="-1">Все</option>
+                    @foreach (var controller in Model.Controllers)
+                    {
+                        <option value="@controller.UserId"@Html.If(Model.ControllerId == controller.UserId, " selected=\"selected\"")>@controller.Name</option>
+                    }
+                </select>
+        
+                <label for="area">Участок: </label>
+        
+                <select id="areas"@Html.If(Model.ControllerId <= 0 || Model.Areas.Where(a => a.ControllerId == Model.ControllerId).Count() == 0, " disabled=\"disabled\"")>
+                    @if (Model.ControllerId > 0)
+                    {
+                        var areas = Model.Areas.Where(a => a.ControllerId == Model.ControllerId);
+                        if (areas.Count() == 0)
+                        {
+                            <option value="-1">Не назначены</option>
+                        }
+                        else
+                        {
+                            <option value="-1">Все</option>
+                            foreach (var area in areas)
+                            {
+                                <option value="@area.AreaId"@Html.If(Model.AreaId == area.AreaId, " selected=\"selected\"")>@area.Name</option>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <option value="-1">Выберите контроллера</option>
+                    }
+                </select>
+
+            </div>
+    
+    
+            <div id="areas-controller--1">
+                <option value="-1">Выберите контроллера</option>
+            </div>
+
+            @foreach (var controller in Model.Controllers)
+            {
+                var areas = Model.Areas.Where(a => a.ControllerId == controller.UserId);
+
+                <div id="areas-controller-@controller.UserId">
+                    @if (areas.Count() == 0)
+                    {
+                        <option value="-1">Не назначены</option>
+                    }
+                    else
+                    {
+                        <option value="-1">Все</option>
+                        foreach (var area in areas)
+                        {
+                            <option value="@area.AreaId">@area.Name</option>
+                        }
+                    }
+                </div>
+            }
+
+        </div>
+
+        <script type="text/javascript">
+            $(function() {
+                $('#controller').change(function() {
+
+                    var controllerId = $('#controller').val();
+                    var divId = '#areas-controller-' + controllerId;
+
+                    $('#areas').html($(divId).html());
+
+                    var optionsCount = $(divId + ' option').length;
+
+                    if (optionsCount > 1) {
+                        $('#areas').prop('disabled', false);
+                    } else {
+                        $('#areas').prop('disabled', true);
+                    }
+                });
+            });
+        </script>
+
+        <script type="text/javascript">
+            $(function() {
+                $('#applyFilter').click(function() {
+                    var periodId = $('#rootingPeriod').val();
+                    var controllerId = $('#controller').val();
+                    var areaId = $('#areas').val();
+
+                    if (periodId <= 0) {
+                        alert('Выберите период');
+                    } else {
+                        window.location = 'PrintBills?periodId=' + periodId + '&controllerId=' + controllerId + '&areaId=' + areaId;
+                    }
+                });
+            });
+        </script>
+
+
+        if (Model.Bills == null || Model.Bills.Length == 0)
+        {
+            <p class="noprint"><b>Контрактов не найдено</b></p>
+        }
+        else
+        {
+            <p class="noprint">Выставлено счетов: @Model.Bills.Length шт.</p>
+            <div class="printCanvas">
+                @foreach (var bill in Model.Bills)
+                {
+                    <div class="preBillDiv">
+                        @Html.Partial("NewContractBillPartial", bill)
+                    </div>
+                }
+            </div>
+        }
+    }
+}

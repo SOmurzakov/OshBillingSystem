@@ -1,0 +1,23 @@
+﻿@model OshBusinessModel.Da.ShowContract.ShowContractModel
+
+@if (Auth.HasPermission(Permission.ContractsChange))
+{
+    <div class="pull-right">
+        <button id="changeRegistrationDebt" class="btn btn-primary btn-mini">Изменить</button>
+    </div>
+    
+    using(var dlg = Html.Dialog("regDebt", "Долг на момент регистрации", "Сохранить", true, "changeRegistrationDebt"))
+    {
+        dlg.InputText("Долг", "debt", Model.Details.RegistrationDebt.ToString("0.00"));
+    }
+    
+    <script type="text/javascript">
+        function save_regDebt() {
+            var id = @Model.Details.ContractId;
+            var debt = $('#regDebt-debt').val();
+            var dto = { ContractId: id, Debt: debt };
+            
+            @Html.Ajax(Url.Action("ChangeRegistrationDebtAjax", "Contracts"))
+        }
+    </script>
+}

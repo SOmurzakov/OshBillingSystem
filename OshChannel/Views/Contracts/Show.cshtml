@@ -1,0 +1,89 @@
+﻿@using OshBusinessModel.Da.ShowContract
+@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.ShowContract.ShowContractModel
+
+@{
+    ViewBag.Title = Model != null ? Model.Details.ContractNumber : "Детали контракта";
+    string type = Model != null ? Model.Subscriber.Type : "";
+    bool isPersonal = type == "prs";
+
+    bool showMeters = Model != null && (Model.Meters.Length > 0 || (Model.Options.Length == 0 && Model.PossibleOptions.Length == 0));
+}
+
+@{
+    if (Model == null)
+    {
+        <p>Контракт не найден</p>
+    }
+    else
+    {
+        
+        <div class="well alert-@(Model.Details.ContractDebt > 0 ? "error" : "success")">@(Model.Details.ContractDebt >= 0 ? "Долг: " : "Переплата: ") @Math.Abs(Model.Details.ContractDebt).ToString("0.00") сом</div>
+
+        <div class="row printable">
+            <div class="span8 printable">
+                <div class="printCanvas">
+                    <div class="preBillDiv">
+                        @Html.Partial("NewContractBillPartial", new ViewDataDictionary(Model.Bill))
+                    </div>
+                </div>
+                <a href="@Url.Action("PreviousBills", "Contracts", new { contractId = Model.Details.ContractId })" class="noprint">Выставленные счета</a> <br/>
+                <a href="@Url.Action("BillStatement", "Contracts", new { contractId = Model.Details.ContractId })">Заявление</a>
+            </div>
+            <div class="span4">
+                @Html.Partial("ContractMakePaymentPartial")
+            </div>
+        </div>
+    
+        
+        <div class="row">
+            <div class="span6">
+                <h3 class="h2margin">Контракт @Model.Details.ContractNumber @Html.If(!Model.Details.IsOpen, "(приостановлен)")</h3>
+                @Html.Partial("ContractInfoPartial", Model)
+            </div>
+            
+            <div class="span6">
+                <h3 class="h2margin">Абонент</h3>
+                @Html.Partial("SubscriberInfoPartial", Model.Subscriber)
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="span6">
+                @Html.Partial("ContractMetersPartial")                
+            </div>
+            <div class="span6">
+                @Html.Partial("ContractMetersValuesPartial")
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="span12">
+                <h3 class="h2margin">
+                    Финансовая история
+                    <a href="@Url.Action("Statement", "Contracts", new { contractId = Model.Details.ContractId })" class="btn btn-mini btn-primary">Выписка</a>
+                </h3> 
+                
+                @Html.Partial("ContractTransactionsPartial")
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="span12">
+                <h3 class="h2margin">Изменения</h3>
+                
+                @Html.Partial("ContractChangesPartial", Model)
+            </div>
+        </div>
+
+        /*
+        @Html.Partial("SetMetersScriptsPartial")
+*/
+
+        if (Auth.HasPermission(Permission.ContractsGiveVisa))
+        {
+                @Html.Partial("GiveVisaScriptsPartial")
+           }
+    }
+}

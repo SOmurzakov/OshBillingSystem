@@ -1,0 +1,262 @@
+﻿@model OshBusinessModel.Da.Invoices.InvoiceDa
+
+    @for (int i = 0; i < 2; i++)
+    {
+
+        <div class="invoice">
+        
+            <div class="invoicePart">
+                <div class="horlines">
+                    <div class="line1 line"></div>
+                    <div class="line2 line"></div>
+                    <div class="line3 line"></div>
+                    <div class="line4 line"></div>
+                    <div class="line5 line"></div>
+                    <div class="line6 line"></div>
+                    <div class="line7 line"></div>
+                    <div class="line8 line"></div>
+                    <div class="line9 line"></div>
+                    @*
+                <div class="line10 line"></div>
+                <div class="line11 line"></div>
+                <div class="line12 line"></div>
+                <div class="line13 line"></div>
+                <div class="line14 line"></div>
+                <div class="line15 line"></div>
+                <div class="line16 line"></div>
+*@
+                    @*
+                <div class="line17 line"></div>
+*@
+                    @*
+                <div class="line18 line"></div>
+*@
+                </div>
+                    
+                <div class="vertlines">
+                    <div class="line1 line"></div>
+                    <div class="line2 line"></div>
+                    <div class="line3 line"></div>
+                    @*
+                <div class="line4 line"></div>
+                <div class="line5 line"></div>
+                <div class="line6 line"></div>
+                <div class="line7 line"></div>
+                <div class="line8 line"></div>
+                <div class="line9 line"></div>
+                <div class="line10 line"></div>
+                <div class="line11 line"></div>
+*@
+                    @*
+                <div class="line12 line"></div>
+*@
+                </div>
+
+                <div class="invoiceFormName">FORM STI-097 <br />ГНИ</div>
+                <div class="invoiceKyrgyzRepublic">КЫРГЫЗСКАЯ РЕСПУБЛИКА</div>
+                <div class="invoiceEmblem"><img src="/Content/invoice_emblem.png" alt="" title=""/></div>
+                <div class="invoiceTitle">СЧЕТ-ФАКТУРА ПО НДС</div>
+                <div class="invoiceSeriesValue">@Model.Series</div>
+                <div class="invoiceNumberValue">@Model.InvoiceNo</div>
+                <div class="invoicePartNumber">@(i + 1)</div>
+                    
+                <div class="invoiceLS">лс</div>
+                <div class="invoiceLSValue">2007</div>
+                <div class="invoice102">102</div>
+                <div class="invoiceNumber">НОМЕР</div>
+                <div class="invoice103">103</div>
+                <div class="invoiceDate">ДАТА</div>
+                <div class="invoiceDateValue">день <span>@Model.Date.ToString("dd")</span> месяц <span>@Model.Date.ToString("MM")</span> год <span>@Model.Date.ToString("yyyy")</span></div>
+
+                <div class="invoiceSupplier fieldDesc"><b>поставщик</b> 201 ИНН</div>
+                <div class="invoiceSupplierValue fieldValue fieldValueNum">@Model.SupplierInn</div>
+
+                <div class="invoiceSupplier1 fieldDesc"><b>покупатель</b> 301 ИНН</div>
+                <div class="invoiceSupplierValue1 fieldValue fieldValueNum">@Model.SubscriberInn</div>
+                    
+                <div class="num202 fieldNum">202</div>
+                <div class="invoiceSupplierName fieldDesc leftValue">ф.и.о. чп\наименование предприятия</div>
+                <div class="invoiceSupplierName fieldValue leftValue valueValue margin35">@Model.SupplierName</div>
+                <div class="num302 fieldNum">302</div>
+                <div class="invoiceSupplierName fieldDesc rightValue">ф.и.о. чп\наименование предприятия</div>
+                <div class="invoiceSupplierName fieldValue rightValue valueValue margin35">@Model.SubscriberName</div>
+                <div class="num203 fieldNum">203</div>
+                <div class="invoiceSupplierAddress fieldDesc leftValue">адрес</div>
+                <div class="invoiceSupplierAddress fieldValue leftValue valueValue margin10">@Model.SupplierFullAddress</div>
+                <div class="num303 fieldNum">303</div>
+                <div class="invoiceSupplierAddress fieldDesc rightValue">адрес</div>
+                <div class="invoiceSupplierAddress fieldValue rightValue valueValue margin10">@Model.SubscriberFullAddress</div>
+                <div class="num204 fieldNum">204</div>
+                <div class="invoiceSupplierRNI fieldDesc leftValue">код и наименование РНИ</div>
+                <div class="invoiceSupplierRNI fieldValue leftValue valueValue margin20">@Model.SupplierUgknsCode @Model.SupplierUgknsName</div>
+                <div class="num304 fieldNum">304</div>
+                <div class="invoiceSupplierRNI fieldDesc rightValue">код и наименование РНИ</div>
+                <div class="invoiceSupplierRNI fieldValue rightValue valueValue margin20">@Model.SubscriberUgknsCode @Model.SubscriberUgknsName</div>
+                <div class="num205 fieldNum">205</div>
+                <div class="invoiceSupplierBank fieldDesc leftValue">код (МФО) и наименование банка</div>
+                <div class="invoiceSupplierBank fieldValue leftValue valueValue margin20">@Model.SupplierBankCode @Model.SupplierBankName</div>
+                <div class="num305 fieldNum">305</div>
+                <div class="invoiceSupplierBank fieldDesc rightValue">код (МФО) и наименование банка</div>
+                <div class="invoiceSupplierBank fieldValue rightValue valueValue margin20">@Model.SubscriberBankCode @Model.SubscriberBankName</div>
+                <div class="num206 fieldNum">206</div>
+                <div class="invoiceSupplierBankAccount fieldDesc leftValue">расчетный счет</div>
+                <div class="invoiceSupplierBankAccount fieldValue leftValue valueValue margin20">@Model.SupplierBankAccount</div>
+                <div class="num306 fieldNum">306</div>
+                <div class="invoiceSupplierBankAccount fieldDesc rightValue">расчетный счет</div>
+                <div class="invoiceSupplierBankAccount fieldValue rightValue valueValue margin20">@Model.SubscriberBankAccount</div>
+                    
+                <div class="invoiceDeliveryDate">ДАТА И ТИП ПОСТАВКИ</div>
+                <div class="invoiceDeliveryDateNum fieldNum">401</div>
+                <div class="invoiceDeliveryDateValue">@Model.Date.ToShortDateString()</div>
+                <div class="invoiceDeliveryTypeNum fieldNum">402</div>
+                <div class="invoiceDeliveryTypeValue">РЕАЛИЗАЦИЯ</div>
+
+                <div class="paymentType">СПОСОБ ПЛАТЕЖА</div>
+                <div class="paymentTypeNum fieldNum">403</div>
+                <div class="paymentTypeValue">НАЛИЧНЫМИ</div>
+            
+                <div class="clearfix"></div>
+                <div style="clear: both;"></div>
+            </div>
+            
+            <div class="invoiceContractsTable">
+                <table>
+                    <tr>
+                        <th>НАИМЕНОВАНИЕ ТОВАРОВ<br/>(РАБОТ, УСЛУГ)</th>
+                        <th>Предыдущее<br/>показание</th>
+                        <th>Настоящее<br/>показание</th>
+                        <th>КОЛИЧЕСТВО<br/>(ОБЪЕМ) М3</th>
+                        <th>ЦЕНА БЕЗ НДС<br/>(СОМ)</th>
+                        <th>СТОИМОСТЬ<br/>ТОВАРОВ, РАБОТ,<br/>УСЛУГ БЕЗ НДС</th>
+                        <th>НДС</th>
+                        <th>СУММА (СОМ)</th>
+                        <th>ВСЕГО СТОИМОСТЬ<br/>РЕАЛИЗАЦИИ<br/>СОМ</th>
+                    </tr>
+                    @foreach (var contract in Model.Contracts)
+                    {
+                        if (contract.FixedConsumptionSewage == 0 || contract.FixedConsumption == contract.FixedConsumptionSewage)
+                        {
+                            <tr>
+                                <td>@contract.ContractName</td>
+                                <td>@contract.LastMetersValue.ToString("0.##")</td>
+                                <td>@contract.CurrentMeterValue.ToString("0.##")</td>
+                                <td>@contract.CubicMeters.ToString("0.##")</td>
+                                <td>@contract.PricePerCubicMeter.ToString("0.##")</td>
+                                <td>@contract.TotalWithoutNdsAndNsp.ToString("0.##")</td>
+                                <td>@contract.NdsValue.ToString("0.##")%</td>
+                                <td>@contract.TotalNds.ToString("0.##")</td>
+                                <td>@contract.TotalWithNds.ToString("0.##")</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>@contract.ContractName</td>
+                                <td>@contract.LastMetersValue.ToString("0.##")</td>
+                                <td>@contract.CurrentMeterValue.ToString("0.##")</td>
+                                <td>@contract.CubicMeters.ToString("0.##")</td>
+                                <td>@contract.WaterPricePerCubicMeter.ToString("0.##")</td>
+                                <td>@contract.AmountWater.ToString("0.##")</td>
+                                <td>@contract.NdsValue.ToString("0.##")%</td>
+                                <td>@contract.AmountNdsForWater.ToString("0.##")</td>
+                                <td>@contract.WaterTotal.ToString("0.##")</td>
+                            </tr>
+                            <tr>
+                                <td>@contract.ContractName - кан.</td>
+                                <td>@contract.LastMetersValue.ToString("0.##")</td>
+                                <td>@contract.FixedConsumptionSewage.ToString("0.##")</td>
+                                <td>@contract.CubicMetersSewage.ToString("0.##")</td>
+                                <td>@contract.SewagePricePerCubicMeter.ToString("0.##")</td>
+                                <td>@contract.AmountSewage.ToString("0.##")</td>
+                                <td>@contract.NdsValue.ToString("0.##")%</td>
+                                <td>@contract.AmountNdsForSewage.ToString("0.##")</td>
+                                <td>@contract.SewageTotal.ToString("0.##")</td>
+                            </tr>
+                        }
+                    }
+                    <tr><td colspan="9">&nbsp;</td></tr>
+                    <tr>
+                        <td colspan="2">Налог с продажи @Model.NspValue.ToString("0.##")%</td>
+                        <td colspan="6"></td>
+                        <td colspan="1">@Model.TotalNsp.ToString("0.##")</td>
+                    </tr>
+                    <tr class="bold">
+                        <td colspan="2">Итого начислено:</td>
+                        <td></td>
+                        <td>@Model.TotalCubicMeters.ToString("0.##")</td>
+                        <td></td>
+                        <td>@Model.TotalWithoutNdsAndNsp.ToString("0.##")</td>
+                        <td></td>
+                        <td>@Model.TotalNds.ToString("0.##")</td>
+                        <td>@Model.TotalWithNds.ToString("0.##")</td>
+                    </tr>
+                    <tr><td colspan="9">&nbsp;</td></tr>
+                    @*
+                <tr class="bold">
+                    <td colspan="2">Сальдо на нач. периода:</td>
+                    <td colspan="6"></td>
+                    <td>@Model.TotalDebt.ToString("0.##")</td>
+                </tr>
+*@
+                    <tr class="bold">
+                        <td colspan="2">Итого к оплате за тек. месяц:</td>
+                        <td colspan="6"></td>
+                        <td>@Model.Total.ToString("0.##")</td>
+                    </tr>
+                    
+                    <tr class="bold">
+                        <td colspan="2">Долг на начало месяца:</td> 
+                        <td colspan="6"></td> 
+                        <td>@Model.TotalDebt.ToString("0.##")</td>
+                    </tr>
+
+                    <tr class="bold">
+                        <td colspan="2">Итого к оплате:</td> 
+                        <td colspan="6"></td> 
+                        <td>@((Model.Total + Model.TotalDebt).ToString("0.##"))</td>
+                    </tr>
+
+                </table>
+
+                <table class="mpTable">
+                    <tr><td>МП</td><td>РУКОВОДИТЕЛЬ</td><td>&nbsp;</td><td>ГЛАВНЫЙ БУХГАЛТЕР</td><td>&nbsp;</td></tr>
+                </table>
+                
+                <div class="clearfix"></div>
+                <div style="clear: both;"></div>
+
+            </div>
+            
+            <div class="clearfix"></div>
+            <div style="clear: both;"></div>
+            @*
+            @{
+                for (var col=0; col<9; col++)
+                {
+                    for (var row=1; row<7; row++)
+                    {
+                        <div class="fieldNum numCol-@col numRow-@row">@(500+col+row)</div>
+                    }
+                }
+            }
+
+*@
+
+
+            @*
+            <div class="invoiceMP">М.П.</div>
+            <div class="invoiceHead">РУКОВОДИТЕЛЬ</div>
+            <div class="invoiceAccountant">ГЛАВНЫЙ БУХГАЛТЕР</div>
+*@
+
+                
+            @*
+        <div class="invoiceRemarks">
+            Примечание: Счет-фактура без печати, подписи руководителя и главного бухгалтера, а также не содержащая все реквизиты, недействительна. Заплоняется<br/>
+            в 2-х экземплярах: 1-покупателю, 2-поставщику. Лица за изготовление или сбыт поддельных счетов-фактур, а также замену, изменения, переделку и подделку<br/>
+            счетов-фактур несут ответственность в соотвествии со статьей 203 УК КР и статьей 310 Кодекса КР об административном ответственности
+        </div>
+*@
+
+        </div>
+    }

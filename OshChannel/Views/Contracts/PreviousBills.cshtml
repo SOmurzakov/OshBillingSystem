@@ -1,0 +1,49 @@
+﻿@model OshBusinessModel.Da.Bills.PreviousBillsModel
+
+@{
+    ViewBag.Title = "Выставленные счета";
+
+    if (Model == null || Model.BillingPeriods.Length == 0)
+    {
+        <p>Счета не выставлялись</p>
+    }
+    else
+    {
+        <div class="well">
+            <form class="form-inline" action="@Url.Action("PreviousBills", "Contracts")" style="margin-bottom: 0;">
+                <h3 style="margin-bottom: 20px; margin-top: 0;">@ViewBag.Title</h3>
+                <div class="pull-right">
+                    <button type="submit" class="btn btn-primary">Обновить</button>
+                </div>
+                <label for="contractId">Контракт</label>
+                <input type="text" name="contractId" id="contractId" value="@Model.ContractId" style="margin-right: 20px;"/>
+                <label style="margin-right: 20px;" for="periodStart">Период</label>
+                <label style="" for="periodStart">с</label>
+                <select name="startPeriodId" class="span2" style="margin-right: 20px;" id="periodStart">
+                    @foreach (var period in Model.BillingPeriods)
+                    {
+                        <option value="@period.BillingPeriodId"@Html.If(period.BillingPeriodId == Model.StartPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                    }
+                </select>
+                <label style="" for="periodEnd">по</label>
+                <select name="endPeriodId" class="span2" style="margin-right: 20px;" id="periodEnd">
+                    @foreach (var period in Model.BillingPeriods)
+                    {
+                        <option value="@period.BillingPeriodId"@Html.If(period.BillingPeriodId == Model.EndPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                    }
+                </select>
+            </form>
+        </div>
+    
+        <div class="printCanvas">
+            @foreach (var bill in Model.Bills)
+            {
+                <div class="preBillDiv">
+                    @Html.Partial("NewContractBillPartial", bill)
+                </div>
+            }
+        </div>
+        
+    }
+}
+

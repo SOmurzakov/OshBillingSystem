@@ -1,0 +1,184 @@
+﻿@using OshChannel.Helpers
+@model OshBusinessModel.Da.Mobiles.MobileContractModel
+
+@{
+    Layout = "~/Views/Shared/_LayoutMobile.cshtml";
+
+    ViewBag.Title = Model != null ? Model.ContractNumber : "Детали контракта";
+    string type = Model != null ? Model.SubscriberType : "";
+    bool isPersonal = type == "prs";
+
+    bool showMeters = Model != null && (Model.Meters.Length > 0 || (Model.Options.Length <= 0));
+}
+
+@if (Model == null)
+{
+    <p>Контракт не найден</p>
+}
+else
+{
+
+    <h3>Контракт @Model.ContractNumber @Html.If(!Model.IsOpen, "(приостановлен)")</h3>
+
+    <h3>Долг: @Model.ContractDebt.ToString("0.00") сом <a href="@Url.Action("ContractMakePayment", new {contractId = Model.ContractId, amount = Model.ContractDebt < 0 ? 0 : Math.Ceiling(Model.ContractDebt)})">Оплатить</a></h3>
+
+    <table width="100%" border="1">
+        <tr>
+            <td width="50%">Абонент</td>
+            <td>@Model.SubscriberName, @OshBusinessModel.Data.SubscriberType.GetById(Model.SubscriberType).Name</td>
+        </tr>
+        <tr>
+            <td>Дата регистрации</td>
+            <td>@Model.RegisteredAtSystem.ToShortDateString()</td>
+        </tr>
+        <tr>
+            <td>
+                @{
+                    if (isPersonal)
+                    {
+                        <span>Паспорт</span>
+                    }
+                    else
+                    {
+                        <span>Свидетельство</span>
+                    }
+                }
+            </td>
+            <td>
+                @Model.PassportNumber
+                <br/>от @Model.PassportDate.ToShortDateString() @Model.PassportWhere
+            </td>
+        </tr>
+        <tr>
+            <td>Адрес</td>
+            <td>@Model.SubscriberFullAddress</td>
+        </tr>
+        <tr>
+            <td>Телефон</td>
+            <td>@Model.SubscriberPhone</td>
+        </tr>
+        @{
+            if (!isPersonal)
+            {
+                <tr>
+                    <td>ИНН</td>
+                    <td>@Model.Inn</td>
+                </tr>
+                <tr>
+                    <td>УГКНС</td>
+                    <td>@Model.Ugkns</td>
+                </tr>
+                <tr>
+                    <td>МФО</td>
+                    <td>@Model.Mfo</td>
+                </tr>
+                <tr>
+                    <td>Счет фактура</td>
+                    <td>
+                        @(Model.InvoiceRequired ? "Требуется" : "Не треубется")
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+
+    <br/>
+
+    <table width="100%" border="1">
+        <tr>
+            <td width="50%">Контракт</td>
+            <td>@Model.ContractNumber</td>
+        </tr>
+        <tr>
+            <td>Дата регистрации</td>
+            <td>@Model.RegistrationDate.ToShortDateString()</td>
+        </tr>
+        @{
+            if (type != "prs")
+            {
+                <tr>
+                    <td>Субъект</td>
+                    <td>@Model.ContractName</td>
+                </tr>
+            }
+        }
+        <tr>
+            <td>Участок</td>
+            <td>
+                @{
+                    if (@Model.AreaId > 0)
+                    {
+                        <span>@Model.AreaName</span>
+                    }
+                }
+            </td>
+        </tr>
+        <tr>
+            <td>Адрес</td>
+            <td>@Model.ContractFullAddress</td>
+        </tr>
+        <tr>
+            <td>Телефон</td>
+            <td>@Model.ContractPhone</td>
+        </tr>
+        <tr>
+            <td>Тариф</td>
+            <td>@Model.TariffName</td>
+        </tr>
+        <tr>
+            <td>Долг на момент регистрации</td>
+            <td>@Model.RegistrationDebt.ToString("0.00") сом</td>
+        </tr>
+        <tr>
+            <td width="50%">@(type == "prs" ? "Прописано человек" : "Фикс. потр. (куб. м.)")</td>
+            <td>
+                @(type == "prs" ? Model.PeopleRegistered.ToString() : Model.FixedConsumption.ToString("0.##"))
+            </td>
+        </tr>
+        @foreach (var option in Model.Options.Where(o => o.Enabled))
+        {
+            <tr>
+                <td>@option.VariableBillName (@option.VariableDescription)</td>
+                <td>@option.Value</td>
+            </tr>
+        }
+    </table>
+
+    if (showMeters)
+    {
+        <h3>Водомеры</h3>
+
+        if (Model.Meters.Length == 0)
+        {
+            <p>Водомеры не установлены</p>
+        }
+        else
+        {
+            <table width="100%" border="1">
+                <tr>
+                    <th>Дата</th>
+                    <th>Серийный номер</th>
+                    <th>Текущие показания</th>
+                    <th>Примечание</th>
+                </tr>
+                @foreach (var meter in Model.Meters)
+                {
+                    <tr@(!meter.Enabled ? " style=\"text-decoration: line-through;\"" : "")>
+                        <td>@meter.ValueDateAsOf.ToShortDateString()</td>
+                        <td>@meter.SerialNumber</td>
+                        <td>@meter.MeterValue.ToString("0.00")</td>
+                        <td>@MeterReadingType.GetMeterReadingTypeById(meter.MeterValueType)</td>
+                    </tr>
+                }
+            </table>
+    
+            if (Model.Meters.Length > 0)
+            {
+                <h3><a href="@Url.Action("ContractSetMetersValues", new {contractId = Model.ContractId})">Выставить показания</a></h3>
+            }
+        }
+
+    }
+}
+    
+

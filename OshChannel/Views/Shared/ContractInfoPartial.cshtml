@@ -1,0 +1,371 @@
+﻿@using OshBusinessModel.Da.ShowContract
+@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.ShowContract.ShowContractModel
+
+@{
+    ViewBag.Title = Model != null ? Model.Details.ContractNumber : "Детали контракта";
+    string type = Model != null ? Model.Subscriber.Type : "";
+    bool isPersonal = type == "prs";
+
+    bool showMeters = Model != null && (Model.Meters.Length > 0 || (Model.Options.Length == 0 && Model.PossibleOptions.Length == 0));
+}
+                
+<table class="table table-striped table-bordered">
+    <tr>
+        <td style="width: 150px;">Контракт</td>
+        <td>
+            @Html.Partial("ChangeContractDetailsButtonPartial")
+
+            @Url.Contract(Model.Details.ContractId, Model.Details.ContractNumber) 
+            @(Model.Details.ArchiveId <= 0 ? "" : string.Format("(Архив: {0})", Model.Details.ArchiveId))
+        </td>
+    </tr>
+    <tr>
+        <td>Дата регистрации</td>
+        <td>@Model.Details.RegistrationDate.ToShortDateString()</td>
+    </tr>
+    @{
+        if (type != "prs")
+        {
+            <tr>
+                <td>Субъект</td>
+                <td>@Model.Details.ContractName</td>
+            </tr>
+        }
+    }
+    <tr>
+        <td>Участок</td>
+        <td>
+            <script type="text/javascript">
+                //alert(@Model.Details.ControllerId);    
+            </script>
+            
+            @{
+                if (@Model.Details.AreaId > 0)
+                {
+                    <a href="@Url.Action("Index", "Areas")">Уч. @Model.Details.AreaName</a> 
+                    if (Model.Details.ControllerId > 0)
+                    {
+                        <span>@Url.User(Model.Details.ControllerId, Model.Details.ControllerName)</span>
+                    }
+                }
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>Адрес</td>
+        <td>@Model.Details.FullAddress</td>
+    </tr>
+    <tr>
+        <td>Телефон</td>
+        <td>@Model.Details.Phone</td>
+    </tr>
+    <tr>
+        <td>Тариф</td>
+        <td>@Url.Tariff(Model.Details.TariffId, Model.Details.TariffName)</td>
+    </tr>
+    @if (Model.Details.TariffId == "bgt")
+    {
+        <tr>
+            <td>Бюджет</td>
+            <td>@BudgetType.GetBudgetTypeById(Model.Details.BudgetType).Name</td>
+        </tr>
+    }
+    <tr>
+        <td>Долг на момент регистрации</td>
+        <td>
+            @Html.Partial("ChangeContractRegistrationDebtPartial")
+            @Model.Details.RegistrationDebt.ToString("0.00") сом
+        </td>
+    </tr>
+</table>
+<table class="table table-striped table-bordered">
+    <tr>
+        <td style="width: 150px;">@(type == "prs" ? "Прописано человек" : "Фикс. потр. (куб. м.)")</td>
+        <td>
+            @(type == "prs" ? Model.Details.PeopleRegistered.ToString() : "Вода: " + Model.Details.FixedConsumption.ToString("0.##") + ", канализация: " + Model.Details.FixedConsumptionSewage.ToString("0.##"))
+
+            @Html.Partial("ChangePeopleRegisteredButtonPartial")
+        </td>
+    </tr>
+    <tr>
+        <td>Канализация</td>
+        <td>@(Model.Details.HasSewage ? "Есть" : "Нет")</td>
+    </tr>
+    <tr>
+        <td>Льгота</td>
+        <td>@(Model.Details.Allowance <=0 ? "Нет" : string.Format("{0}% {1}", Model.Details.Allowance, string.IsNullOrWhiteSpace(Model.Details.AllowanceReason) ? "":  "(" + Model.Details.AllowanceReason + ")"))</td>
+    </tr>
+    @{
+        foreach (var option in Model.Options)
+        {
+            <tr>
+                <td@Html.LineThrought(!option.Enabled)>@option.VariableBillName (@option.VariableDescription)</td>
+                <td>
+                    @if(option.UsePeopleRegistered)
+                    {
+                        <span>Есть</span>
+                    }
+                    else
+                    {
+                        <span>@option.Value</span>
+                    }
+                    
+                    @if(option.HasSewage)
+                    {
+                        <span>(с канализацией)</span>
+                    }
+
+                    @{
+                        if (Auth.HasPermission(Permission.ContractsChange))
+                        {
+                            <div class="pull-right">
+                                <button class="changeTariffOption btn btn-primary btn-mini" tariffoptionid="@option.ContractTariffOptionId" tariffoptionname="@option.VariableBillName" tariffoptiondesc="@option.VariableDescription" tariffoptionvalue="@option.Value" data-use-people-registered='@(option.UsePeopleRegistered ? 1 : 0)' data-sewage-available="@(option.SewageAvailable ? 1 : 0)" data-sewage="@(option.HasSewage ? 1 : 0)">Изменить</button>
+                                <button class="blockTariffOption btn @(option.Enabled ? "btn-danger" : "btn-success") btn-danger btn-mini" tariffoptionid="@option.ContractTariffOptionId" tariffoptionname="@option.VariableBillName" tariffoptiondesc="@option.VariableDescription" tariffoptionvalue="@option.Value" tariffoptionaction="@(option.Enabled ? "disable" : "enable")" data-use-people-registered='@(option.UsePeopleRegistered ? 1 : 0)' >@(option.Enabled ? "Приостановить" : "Возобновить")</button>
+                            </div>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    }
+</table>
+                
+@{
+    if (Auth.HasPermission(OshBusinessModel.Data.Permission.ContractsChange))
+    {
+        <div class="form-actions">
+            
+            @Html.Partial("ChangeContractTariffButtonPartial")
+            @Html.Partial("AddTariffOptionButtonPartial")
+            
+            <div class="pull-right">
+                @Html.Partial("ContractActionButtonPartial")
+            </div>
+        </div>
+    }
+}
+
+@if (Model.Options.Length > 0 && Auth.HasPermission(Permission.ContractsChange))
+{
+    <div id="modal-changeTariffOptionValue" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Изменить данные</h3>
+        </div>
+        <div class="modal-body">
+            <div class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="changeTariffOptionValue-name">Опция</label>
+                    <div class="controls">
+                        <input type="text" disabled="disabled" value="" id="changeTariffOptionValue-name" class="span3"/>
+                        <input type="hidden" value="" id="changeTariffOptionValue-id"/>
+                    </div>
+                </div>
+                <div class="control-group" id="div-changeTariffOptionValue-value">
+                    <label class="control-label" for="changeTariffOptionValue-value">Значение</label>
+                    <div class="controls">
+                        <input type="text" id="changeTariffOptionValue-value" class="span3"/>
+                    </div>
+                </div>
+                <div class="control-group" id="div-changeTariffOptionValue-sewage" style="display: none;">
+                    <label class="control-label" for="changeTariffOptionValue-sewage">Канализация</label>
+                    <div class="controls">
+                        <label style="display: inline-block !important; line-height: 23px; height: 23px; vertical-align: bottom; margin: 0; width: 70px;">
+                            <input type="checkbox" id="changeTariffOptionValue-sewage" style="display: inline-block !important; line-height: 23px; height: 23px;">
+                            Есть
+                        </label>
+                    </div>
+                </div>
+                <hr/>
+                <div class="control-group">
+                    <label class="control-label" for="changeTariffOptionValue-changeRemarks">Основание</label>
+                    <div class="controls">
+                        <textarea id="changeTariffOptionValue-changeRemarks" rows="3" cols="50" class="span3"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Отмета</button>
+            <button class="btn btn-primary" id="save-changeTariffOptionValue">Сохранить</button>
+        </div>
+    </div>
+
+    <div id="modal-blockTariffOption" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="header-blockTariffOption">Блокировать</h3>
+        </div>
+        <div class="modal-body">
+            <div class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="blockTariffOption-name">Опция</label>
+                    <div class="controls">
+                        <input type="text" disabled="disabled" value="" id="blockTariffOption-name" class="span3"/>
+                        <input type="hidden" value="" id="blockTariffOption-id"/>
+                        <input type="hidden" value="" id="blockTariffOption-action"/>
+                    </div>
+                </div>
+                <div class="control-group" id="div-blockTariffOption-value">
+                    <label class="control-label" for="blockTariffOption-value">Значение</label>
+                    <div class="controls">
+                        <input type="text" id="blockTariffOption-value" class="span3" disabled="disabled"/>
+                    </div>
+                </div>
+                <hr/>
+                <div class="control-group">
+                    <label class="control-label" for="blockTariffOption-changeRemarks">Основание</label>
+                    <div class="controls">
+                        <textarea id="blockTariffOption-changeRemarks" rows="3" cols="50" class="span3"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Отмета</button>
+            <button class="btn btn-primary" id="save-blockTariffOption">Сохранить</button>
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+        function changeTariffOption(id, name, desc, value, usePeopleRegistered, sewageAvailable, sewage) {
+            $('#changeTariffOptionValue-id').val(id);
+            $('#changeTariffOptionValue-name').val(name + ' (' + desc + ')');
+            $('#changeTariffOptionValue-value').val(value);
+            $('#changeTariffOptionValue-changeRemarks').val('');
+            
+            if (usePeopleRegistered > 0) {
+                $('#div-changeTariffOptionValue-value').hide();
+            } else {
+                $('#div-changeTariffOptionValue-value').show();
+            }
+
+            if (sewageAvailable > 0) {
+                $('#div-changeTariffOptionValue-sewage').show();
+            } else {
+                $('#div-changeTariffOptionValue-sewage').hide();
+            }
+
+            if (sewage > 0) {
+                $('#changeTariffOptionValue-sewage').prop('checked', true);
+            } else {
+                $('#changeTariffOptionValue-sewage').prop('checked', false);
+            }
+            
+            $('#modal-changeTariffOptionValue').modal('show');
+        }
+
+        function saveChangeTariffOptionValue() {
+            var tariffOptionId = $('#changeTariffOptionValue-id').val();
+            var value = $('#changeTariffOptionValue-value').val();
+            var sewage = $('#changeTariffOptionValue-sewage').prop('checked');
+            var changeRemarks = $('#changeTariffOptionValue-changeRemarks').val();
+
+            var dto = { TariffOptionId: tariffOptionId, Value: value, ChangeRemarks: changeRemarks, Sewage: sewage };
+            var json = JSON.stringify(dto);
+
+            $.ajax({
+                url: '@Url.Action("ChangeTariffOptionValueAjax", "Contracts")',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: json,
+                success: function(result) {
+                    if (result['Success']) {
+                        location.reload();
+                    } else {
+                        alert(result['Message']);
+                    }
+
+                },
+
+                error: function(a, b, ctx) {
+                    alert('Пожалуйста, проверьте данные');
+                }
+            });
+        }
+
+        function blockTariffOption(id, name, desc, value, action, usePeopleRegistered) {
+
+            var stringAction = action == 'enable' ? 'Возобновить' : 'Приостановить';
+
+            $('#header-blockTariffOption').html(stringAction);
+            $('#save-blockTariffOption').html(stringAction);
+
+            $('#blockTariffOption-name').val(name + ' (' + desc + ')');
+            $('#blockTariffOption-value').val(value);
+            $('#blockTariffOption-id').val(id);
+            $('#blockTariffOption-changeRemarks').val('');
+            $('#blockTariffOption-action').val(action);
+            
+            if (usePeopleRegistered > 0) {
+                $('#div-blockTariffOption-value').hide();
+            } else {
+                $('#div-blockTariffOption-value').show();
+            }
+            
+            $('#modal-blockTariffOption').modal('show');
+        }
+
+        function saveBlockTariffOption() {
+            var tariffOptionId = $('#blockTariffOption-id').val();
+            var action = $('#blockTariffOption-action').val();
+            var changeRemarks = $('#blockTariffOption-changeRemarks').val();
+
+            var dto = { TariffOptionId: tariffOptionId, Action: action, ChangeRemarks: changeRemarks };
+            var json = JSON.stringify(dto);
+
+            $.ajax({
+                url: '@Url.Action("RegisterTariffOptionActionAjax", "Contracts")',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: json,
+                success: function (result) {
+                    if (result['Success']) {
+                        location.reload();
+                    } else {
+                        alert(result['Message']);
+                    }
+                },
+                error: function (a, b, c) {
+                    alert('Пожалуйста, проверьте данные');
+                }
+            });
+        }
+
+        $(function () {
+            $('.changeTariffOption').click(function () {
+                var id = $(this).attr('tariffoptionid');
+                var name = $(this).attr('tariffoptionname');
+                var desc = $(this).attr('tariffoptiondesc');
+                var value = $(this).attr('tariffoptionvalue');
+                var usePeopleRegistered = $(this).attr('data-use-people-registered');
+                var sewageAvailable = $(this).attr('data-sewage-available');
+                var sewage = $(this).attr('data-sewage');
+                changeTariffOption(id, name, desc, value, usePeopleRegistered, sewageAvailable, sewage);
+            });
+
+            $('#save-changeTariffOptionValue').click(function () {
+                saveChangeTariffOptionValue();
+            });
+
+            $('.blockTariffOption').click(function () {
+                var id = $(this).attr('tariffoptionid');
+                var name = $(this).attr('tariffoptionname');
+                var desc = $(this).attr('tariffoptiondesc');
+                var value = $(this).attr('tariffoptionvalue');
+                var action = $(this).attr('tariffoptionaction');
+                var usePeopleRegistered = $(this).attr('data-use-people-registered');
+                blockTariffOption(id, name, desc, value, action, usePeopleRegistered);
+            });
+
+            $('#save-blockTariffOption').click(function () {
+                saveBlockTariffOption();
+            });
+        });
+    </script>
+}
+

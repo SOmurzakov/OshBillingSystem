@@ -1,0 +1,383 @@
+﻿@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.Subscribers.SubscriberDetailsModel
+
+@{
+    ViewBag.Title = Model != null ? Model.Details.TypeAsString + '-' + Model.Details.SubscriberId : "Детали контракта";
+    bool isPersonal = Model != null && Model.Details.Type == "prs";
+}
+
+@{
+    if (Model == null)
+    {
+        <p>Абонент не найден</p>
+    }
+    else
+    {
+        
+        <div class="row printable">
+            <div class="span8 printable">
+                <div class="printCanvas">
+                    <div class="preBillDiv">
+                        @Html.Partial("SubscriberBillPartial", Model.Bills)
+                    </div>
+                </div>
+                
+@*
+                <a href="@Url.Action("PreviousBills", "Subscribers", new { subscriberId = Model.Details.SubscriberId })">Выставленные счета</a> <br/>
+*@
+
+                @if (Model.Details.InvoiceRequired)
+                {
+                    <a href="@Url.Action("Invoice", "Subscribers", new { subscriberId = Model.Details.SubscriberId })">Показать счет фактуру</a>
+                }
+                
+            </div>
+            <div class="span4">
+@*
+                @Html.Partial("ContractMakePaymentPartial")
+*@
+            </div>
+        </div>
+        
+        
+        <div class="row">
+            <div class="span6">
+                
+                <h3 class="h2margin">@Model.Details.Name</h3>
+                
+                @Html.Partial("SubscriberInfoPartial", Model.Details)
+                
+                <div class="form-actions">
+                    @if (Auth.HasPermission(Permission.SubscribersChangeInfo))
+                    {
+                        <button class="btn btn-primary" id="subscriberChangeInfo">Изменить данные</button>
+                    }
+                        
+                    @if (Auth.HasPermission(Permission.ClosePeriodForSubscriber))
+                    {
+                        @Html.Partial("ClosePeriodForSubscriber")
+                    }
+                    
+                    <div class="pull-right">
+                        <a class="btn btn-success" href='@Url.Action("SubscriberReconciliation", "Accountant", new { subscriberId = Model.Details.SubscriberId })'>Акт сверки</a>
+                    </div>
+                </div>
+
+                <h3 class="h2margin">Контракты</h3>
+                
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <th>Контракт</th>
+                        <th>Тариф</th>
+                        <th>Адрес</th>
+                        <th>Участок</th>
+                    </tr>
+                    @foreach (var contract in Model.Contracts)
+                    {
+                        <tr>
+                            <td@Html.LineThrought(!contract.IsOpen)>@Url.Contract(contract.ContractId, contract.ContractNumber + " " + contract.ContractName)</td>
+                            <td>@Url.Tariff(contract.TariffId, contract.TariffName)</td>
+                            <td>@contract.FullAddress</td>
+                            <td>@Url.Area(contract.AreaId, contract.AreaName) @Url.User(contract.ControllerId, contract.ControllerName)</td>
+                        </tr>
+                    }
+                </table>
+                
+                @if (Auth.HasPermission(Permission.ContractsChange))
+                {
+                    <div class="form-actions">
+                        <a href="@Url.Action("Create", "Contracts", new { subscriberId = Model.Details.SubscriberId })" class="btn btn-success">Добавить контракт</a>
+                    </div>
+                }
+
+            </div>
+            <div class="span6">
+                <h3 class="h2margin">Изменения</h3>
+                
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <th>Изменение</th>
+                        <th>Данные</th>
+                        <th>Виза</th>
+                    </tr>
+                    @foreach (var change in Model.Changes)
+                    {
+                        <tr@Url.VisaRequiredCss(change.VisaRequired, change.VisaGivenUserId)>
+                            <td>
+                                @change.Date.ToShortDateString()
+                                <br/>
+                                @Url.User(change.ChangedUserId, change.ChangedUserName)
+                                <br/>
+                                @change.ChangeRemarks
+                            </td>
+                            <td>
+                                Абонент: @change.Name <br/>
+                                @(change.Type == "prs" ? "Паспорт" : "Свидетельство"): @change.PassportNumber 
+                                
+                                @if (change.PassportDate != null || !string.IsNullOrWhiteSpace(change.PassportWhere))
+                                {
+                                    <span>
+                                        от
+                                        @change.PassportDateAsString
+                                        @change.PassportWhere
+                                    </span>
+                                }
+                                <br/>
+                                Адрес: @change.AddressStreet @change.AddressBuilding @change.AddressFlat <br/>
+                                Телефон: @change.Phone <br/>
+                                
+                                @{
+                                if (change.Type != "prs")
+                                {
+                                        <span>
+                                            ИНН: @change.Inn <br/>
+                                            УГКНС: @change.Ugkns @change.UgknsName<br/>
+                                            МФО: @change.Mfo <br/>
+                                            Банк: @change.BankCode @change.BankName @change.BankAccount <br/>
+                                            Счет фактура: @(change.InvoiceRequired ? "Требуется" : "Не треубется")
+                                        </span>
+                                }
+                                }
+                                                                
+                            </td>
+                            <td>
+                                @Url.VisaInfo(change.VisaRequired, change.VisaGivenUserId, change.VisaGivenUserName, change.VisaGivenDate, Permission.ContractsGiveVisa, change.Id, "Subscribers")
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+
+                    if (Auth.HasPermission(OshBusinessModel.Data.Permission.ContractsGiveVisa))
+                    {
+            <div>@Html.Partial("GiveVisaScriptsPartial")</div>
+                    }
+
+
+                    if (Auth.HasPermission(Permission.SubscribersChangeInfo))
+                    {
+        <div id="modal-subscriberChangeInfo" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="myModalLabel">Изменить данные</h3>
+            </div>
+            <div class="modal-body">
+                
+                <div class="form-horizontal">
+                    
+                    <div class="control-group">
+                        <label class="control-label" for="subscriberName">@(isPersonal ? "Имя" : "Название компании")</label>
+                        <div class="controls">
+                            <input type="text" id="subscriberName" value="@Model.Details.Name" class="span3"/>
+                        </div>
+                    </div>
+            
+                    <div class="control-group">
+                        <label class="control-label" for="passportNumber">@(isPersonal ? "Паспорт" : "Свидетельство о регистрации")</label>
+                        <div class="controls">
+                            <input type="text" id="passportNumber" value="@Model.Details.PassportNumber" class="span3"/>
+                        </div>
+                    </div>
+            
+                    <div class="control-group">
+                        <label class="control-label" for="passportWhere">@(isPersonal ? "Выдан" : "Выдано")</label>
+                        <div class="controls">
+                            <input type="text" style="width: 95px" id="passportWhere" value="@(Model.Details.PassportWhere)"/>
+                            <label class="control-description" style="width: 40px; margin-right: 0; padding-right: 2px;" for="passportDate">Когда</label>
+                            <input type="text" style="width: 95px" id="passportDate" value="@(Model.Details.PassportDateAsString)"/>
+                        </div>
+                    </div>
+            
+                    <hr/>
+
+                    <div class="control-group">
+                        <label class="control-label" for="subscriberAddressStreet">Улица</label>
+                        <div class="controls">
+                            <input type="text" id="subscriberAddressStreet" value="@Model.Details.AddressStreet" class="span3"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="subscriberAddressBuilding">Дом</label>
+                        <div class="controls">
+                            <input type="text" style="width: 95px;" id="subscriberAddressBuilding" value="@Model.Details.AddressBuilding"/>
+                            <label class="control-description" style="width: 32px;" for="subscriberAddressFlat">Кв.</label>
+                            <input type="text" style="width: 95px;" id="subscriberAddressFlat" value="@Model.Details.AddressFlat"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="subscriberPhone">Телефон</label>
+                        <div class="controls">
+                            <input type="text" value="@Model.Details.Phone" id="subscriberPhone" class="span3"/>
+                        </div>
+                    </div>
+            
+                    <hr/>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inn">ИНН</label>
+                        <div class="controls">
+                            <input type="text" class="span3" id="inn" value="@Model.Details.Inn"/>
+                        </div>
+                    </div>
+
+                    @{
+                        if (!isPersonal)
+                        {
+
+                            <div class="control-group">
+                                <label class="control-label" for="ugkns">УГКНС</label>
+                                <div class="controls">
+                                    <input type="text" style="width: 45px;" id="ugkns" value="@Model.Details.Ugkns"/>
+                                    <label class="control-description" style="width: 32px;" for="ugknsName">Назв.</label>
+                                    <input type="text" style="width: 145px;" id="ugknsName" value="@Model.Details.UgknsName"/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label" for="mfo">Код МФО</label>
+                                <div class="controls">
+                                    <input type="text" class="span3" id="mfo" value="@Model.Details.Mfo"/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <div class="controls">
+                                    <label style="height: 18px; vertical-align: middle; display: inline-block;">
+                                        <input type="checkbox" id="invoice" style="margin: 0 5px 0 0;" @(Model.Details.InvoiceRequired ? "checked=\"checked\"" : "")/>Выдавать счет фактуру
+                                    </label>
+                                </div>
+                            </div>
+
+                            <hr/>
+                        
+                            <div class="control-group">
+                                <label class="control-label" for="bankCode">Код Банка</label>
+                                <div class="controls">
+                                    <input type="text" class="span3" id="bankCode" value="@Model.Details.BankCode"/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label" for="bankName">Название</label>
+                                <div class="controls">
+                                    <input type="text" class="span3" id="bankName" value="@Model.Details.BankName"/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label" for="bankAccount">Номер счета</label>
+                                <div class="controls">
+                                    <input type="text" class="span3" id="bankAccount" value="@Model.Details.BankAccount"/>
+                                </div>
+                            </div>
+                        }
+                    }
+            
+                    <hr/>
+            
+                    <div class="control-group">
+                        <label class="control-label" for="subscriberChangeRemarks">Основание</label>
+                        <div class="controls">
+                            <textarea id="subscriberChangeRemarks" rows="3" cols="50" class="span3"></textarea>
+                        </div>
+                    </div>
+                </div>
+                    
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Отмета</button>
+                <button class="btn btn-primary" id="save-subscriberChangeInfo">Сохранить</button>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            function subscriberChangeInfo() {
+
+                var type = '@Model.Details.Type';
+                var subscriberId = @Model.Details.SubscriberId;
+                var subscriberName = $('#subscriberName').val();
+                var subscriberPassportNumber = $('#passportNumber').val();
+                var subscriberPassportWhere = $('#passportWhere').val();
+                var subscriberPassportDate = $('#passportDate').val();
+                var subscriberAddressStreet = $('#subscriberAddressStreet').val();
+                var subscriberAddressBuilding = $('#subscriberAddressBuilding').val();
+                var subscriberAddressFlat = $('#subscriberAddressFlat').val();
+                var subscriberPhone = $('#subscriberPhone').val();
+                var inn = $('#inn').val();
+                var ugkns = type == 'prs' ? '' : $('#ugkns').val();
+                var mfo = type == 'prs' ? '' : $('#mfo').val();
+                var invoice = type == 'prs' ? 0 : $('#invoice').prop('checked') ? 1 : 0;
+                var subscriberChangeRemarks = $('#subscriberChangeRemarks').val();
+                var ugknsName = type == 'prs' ? '' : $('#ugknsName').val();
+                var bankCode = type == 'prs' ? '' : $('#bankCode').val();
+                var bankName = type == 'prs' ? '' : $('#bankName').val();
+                var bankAccount = type == 'prs' ? '' : $('#bankAccount').val();
+
+                var subscriberDto =
+                    {
+                        SubscriberId: subscriberId,
+                        Name: subscriberName,
+                        PassportNumber: subscriberPassportNumber,
+                        PassportWhere: subscriberPassportWhere,
+                        PassportDate: subscriberPassportDate,
+                        AddressStreet: subscriberAddressStreet,
+                        AddressBuilding: subscriberAddressBuilding,
+                        AddressFlat: subscriberAddressFlat,
+                        Phone: subscriberPhone,
+                        Inn: inn,
+                        Ugkns: ugkns,
+                        Mfo: mfo,
+                        Invoice: invoice,
+                        ChangeRemarks: subscriberChangeRemarks,
+                        UgknsName: ugknsName,
+                        bankCode: bankCode,
+                        bankName: bankName,
+                        bankAccount: bankAccount
+                    };
+                    
+                var json = JSON.stringify(subscriberDto);
+
+                $.ajax({
+                    url: '@Url.Action("ChangeInfoAjax", "Subscribers")',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: json,
+                    success: function(result) {
+
+                        if (result['Success']) {
+                            location.reload();
+                        } else {
+                            alert(result['Message']);
+                        }
+
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert(jqXHR);
+                        alert(textStatus);
+                        alert(errorThrown);
+                    }
+                });
+
+            }
+
+            function showSubscriberChangeInfoDialog() {
+                $('#modal-subscriberChangeInfo').modal('show');
+            }
+
+            $(function() {
+                $('#subscriberChangeInfo').click(function() {
+                    showSubscriberChangeInfoDialog();
+                });
+
+                $('#save-subscriberChangeInfo').click(function() {
+                    subscriberChangeInfo();
+                });
+            });
+        </script>            
+                    }
+
+    }
+}

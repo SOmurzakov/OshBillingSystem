@@ -1,0 +1,72 @@
+﻿@using OshChannel.Helpers
+@model OshBusinessModel.Da.ReportByControllers.ReportByTariffsModel
+
+@{
+    ViewBag.Title = "Отчет по тарифам";
+}
+
+@if (Model == null)
+{
+    <p>Счета не выставлялись</p>
+}
+else
+{
+    
+    <div class="well">
+        <form class="form-inline" action="@Url.Action("ReportByTariffs", "Accountant")" style="margin-bottom: 0;">
+            <h3 style="margin-bottom: 20px; margin-top: 0;">@ViewBag.Title</h3>
+            <div class="pull-right">
+                <button type="submit" class="btn btn-primary">Обновить</button>
+            </div>
+            <label style="margin-right: 20px;" for="periodStart">Период</label>
+            <label style="" for="periodStart">с</label>
+            <select name="startPeriodId" class="span2" style="margin-right: 20px;" id="periodStart">
+                @foreach (var period in Model.BillingPeriods)
+                {
+                    <option value="@period.BillingPeriodId"@Html.If(period.BillingPeriodId == Model.StartPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                }
+            </select>
+            <label style="" for="periodEnd">по</label>
+            <select name="endPeriodId" class="span2" style="margin-right: 20px;" id="periodEnd">
+                @foreach (var period in Model.BillingPeriods)
+                {
+                    <option value="@period.BillingPeriodId"@Html.If(period.BillingPeriodId == Model.EndPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                }
+            </select>
+        </form>
+    </div>
+    
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th>Тариф</th>
+            <th>Кол. контр.</th>
+            <th>Нач. пер.</th>
+            <th>Куб. м.</th>
+            <th>Начисл.</th>
+            <th>Опл.</th>
+            <th>Кон. пер.</th>
+        </tr>
+        @foreach(var item in Model.Report)
+        {
+            <tr>
+                <td>@Url.Tariff(item.TariffId, item.TariffName)</td>
+                <td>@item.ContractsCount</td>
+                <td>@((item.StartBalance + item.RegistrationDebt).ToString("0.00"))</td>
+                <td>@item.CubicMeters.ToString("0.00")</td>
+                <td>@item.BilledAmount.ToString("0.00")</td>
+                <td>@item.TransactionsAmount.ToString("0.00")</td>
+                <td>@item.EndBalance.ToString("0.00")</td>
+            </tr>
+        }
+        <tr>
+            <th>Итого</th> 
+                <td>@Model.Total.ContractsCount</td>
+                <td>@((Model.Total.StartBalance + Model.Total.RegistrationDebt).ToString("0.00"))</td>
+                <td>@Model.Total.CubicMeters.ToString("0.00")</td>
+                <td>@Model.Total.BilledAmount.ToString("0.00")</td>
+                <td>@Model.Total.TransactionsAmount.ToString("0.00")</td>
+                <td>@Model.Total.EndBalance.ToString("0.00")</td>
+        </tr>
+    </table>
+    
+}

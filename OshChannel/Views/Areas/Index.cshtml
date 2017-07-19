@@ -1,0 +1,46 @@
+﻿@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.Areas.AreasDictionaryModel
+
+@{
+    ViewBag.Title = "Районы города";
+
+
+    var byController = Model.Areas.Select(a => a.ControllerId).Distinct().ToDictionary
+        (
+            key => key == 0 ? "Без контроллера" : Model.Areas.FirstOrDefault(a => a.ControllerId == key).ControllerName,
+            value => Model.Areas.Where(a => a.ControllerId == value)
+        );
+}
+
+<ul class="breadcrumb">
+    @ViewBag.Title
+</ul>
+
+@Html.Partial("CreateAreaButtonPartial")
+
+@foreach (var c in byController)
+{
+    <h3 class="h2margin">@c.Key</h3>
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th style="width: 33%;">Район</th>
+            <th style="width: 33%">Замечания</th>
+            <th >Контроллер</th>
+        </tr>
+        @foreach (var area in c.Value)
+        {
+            <tr>
+                <td>
+                    <a href="javascript:void(0)" onclick="editArea(@area.Id, '@area.Name', '@area.Remarks', @area.ControllerId)">@area.Name</a>
+                </td>
+                <td>
+                    @area.Remarks
+                </td>
+                <td>
+                    @Url.User(area.ControllerId, area.ControllerName)
+                </td>
+            </tr>
+        }
+    </table>
+}

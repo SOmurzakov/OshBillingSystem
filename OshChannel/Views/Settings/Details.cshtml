@@ -1,0 +1,138 @@
+﻿@using OshChannel.Helpers
+@model OshBusinessModel.Da.Settings.SettingsDetailsModel
+
+@{
+    ViewBag.Title = "Настройки системы";
+
+    bool hasChangePermission = Auth.HasPermission(OshBusinessModel.Data.Permission.SettingsChange);
+    bool hasGiveVisaPermission = Auth.HasPermission(OshBusinessModel.Data.Permission.SettingsGiveVisa);
+}
+
+@{
+    if (Model == null || Model.Details == null)
+    {
+        <h3>Не найдено</h3>
+    }
+    else
+    {
+        <div class="row">
+            <div class="span6">
+                <h3 class="h2margin">@Model.Details.Description</h3>
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <td style="width: 175px;">Параметр</td>
+                        <td>@Model.Details.Description</td>
+                    </tr>
+                    <tr>
+                        <td>Значение</td>
+                        <td>@Model.Details.StringValue</td>
+                    </tr>
+                </table>
+                
+                @{
+                    if (hasChangePermission)
+                    {
+                        <div class="form-actions">
+                            <button class="btn btn-primary" id="giveNewValue">Изменить</button>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="span6">
+                <h3 class="h2margin">История изменений</h3>
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <th style="width: 75px;">Пользователь</th>
+                        <th>Значение</th>
+                        <th>Виза</th>
+                    </tr>
+                    @foreach (var change in Model.Changes)
+                    {
+                        <tr@Url.VisaRequiredCss(change.VisaRequired, change.VisaGivenUserId)>
+                            <td>
+                                @change.Date.ToShortDateString() <br/>
+                                @Url.User(change.UserId, change.UserName)
+                            </td>
+                            <td>@change.StringValue</td>
+                            <td>
+                                @Url.VisaInfo(change.VisaRequired, change.VisaGivenUserId, change.VisaGivenUserName, change.VisaGivenDate, OshBusinessModel.Data.Permission.SettingsGiveVisa, change.Id, "Settings")
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    
+                    if (hasChangePermission)
+                    {
+            <div id="modal-setNewValue" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">Новое значение</h3>
+                </div>
+                <div class="modal-body">
+                    <b>@Model.Details.Description</b>
+                    <input type="text" value="@Model.Details.StringValue" id="input-setNewValue" style="width: 95%;"/>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Отмета</button>
+                    <button class="btn btn-primary" id="save-setNewValue">Сохранить</button>
+                </div>
+            </div>
+            
+            <script type="text/javascript">
+                function giveNewValue() {
+                    $('#modal-setNewValue').modal('show');
+                }
+
+                function save() {
+                    
+                    var key = '@Model.Details.KeyName';
+                    var value = $('#input-setNewValue').val();
+                    var json = JSON.stringify({Key: key, Value: value });
+
+                    $.ajax({
+                        url: '@Url.Action("SetNewValue", "Settings")',
+                            type: 'POST',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            data: json,
+                            success: function(result) {
+
+                                if (result['Success']) {
+                                    location.reload();
+                                } else {
+                                    alert('не верные данные');
+                                }
+
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                alert(jqXHR);
+                                alert(textStatus);
+                                alert(errorThrown);
+                            }
+                        });
+                }
+
+                $(function () {
+                    $('#giveNewValue').click(function () {
+                        giveNewValue();
+                    });
+
+                    $('#save-setNewValue').click(function() {
+                        save();
+                    });
+                });
+                
+            </script>
+    
+        }
+    }
+}
+
+@{
+    if (Auth.HasPermission(OshBusinessModel.Data.Permission.SettingsGiveVisa))
+    {
+        <div>@Html.Partial("GiveVisaScriptsPartial")</div>
+    }
+}

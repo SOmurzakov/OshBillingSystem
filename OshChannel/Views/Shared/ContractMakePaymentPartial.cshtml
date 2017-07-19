@@ -1,0 +1,88 @@
+﻿@using OshBusinessModel.Da.ShowContract
+@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.ShowContract.ShowContractModel
+
+<div class="makePayment form-horizontal">
+    <input type="hidden" id="contractId" value="@Model.Details.ContractId"/>
+    <legend>Внести оплату</legend> 
+    <div class="control-group">
+        <label class="control-label" for="debt">Долг:</label>
+        <div class="controls">
+            <input type="text" id="debt" value="@Model.Details.ContractDebt.ToString("0.00")" disabled="disabled"/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="amount">Сумма: </label>
+        <div class="controls">
+            <input type="text" id="amount" value="@(Model.Details.ContractDebt > 0 ? Model.Details.ContractDebt.ToString("0.00") : "")"/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="subagentId">Субагент: </label>
+        <div class="controls">
+            <select id="subagentId">
+                <option value="-@Auth.User.UserId">@Auth.User.Name</option>
+                @foreach(var subagent in Model.Subagents.Where(s => !s.IsSystem))
+                {
+                    <option value="@subagent.SubagentId">@subagent.SubagentName</option>
+                }
+                @if (Model.Details.ControllerId > 0) {
+                    <option value="-@Model.Details.ControllerId">Контроллер @Model.Details.ControllerName</option>
+                }
+                @foreach(var user in Model.MakePaymentUsers)
+                {
+                    <option value="-@user.UserId">@user.Name</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="makePayment-receiptNo">Квитанция: </label>
+        <div class="controls">
+            <input type="text" id="makePayment-receiptNo"/>
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="controls">
+            <button class="btn btn-primary" id="pay">Оплатить</button>
+        </div>
+    </div>
+</div>
+                
+<script type="text/javascript">
+    function pay() {
+        var amount = $('#amount').val();
+        var contractid = $('#contractId').val();
+        var subagentId = $('#subagentId').val();
+        var receiptNo = $('#makePayment-receiptNo').val();
+
+        if (amount) {
+            var json = JSON.stringify({ Amount: amount, ContractId: contractid, SubagentId: subagentId, ReceiptNo: receiptNo });
+            $.ajax({
+                url: '@Url.Action("MakePaymentAjax", "Contracts")',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: json,
+                success: function (result) {
+                    if (result['Success']) {
+                        location.reload();
+                    } else {
+                        alert(result['Message']);
+                    }
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert('Не успешно, проверьте данные');
+                }
+            });
+        }
+    }
+
+    $(function () {
+        $('#pay').click(function () {
+            pay();
+        });
+    });
+</script>

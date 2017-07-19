@@ -1,0 +1,78 @@
+﻿@model OshBusinessModel.Da.ReconciliationReport
+
+@{
+    ViewBag.Title = "Сверка кассы ";
+
+    var systemSubagents = Model.Report.Where(r => r.IsSubagent && r.IsSystem);
+    var paymentTerminals = Model.Report.Where(r => r.IsSubagent && !r.IsSystem);
+
+    var cashiers = Model.Report.Where(r => !r.IsSubagent && r.UserType == UserType.Cashier.SemanticId);
+    var controllers = Model.Report.Where(r => !r.IsSubagent && r.UserType == UserType.Controller.SemanticId);
+    var otherUsers = Model.Report.Where(r => !r.IsSubagent && r.UserType != UserType.Cashier.SemanticId && r.UserType != UserType.Controller.SemanticId && r.TransactionCount > 0);
+}
+
+<div class="well">
+    <form class="form-inline" action="@Url.Action("Reconciliation", "Accountant")" style="margin-bottom: 0;">
+        <h3 style="margin-bottom: 20px; margin-top: 0;">@ViewBag.Title</h3>
+        <div class="pull-right">
+            <button type="submit" class="btn btn-primary">Обновить</button>
+        </div>
+        
+        <label for="dateStart" style="margin-right: 20px;">Период </label>
+        <label for="dateStart">с</label>
+        <input type="text" value="@Model.DateStart.ToShortDateString()" name="dateStart" class="span2" id="dateStart" style="margin-right: 20px;"/>
+        <label for="dateEnd">по</label>
+        <input type="text" value="@Model.DateEnd.ToShortDateString()" name="dateEnd" class="span2" id="dateEnd"/>
+    </form>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        datetimepicker('#dateStart');
+        datetimepicker('#dateEnd');
+    });
+</script>
+
+<h3 style="margin: 20px 0;">Кассы</h3>
+
+@Html.Partial("ReconciliationTransactionsPartial"
+                    , new ReconciliationTransactionsPartialModel() 
+                        { Transactions = cashiers, DateStart = Model.DateStart, DateEnd = Model.DateEnd})
+
+<h3 style="margin: 20px 0;">Контроллеры</h3>
+
+@Html.Partial("ReconciliationTransactionsPartial"
+                    , new ReconciliationTransactionsPartialModel() 
+                        { Transactions = controllers, DateStart = Model.DateStart, DateEnd = Model.DateEnd})
+
+<h3 style="margin: 20px 0;">Банки и терминалы</h3>
+
+@Html.Partial("ReconciliationTransactionsPartial"
+                    , new ReconciliationTransactionsPartialModel() 
+                        { Transactions = paymentTerminals, DateStart = Model.DateStart, DateEnd = Model.DateEnd})
+
+<h3 style="margin: 20px 0;">Перерасчет</h3>
+
+@Html.Partial("ReconciliationTransactionsPartial"
+                    , new ReconciliationTransactionsPartialModel() 
+                        { Transactions = systemSubagents, DateStart = Model.DateStart, DateEnd = Model.DateEnd})
+
+@if (otherUsers.Count() > 0)
+{
+    
+    <h3 style="margin: 20px 0;">Другие пользователи</h3>
+
+    @Html.Partial("ReconciliationTransactionsPartial"
+                        , new ReconciliationTransactionsPartialModel() { Transactions = otherUsers, DateStart = Model.DateStart, DateEnd = Model.DateEnd })
+
+}
+
+<h3 class="h2margin">Итого</h3>
+<table class="table table-bordered table-striped">
+    <tr>
+        <td>Итого</td>
+        <td class="reconciliationAmount">@Model.Report.Sum(r => r.TransactionCount)</td>
+        <td class="reconciliationAmount">@Model.Report.Sum(s => s.Amount).ToString("0.00")</td>
+        <td style="width:150px;"></td>
+    </tr>
+</table>

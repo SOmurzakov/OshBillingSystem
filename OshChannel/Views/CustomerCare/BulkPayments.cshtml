@@ -1,0 +1,423 @@
+﻿@model OshBusinessModel.Da.BulkPayments.BuilkPaymentsModel
+
+@{
+    ViewBag.Title = "Массовый ввод платежей";
+}
+
+<div class="well">
+    <div class="form-inline">
+        <div class="pull-right">
+            <label for="paymentdate" style="margin-right: 10px;">Дата:</label>
+            <input type="text" value="@Html.ToDate(DateTime.Today)" style="width: 100px;" id="paymentDate"/>
+        </div>
+        <h3 style="margin-bottom: 20px; margin-top: 0;">@ViewBag.Title</h3>
+        
+        <div style="margin-bottom: 10px;">
+            <label for="subagentuser" style="margin-right: 10px;" class="bold">Субагент/Контроллер:</label>
+            <label class="radio subagent-radio"><input type="radio" name="SubagentUser" value="1" data-use-controller="1" data-subagent-id="-1" data-user-id="-1"/> Контроллер</label>
+            @for (int i = 0; i < Model.SubagentsUsers.Length; i++)
+            {
+                var subagent = Model.SubagentsUsers[i];
+                if (subagent.Role != "controller")
+                {
+                    <label class="radio subagent-radio"><input type="radio" name="SubagentUser" value="@i" data-use-controller="0" data-subagent-id="@subagent.SubagentId" data-user-id="@subagent.UserId"/>@subagent.Name</label>
+                }
+            }
+        </div>
+
+@*
+        <select id="subagentuser" style="margin-right: 50px;">
+            <option value="-1" subagent-id="-1" user-id="-1">Выберите субагента</option>
+            @for (int i = 0; i < Model.SubagentsUsers.Length; i++)
+            {
+                var subagentuser = Model.SubagentsUsers[i];
+                <option value="@i" subagent-id="@subagentuser.SubagentId" user-id="@subagentuser.UserId">@subagentuser.Name</option>
+            }
+        </select>
+*@
+        
+        <div>
+            <label style="margin-right: 10px;" class="bold">Критерий поиска:</label>
+        
+            <label class="radio" style="margin-right: 10px;"><input type="radio" name="searchCriteria" value="contractId"/> Номер контракта</label>
+            <label class="radio" style="margin-right: 10px;"><input type="radio" name="searchCriteria" value="archiveId" checked="checked"/>Лицевой счет (Архивный номер)</label>
+            <label class="radio" style="margin-right: 30px;"><input type="radio" name="searchCriteria" value="address"/> Адрес</label>
+        </div>
+
+    </div>
+</div>
+
+<div class="bulkPaymentDiv" style="display:none;">
+    <table style="width: 100%">
+    </table>
+</div>
+
+<div id="headerTemplate-contractId" style="display: none;">
+    <table>
+        <tr>
+            <th style="width: 120px;">Номер контракта</th>
+            <th style="width: 120px;">Номер квитанции</th>
+            <th style="width: 120px;">Сумма оплаты</th>
+            <th>Контракт</th>
+            <th style="width: 120px;">Долг</th>
+        </tr>
+    </table>
+</div>
+
+<div id="headerTemplate-archiveId" style="display: none;">
+    <table>
+        <tr>
+            <th style="width: 120px;">Архивный номер</th>
+            <th style="width: 120px;">Номер квитанции</th>
+            <th style="width: 120px;">Сумма оплаты</th>
+            <th>Контракт</th>
+            <th style="width: 120px;">Долг</th>
+        </tr>
+    </table>
+</div>
+
+<div id="headerTemplate-address" style="display: none;">
+    <table>
+        <tr>
+            <th style="width: 170px;">Полный адрес</th>
+            <th style="width: 170px;">Фамилия</th>
+            <th style="width: 120px;">Номер квитанции</th>
+            <th style="width: 120px;">Сумма оплаты</th>
+            <th>Контракт</th>
+            <th style="width: 120px;">Долг</th>
+        </tr>
+    </table>
+</div>
+
+<div id="trTemplate-contractId" style="display: none;">
+    <table>
+        <tr>
+            <td><input type="text" class="keyValue" style="width: 100px;"/></td>
+            <td><input type="text" class="receiptNo" style="width: 100px;"/></td>
+            <td><input type="text" class="amount" style="width: 100px;"/></td>
+            <td>
+                <span class="contractId" style="display: none"></span>
+                <span class="subscriber"></span>
+                <br/><span class="address"></span>
+                <br/><span class="area"></span>
+            </td>
+            <td>
+                <span class="contractdebt" style="font-weight: bold;"></span>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="trTemplate-archiveId" style="display: none;">
+    <table>
+        <tr>
+            <td><input type="text" class="keyValue" style="width: 100px;"/></td>
+            <td><input type="text" class="receiptNo" style="width: 100px;"/></td>
+            <td><input type="text" class="amount" style="width: 100px;"/></td>
+            <td>
+                <span class="contractId" style="display: none"></span>
+                <span class="subscriber"></span>
+                <br/><span class="address"></span>
+                <br/><span class="area"></span>
+            </td>
+            <td>
+                <span class="contractdebt" style="font-weight: bold;"></span>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="trTemplate-address" style="display: none;">
+    <table>
+        <tr>
+            <td><input type="text" class="keyValue" style="width: 150px;"/></td>
+            <td><span class="nameWrapper"></span></td>
+            <td><input type="text" class="receiptNo" style="width: 100px;"/></td>
+            <td><input type="text" class="amount" style="width: 100px;"/></td>
+            <td>
+                <span class="contractId" style="display: none"></span>
+                <span class="subscriber"></span>
+                <br/><span class="address"></span>
+                <br/><span class="area"></span>
+            </td>
+            <td>
+                <span class="contractdebt" style="font-weight: bold;"></span>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<p style="text-align: center"><button class="btn btn-large btn-primary" id="registerPayments" style="display: none;">Сохранить</button></p>
+
+<script type="text/javascript">
+
+    var _transactionsSaved = false;
+
+    function setContractInfo(tr, area, subscriber, address, debt, contractId, archiveId, contractNumber) {
+        tr.find('.area').text(area);
+
+        if (contractId > 0) {
+            var subscriberSpan = tr.find('.subscriber');
+            subscriberSpan.html('');
+
+            var linkText = contractNumber;
+            if (archiveId > 0) {
+                linkText += ' (Архив: ' + archiveId + ')';
+            }
+
+            var contractLink = $('<a>' + linkText + '</a>').attr('href', '@Url.Action("Show", "Contracts")' + '?contractId=' + contractId);
+
+            subscriberSpan.append(contractLink);
+            subscriberSpan.append(' ' + subscriber);
+        } else {
+            tr.find('.subscriber').text('Не найден!');
+        }
+
+        tr.find('.address').text(address);
+        tr.find('.contractdebt').text(debt + ' сом');
+        tr.find('.contractId').text(contractId);
+    }
+
+    function lastRowIsEmpty() {
+        var contracts = $(".keyValue", '.bulkPaymentDiv').map(function () { return $(this).val(); }).get();
+        return contracts.length == 0     || !contracts[contracts.length - 1];
+    }
+
+    function getContractInfoByArchiveId(keyValue, searchCriteria, parentTr) {
+        var data = { KeyValue: keyValue, SearchCriteria: searchCriteria };
+        var json = JSON.stringify(data);
+
+        $.ajax({
+            url: '@Url.Action("GetConctractInfoByArchiveIdAjax", "CustomerCare")',
+            data: json,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function (result) {
+                if (result["Found"] == true) {
+
+                    if (result.Options) {
+
+                        addOptions(parentTr, result.Options);
+
+                    } else {
+
+                        //removeOptions(parentTr);
+                        parentTr.removeClass('bulkPaymentBad');
+                        setContractInfo(parentTr, result['Area'], result['Subscriber'], result['Address'], result['DebtAsString'], result['ContractId'], result['ArchiveId'], result['ContractNumber']);
+                        parentTr.addClass('bulkPaymentGood');
+                        if (!lastRowIsEmpty()) {
+                            addRow();
+                        }
+
+                    }
+
+                } else {
+                    parentTr.removeClass('bulkPaymentGood');
+                    parentTr.addClass('bulkPaymentBad');
+                    setContractInfo(parentTr, '', '', '', '', 0, 0, '');
+                }
+            }
+        });
+    }
+
+    function addOptions(parentTr, options) {
+        var $select = $('<select style="width: 150px; margin-top: 10px;"></select>');
+        parentTr.find('.nameWrapper').html('').append( $select );
+        for (var i = 0; i < options.length; i++) {
+            var option = options[i];
+            $select.append('<option value="' + option.ContractId + '">' + option.ContractNumber + ' ' + option.Name + '</option>');
+            $select.change(function() {
+                var contractId = $(this).val();
+                getContractInfoByArchiveId(contractId, 'contractId', parentTr);
+            });
+        }
+    }
+
+    function removeOptions(parentTr) {
+        parentTr.find('.nameWrapper').html('');
+    }
+
+    function addRow() {
+        var searchCriteria = $('input[name=searchCriteria]:checked').val();
+        //alert(searchCriteria);
+        
+        var trTemplate = $('table tbody', '#trTemplate-' + searchCriteria).html();
+        //var justAdded = $(trTemplate).appendTo('table', 'div.bulkPaymentDiv');
+        $('table tbody', 'div.bulkPaymentDiv').append(trTemplate);
+
+        //$('.contractId', justAdded).val('123456');
+
+        $('.keyValue').off('change');
+        $('input', 'div.bulkPaymentDiv').off('keyup');
+
+        $('.keyValue').change(function () {
+            var keyValue = $(this).val();
+            var parentTr = $(this).parents('tr');
+            getContractInfoByArchiveId(keyValue, searchCriteria, parentTr);
+        });
+
+        $('input').bind('keyup', function (event) {
+            if (event.keyCode == 13) {
+
+                if ($(this).hasClass('amount')) {
+                    $(this).parents('tr').next('tr').find('input')[0].focus();
+                } else {
+                    $(this).parents('td').next('td').children('input').focus();
+                }
+
+            }
+        });
+        
+        if (searchCriteria == 'address') {
+            $('.keyValue').unbind('keyup');
+            $('.keyValue').data('typeahead', (data = null));
+            $('.keyValue').typeahead({ source: streets });
+        }
+    }
+    
+    function addHeader() {
+        var searchCriteria = $('input[name=searchCriteria]:checked').val();
+        var headerTemplate = $('table tbody', '#headerTemplate-' + searchCriteria).html();
+        $('table', 'div.bulkPaymentDiv').append(headerTemplate);
+    }
+
+    function clearRows() {
+        $('table', 'div.bulkPaymentDiv').html('');
+        addHeader();
+    }
+
+    function registerPayments() {
+        if ($('#registerPayments').prop('disabled')) {
+
+        } else {
+
+            var selectedSubagent = $('[name=SubagentUser]:checked');
+            var subagentUserId = selectedSubagent.val();
+            
+            if (subagentUserId < 0) {
+                alert('Выберите субагента');
+                return;
+            }
+
+            var useController = selectedSubagent.attr('data-use-controller');
+            var subagentId = selectedSubagent.attr('data-subagent-id');
+            var userId = selectedSubagent.attr('data-user-id');
+            var date = $('#paymentDate').val();
+
+            if ($('.bulkPaymentBad').length > 0) {
+                alert('Проверьте номера контрактов');
+                return;
+            }
+            
+            if ($('.bulkPaymentGood').length == 0) {
+                alert('Введите хотя бы один платеж');
+                return;
+            }
+            
+            var contractIds = $('.contractId', '.bulkPaymentDiv').map(function () { return $(this).text(); }).get();
+            var receiptNumbers = $('.receiptNo', '.bulkPaymentDiv').map(function () { return $(this).val(); }).get();
+            var amounts = $('.amount', '.bulkPaymentDiv').map(function() { return $(this).val(); }).get();
+
+            var payments = [];
+
+            for (var i = 0; i < contractIds.length; i++) {
+
+                if (!contractIds[i]) {
+                    if (i != contractIds.length - 1) {
+                        alert('Введите номер контракта');
+                        return;
+                    }
+                } else if (!amounts[i]) {
+                    alert('Введите сумму оплаты');
+                    return;
+                } else {
+                    payments.push({ ContractId: contractIds[i], ReceiptNo: receiptNumbers[i], Amount: amounts[i] });
+                }
+            }
+
+            var dto = { SubagentId: subagentId, UserId: userId, Date: date, Payments: payments, UseController: useController };
+
+            var json = JSON.stringify(dto);
+
+            $('#registerPayments').prop('disabled', true);
+            $.ajax({
+                url: '@Url.Action("BulkPaymentsAjax", "CustomerCare")',
+                type: 'POST',
+                contentType: 'application/json; charset=UTF-8',
+                data: json,
+                dataType: 'json',
+                error: function (a, b, c) {
+                    alert(c);
+                    $('#registerPayments').prop('disabled', false);
+                },
+                success: function (result) {
+                    if (result['Success']) {
+                        alert('Платежи успешно зарегистрированы');
+                        _transactionsSaved = true;
+                        location.href = result['RedirectUrl'];
+                    } else {
+                        alert(result['Message']);
+                    }
+                    $('#registerPayments').prop('disabled', false);
+                }
+            });
+
+        }
+    }
+
+    function showPaymentTableIfNeeded() {
+        var subagentId = $('[name=SubagentUser]:checked').val();
+        var canShow = subagentId >= 0;
+
+        if (canShow) {
+
+            if ($('table', 'div.bulkPaymentDiv').find('tr').length == 0) {
+                addHeader();
+                addRow();
+            }
+
+            $('#registerPayments').show('fast');
+            $('.bulkPaymentDiv').show('fast');
+        } else {
+            $('#registerPayments').hide();
+            $('.bulkPaymentDiv').hide();
+            //clearRows();
+        }
+    }
+
+    function hasPayments() {
+        return $('.bulkPaymentBad').length + $('.bulkPaymentGood').length > 0;
+    }
+
+    $(function () {
+
+        $('input[name=searchCriteria]').change(function () {
+            clearRows();
+            addRow();
+        });
+
+        $('[name=SubagentUser]').click(function () {
+            showPaymentTableIfNeeded();
+        });
+
+        $('#registerPayments').click(function () {
+            registerPayments();
+        });
+
+        datetimepicker('#paymentDate');
+
+        $(window).bind('beforeunload', function() {
+
+            if (hasPayments() && !_transactionsSaved) {
+                return 'Внимание! Введенные транзакции будут потеряны';
+            }
+
+        });
+    });    
+
+    var streets = [@(new MvcHtmlString(string.Join(", ", Model.Streets.Select(s => "\"" + s + "\""))))];
+
+</script>
+
+

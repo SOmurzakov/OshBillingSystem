@@ -1,0 +1,249 @@
+﻿@model OshBusinessModel.Da.Rootings.RootingsForControllerModel
+
+@{
+    ViewBag.Title = "Обходной лист";
+    var selectedPeriod = Model.Periods.FirstOrDefault(p => p.BillingPeriodId == Model.PeriodId);
+    var selectedPeriodName = selectedPeriod != null ? selectedPeriod.Name : "";
+    var selectedController = Model.Controllers.FirstOrDefault(c => c.UserId == Model.ControllerId);
+    var selectedControllerName = selectedController != null ? selectedController.Name : "";
+}
+
+@if (Model == null)
+{
+    <h3>Счета не выставлялись</h3>
+}
+else
+{
+    <div class="well">
+
+        <h3 style="margin-bottom: 20px; margin-top: 0;">Обходной лист</h3>
+    
+        <div class="pull-right">
+            <button class="btn btn-large btn-primary" id="applyFilter">Построить</button>
+        </div>
+
+        <div class="form-inline">
+    
+            <label for="rootingPeriod">Период: </label>
+        
+            <select id="rootingPeriod" style="margin-right: 20px;">
+                <option value="-1">Выберите период...</option>
+                @foreach (var period in Model.Periods)
+                {
+                    <option value="@period.BillingPeriodId"@Html.If(Model.PeriodId == period.BillingPeriodId, " selected=\"selected\"")>@period.Name</option>
+                }
+            </select>
+        
+            <label for="controller">Контроллер: </label>
+        
+            <select id="controller" style="margin-right: 20px;">
+                <option value="-1">Выберите контроллера...</option>
+                @foreach (var controller in Model.Controllers)
+                {
+                    <option value="@controller.UserId"@Html.If(Model.ControllerId == controller.UserId, " selected=\"selected\"")>@controller.Name</option>
+                }
+            </select>
+        
+            <label for="area">Участок: </label>
+        
+            <select id="areas"@Html.If(Model.ControllerId <= 0 || Model.Areas.Where(a => a.ControllerId == Model.ControllerId).Count() == 0, " disabled=\"disabled\"")>
+                @if (Model.ControllerId > 0)
+                {
+                    var areas = Model.Areas.Where(a => a.ControllerId == Model.ControllerId);
+                    if (areas.Count() == 0)
+                    {
+                        <option value="-1">Не назначены</option>
+                    }
+                    else
+                    {
+                        <option value="-1">Все</option>
+                        foreach (var area in areas)
+                        {
+                            <option value="@area.Id"@Html.If(Model.AreaId == area.Id, " selected=\"selected\"")>@area.Name</option>
+                        }
+                    }
+                }
+                else
+                {
+                    <option value="-1">Выберите контроллера</option>
+                }
+            </select>
+
+        </div>
+    
+    
+        <div id="areas-controller--1">
+            <option value="-1">Выберите контроллера</option>
+        </div>
+
+        @foreach (var controller in Model.Controllers)
+        {
+            var areas = Model.Areas.Where(a => a.ControllerId == controller.UserId);
+
+            <div id="areas-controller-@controller.UserId">
+                @if (areas.Count() == 0)
+                {
+                    <option value="-1">Не назначены</option>
+                }
+                else
+                {
+                    <option value="-1">Все</option>
+                    foreach (var area in areas)
+                    {
+                        <option value="@area.Id">@area.Name</option>
+                    }
+                }
+            </div>
+        }
+
+    </div>
+
+    <script type="text/javascript">
+        $(function() {
+            $('#controller').change(function() {
+
+                var controllerId = $('#controller').val();
+                var divId = '#areas-controller-' + controllerId;
+
+                $('#areas').html($(divId).html());
+
+                var optionsCount = $(divId + ' option').length;
+
+                if (optionsCount > 1) {
+                    $('#areas').prop('disabled', false);
+                } else {
+                    $('#areas').prop('disabled', true);
+                }
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(function() {
+            $('#applyFilter').click(function() {
+                var periodId = $('#rootingPeriod').val();
+                var controllerId = $('#controller').val();
+                var areaId = $('#areas').val();
+
+                if (periodId <= 0) {
+                    alert('Выберите период');
+                } else if (controllerId <= 0) {
+                    alert('Выберите контроллера');
+                } else {
+                    window.location = 'Rootings?periodId=' + periodId + '&controllerId=' + controllerId + '&areaId=' + areaId;
+                }
+            });
+        });
+    </script>
+
+    if (Model.Contracts == null || Model.Contracts.Length == 0)
+    {
+        <p><b>Контрактов не найдено</b></p>
+    }
+    else
+    {
+        var i = 0;
+		var j = 0;
+
+        var areas = Model.Contracts.Select(c => c.AreaId).Distinct();
+
+        <div class="print-only">
+            <table style="width: 100%; table-layout: fixed;">
+                <tr>
+                    <td style="text-align: left;">Период: @selectedPeriodName</td>
+                    <td style="text-align: center;">Контроллер: @selectedControllerName</td>
+                    <td style="text-align: right;">Лист распечатан: @DateTime.Today.ToShortDateString()</td>
+                </tr>
+            </table>
+        </div>
+        
+        foreach (var areaId in areas)
+        {
+            var area = Model.Areas.FirstOrDefault(a => a.Id == areaId);
+            var areaName = area == null ? "Неизвестный участок" : area.Name;
+            var contracts = Model.Contracts.Where(c => c.AreaId == areaId);
+
+            <h3 class="h2margin">@areaName</h3>
+
+            <div class="noprint">
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <th width="5%">№</th>
+                        <th width="10%">Контракт</th>
+                        <th width="25%">ФИО / Название</th>
+                        <th>Адресс</th>
+                        <th width="5%">Льгота</th>
+                        <th width="5%">Тариф</th>
+                        <th width="5%">Кол-во человек</th>
+                        <th width="5%">Кан.</th>
+                        <th width="5%">Нач. мес.</th>
+                        <th width="5%">Выставл.</th>
+                        <th width="5%">Оплатил</th>
+                        <th width="5%">Кон. мес.</th>
+                    </tr>
+                    @foreach (var contract in contracts)
+                    {
+                        i++;
+                        <tr>
+                            <td>@i</td>
+                            <td>@Url.Contract(contract.ContractId, contract.ContractNumber)</td>
+                            <td>@contract.Name</td>
+                            <td>@contract.FullAddress</td>
+                            <td>@(new MvcHtmlString(contract.Allowance > 0 ? contract.Allowance.ToString("0.##") + "%" : "&nbsp;"))</td>
+                            <td>@contract.TariffName</td>
+                            <td>@(new MvcHtmlString(contract.Type == "prs" ? contract.PeopleRegistered.ToString() : "&nbsp;"))</td>
+                            <td>@(contract.HasSewage ? "Есть" : "Нет")</td>
+                            <td>@contract.StartBalance.ToString("0.00")</td>
+                            <td>@contract.BilledAmount.ToString("0.00")</td>
+                            <td>@contract.PayedAmount.ToString("0.00")</td>
+                            <td>@contract.EndBalance.ToString("0.00")</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+    
+            <div class="print-only">
+                <table class="table table-striped table-bordered table-condensed small-font-on-print">
+                    <tr>
+                        <th width="5%">№</th>
+                        <th>Контракт / ФИО / Название / Адресс</th>
+                        <th width="5%">Льгота</th>
+                        <th width="5%">Тариф</th>
+                        <th width="5%">Кол-во человек</th>
+                        <th width="5%">Кан.</th>
+                        <th width="5%">Нач. мес.</th>
+                        <th width="5%">Выставл.</th>
+                        <th width="5%">Оплатил</th>
+                        <th width="5%">Кон. мес.</th>
+                    </tr>
+                    @foreach (var contract in contracts)
+                    {
+                        j++;
+                        <tr>
+                            <td>@j</td>
+                            <td>
+                                @contract.ContractNumber
+                                @contract.Name
+                                @contract.FullAddress
+                            </td>
+                            <td>@(new MvcHtmlString(contract.Allowance > 0 ? contract.Allowance.ToString("0.##") + "%" : "&nbsp;"))</td>
+                            <td>@contract.TariffName</td>
+                            <td>@(new MvcHtmlString(contract.Type == "prs" ? contract.PeopleRegistered.ToString() : "&nbsp;"))</td>
+                            <td>@(contract.HasSewage ? "Есть" : "Нет")</td>
+                            <td>@contract.StartBalance.ToString("0.00")</td>
+                            <td>@contract.BilledAmount.ToString("0.00")</td>
+                            <td>
+                                @if (contract.PayedAmount > 0)
+                                {
+                                    @contract.PayedAmount.ToString("0.00")
+                                }
+                            </td>
+                            <td>@contract.EndBalance.ToString("0.00")</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        }
+
+    }
+}

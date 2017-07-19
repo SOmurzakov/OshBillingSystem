@@ -1,0 +1,67 @@
+﻿@model OshBusinessModel.Da.ShowContract.ShowContractModel
+
+@{
+    ViewBag.Title = "Заявление";
+    var bill = Model.Bill;
+}
+
+
+<h4>Счет-извещение за воду и стоки</h4>
+
+<table border="1" style="width: 10cm; margin-bottom: 20px;">
+    <tr>
+        <td>Месяц</td>
+        <td>@bill.BillDetails.BillingPeriodName</td>
+    </tr>
+    <tr>
+        <td>Контракт</td>
+        <td>@bill.ContractDetails.ContractNumber</td>
+    </tr>
+    <tr>
+        <td>Абонент</td>
+        <td>@bill.ContractDetails.Name</td>
+    </tr>
+    <tr>
+        <td>Участок</td>
+        <td>@bill.ContractDetails.AreaName</td>
+    </tr>
+    <tr>
+        <td>Тариф</td>
+        <td>
+            @bill.BillDetails.TariffName - @bill.BillDetails.PeopleRegistered чел
+            @foreach (var option in bill.Options)
+            {
+                <br/>
+                <span>
+                    @option.VariableBillName 
+                    - 
+                    @option.VariableDescription
+                </span>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>Период</td>
+        <td>с @bill.BillDetails.PeriodStart.ToShortDateString() по @bill.BillDetails.PeriodEnd.ToShortDateString()</td>
+    </tr>
+    <tr style="font-weight: bold;">
+        <td>Начисленно за месяц</td>
+        <td>@bill.BillDetails.AmountForMonth.ToString("0.00")</td>
+    </tr>
+    <tr>
+        <td>Долг</td>
+        <td>@bill.BillDetails.Debt.ToString("0.00")</td>
+    </tr>
+    <tr>
+        <td>Пеня</td>
+        <td>0.00</td>
+    </tr>
+    <tr>
+        <td>К оплате</td>
+        <td>@bill.BillDetails.AmountToPay.ToString("0.00")</td>
+    </tr>
+</table>
+
+@Settings.Get("Company.FullName") <br/>
+@Settings.Get("Company.Address") <br/>
+Тел.: @Settings.Get("Company.Phone")

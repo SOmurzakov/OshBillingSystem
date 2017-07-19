@@ -1,0 +1,39 @@
+﻿@model OshBusinessModel.Da.Rootings.RootingsBuildingsModel
+
+@{
+    ViewBag.Title = "Обходной лист - выбор дома";
+}
+
+<ul class="breadcrumb">
+    @ViewBag.Title
+</ul>
+
+@if (Model == null)
+{
+    <p>Контрактов не найдено</p>
+}
+else
+{
+    <h3 class="h2margin">Уч. @Model.AreaName, ул. @Model.AddressStreet</h3>
+
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th></th>
+            <th>Дом</th>
+            <th>Активных абонентов</th>
+            <th>Из них с водомерами</th>
+            <th>Показания счетчика не предоставлены</th>
+        </tr>
+        @for (int i = 0; i < Model.Buildings.Length; i++)
+        {
+            var building = Model.Buildings[i];
+            <tr>
+                <td>@(i + 1)</td>
+                <td><a href="@Url.Action("RootingsGetContracts", "Controller", new { areaId = Model.AreaId, street = Model.AddressStreet, building = building.AddressBuilding })">@Model.AddressStreet @building.AddressBuilding</a></td>
+                <td>@building.OpenContractsCount</td>
+                <td>@building.ContractsWithMetersCount</td>
+                <td>@building.NoMetersValuesProvidedCount</td>
+            </tr>
+        }
+    </table>
+}

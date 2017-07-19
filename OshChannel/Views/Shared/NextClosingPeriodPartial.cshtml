@@ -1,0 +1,59 @@
+﻿@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.Director.DirectorIndexModel
+
+
+@if (Model.NextClosingPeriod.CanBeClosed)
+{
+    <div class="well alert-info">
+        <div class="pull-right">
+            @if (Auth.HasPermission(Permission.ClosePeriod))
+            {
+                <button class="btn btn-primary btn-large" id="closePeriod">Закрыть</button>
+                
+                using (var dlg = Html.Dialog("closePeriodDialog", "Закрыть период", "Продолжить", true, "closePeriod"))
+                {
+                    <p>Вы действительно хотите закрыть период?</p>
+                }
+                
+                <script type="text/javascript">
+
+                    function save_closePeriodDialog() {
+                        if ($('#save-closePeriodDialog').hasClass('disabled')) {
+                            alert('already');
+                            return;
+                        }
+                        
+                        $('#save-closePeriodDialog').addClass('disabled');
+
+                        $.ajax({
+                            url: '@Url.Action("ClosePeriodAjax", "Director")',
+                            type: 'POST',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            data: JSON.stringify({}),
+                            success: function (result) {
+                                if (result['Success']) {
+                                    alert('Период был успешно закрыт');
+                                    location.reload();
+                                } else {
+                                    alert(result['Message']);
+                                }
+                            },
+                            error: function (a, b, c) {
+                                alert('Произошла ошибка');
+                            }
+                        });
+                    }
+                </script>
+            }
+        </div>
+        <h3>Закрыть период: @Model.NextClosingPeriod.NextPeriodName</h3>
+    </div>
+}
+else
+{
+    <div class="well">
+        <h3>Текущий период: @Model.NextClosingPeriod.NextPeriodName</h3>
+    </div>
+}

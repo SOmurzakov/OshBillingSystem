@@ -1,0 +1,32 @@
+﻿@using OshChannel.Helpers
+@model OshBusinessModel.Da.Subagents.SubagentTransactionsModel
+
+@{
+    ViewBag.Title = Model.Name;
+}
+
+<ul class="breadcrumb">
+    @ViewBag.Title
+</ul>
+
+<table class="table table-striped table-bordered">
+    <tr>
+        <th>Дата</th>
+        <th>Сумма (сом)</th>
+        <th>Контракт</th>
+        <th>Абонент</th>
+        <th>Адрес</th>
+        <th>Пользователь</th>
+    </tr>
+    @foreach(var transaction in Model.Transactions)
+    {
+        <tr>
+            <td>@transaction.DateAsOf.ToShortDateString()</td>
+            <td>@transaction.Amount.ToString("0.00")</td>
+            <td>@Url.Contract(transaction.ContractId, transaction.ContractNumber)</td>
+            <td>@Url.Subscriber(transaction.SubscriberId, transaction.SubscriberName)</td>
+            <td>@transaction.FullAddress</td>
+            <td>@Url.User(transaction.UserId, transaction.UserName)</td>
+        </tr>
+    }
+</table>

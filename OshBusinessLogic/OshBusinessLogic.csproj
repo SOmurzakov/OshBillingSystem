@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9796DE56-80A5-43C9-B79E-DC2AD7CE111D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OshBusinessLogic</RootNamespace>
+    <AssemblyName>OshBusinessLogic</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="GlobalSettings.cs" />
+    <Compile Include="Helpers\Misc.cs" />
+    <Compile Include="NativeSql.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\AccountantProvider.cs" />
+    <Compile Include="Providers\AreasProvider.cs" />
+    <Compile Include="Providers\BillingProvider.cs" />
+    <Compile Include="Providers\BillsProvider.cs" />
+    <Compile Include="Providers\ClosingPeriodsProvider.cs" />
+    <Compile Include="Providers\ContractsProvider.cs" />
+    <Compile Include="Providers\ControllersProvider.cs" />
+    <Compile Include="Providers\CustomerCareProvider.cs" />
+    <Compile Include="Providers\DebugProvider.cs" />
+    <Compile Include="Providers\DirectorProvider.cs" />
+    <Compile Include="Providers\InvoicesProvider.cs" />
+    <Compile Include="Providers\OrdersProvider.cs" />
+    <Compile Include="Providers\RootingsProvider.cs" />
+    <Compile Include="Providers\SettingsProvider.cs" />
+    <Compile Include="Providers\StreetsProvider.cs" />
+    <Compile Include="Providers\SubagentsProvider.cs" />
+    <Compile Include="Providers\SubscribersProvider.cs" />
+    <Compile Include="Providers\TariffsProvider.cs" />
+    <Compile Include="Providers\UsersProvider.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OshBusinessModel\OshBusinessModel.csproj">
+      <Project>{30B6D745-3539-4370-B16A-88317FA0C1D6}</Project>
+      <Name>OshBusinessModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OshCommons\OshCommons.csproj">
+      <Project>{1D1BBA49-273A-4718-A9EE-4F3A411FDF03}</Project>
+      <Name>OshCommons</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

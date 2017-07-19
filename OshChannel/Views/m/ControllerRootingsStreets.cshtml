@@ -1,0 +1,36 @@
+﻿@model OshBusinessModel.Da.Rootings.RootingsStreetsModel
+
+@{
+    ViewBag.Title = "Обходной лист - выбор улицы";
+    Layout = "~/Views/Shared/_LayoutMobile.cshtml";
+}
+
+@if (Model == null)
+{
+    <p>Контрактов не найдено</p>
+}
+else
+{
+    <h3 class="h2margin">Уч. @Model.AreaName</h3>
+
+    <table border="1" width="100%">
+        @for (int i = 0; i < Model.Streets.Length; i++)
+        {
+            var street = Model.Streets[i];
+            <tr>
+                <td rowspan="3">@(i + 1)</td>
+                <td rowspan="3"><a href="@Url.Action("ControllerRootingsGetBuildings", "m", new {areaId = Model.AreaId, street = street.AddressStreet})">@street.AddressStreet</a></td>
+                <td>Активных абонентов</td>
+                <td>@street.OpenContractsCount</td>
+            </tr>
+            <tr>
+                <td>Из них с водомером</td>
+                <td>@street.ContractsWithMetersCount</td>
+            </tr>
+            <tr>
+                <td>Показания не предоставили</td>
+                <td>@street.NoMetersValuesProvidedCount</td>
+            </tr>
+        }
+    </table>
+}

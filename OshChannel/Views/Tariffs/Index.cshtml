@@ -1,0 +1,97 @@
+﻿@using OshChannel.Helpers
+@model OshBusinessModel.Da.Tariffs.TariffDictionaryDa[]
+
+@{
+
+    var tariffsGrouped =
+        OshBusinessModel.Data.SubscriberType.SubscriberTypes.ToDictionary
+            (
+                key => key,
+                value => Model.Where(tariff => tariff.SubscriberType == value.SemanticId).ToArray()
+            );
+    
+}
+
+<ul class="breadcrumb">
+    @ViewBag.Title
+</ul>
+
+<p>&nbsp;</p>
+
+
+@{
+
+    if (Model.Length <= 0)
+    {
+
+        <p>Тарифная сетка пуста</p>
+
+    }
+    else
+    {
+
+
+        foreach (var group in tariffsGrouped)
+        {
+            
+            <h3 class="h2margin">@group.Key.Plural</h3>
+
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th style="width: 200px;">Название</th>
+                    <th>Детали</th>
+                </tr>
+                @for (int i = 0; i < @group.Value.Length; i++)
+                {
+                    var tariff = @group.Value[i];
+                    string rowSpan = tariff.TariffOptions.Length > 0 ? " rowspan=2" : "";
+
+                    <tr>
+                        <td@rowSpan>
+                            <a href="@Url.Tariff(tariff.SemanticId)">@tariff.Name (@tariff.ShortName)</a>
+                        </td>
+                        <td>
+                            <ul>
+                                @{
+                                    if (tariff.LitersPerPersonPerDay > 0)
+                                    {
+                                        <li>Норма потребления питьевой воды на 1 человека в день (литры): @tariff.LitersPerPersonPerDay</li>
+                                    }
+
+                                    if (tariff.WaterPricePerCubicMeter > 0)
+                                    {
+                                        <li>Стоимость кубометра питьевой воды: @tariff.WaterPricePerCubicMeter сом</li>
+                                    }
+
+                                    if (tariff.SewagePricePerCubicMeter > 0)
+                                    {
+                                        <li>Кубометр стоков: @tariff.SewagePricePerCubicMeter сом</li>
+                                    }
+                                }
+                            </ul>
+                        </td>
+                    </tr>
+                    if (tariff.TariffOptions.Length > 0)
+                    {
+                        <tr>
+                            <td>
+                                <p><b>Опции:</b></p>
+                                <ul>
+                                    @foreach (var option in tariff.TariffOptions)
+                                    {
+                                        <li><a href="@Url.TariffOption(option.SemanticId)">@option.Name</a> - 1 @option.VariableDescription - @option.LitersPerDay л. в сутки @Html.If(option.SewageAvailable, ", возможна канализация")</li>
+                                    }
+                                </ul>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        }
+
+    }
+
+}
+
+
+

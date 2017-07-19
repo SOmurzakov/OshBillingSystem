@@ -1,0 +1,93 @@
+﻿@model OshBusinessModel.Da.Invoices.InvoiceDa
+
+@{
+    ViewBag.Title = "Счет фактура";
+    
+    if (Model == null)
+    {
+        <h3>Счет фактура не найдена</h3>
+    }
+    else
+    {
+
+		<div class="noprint well">
+		<button id="changeInvoiceNumber" 
+			class="btn btn-primary" 
+			data-invoice-id="@Model.InvoiceId" 
+			data-invoice-series="@Model.Series" 
+			data-invoice-number="@Model.InvoiceNo"
+			data-invoice-subscriber="@Model.SubscriberName">Поменять номер с/ф</button>
+		</div>
+
+        <div id="edit-invoice" class="modal hide">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Счет фактура</h3>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-invoice-id"/>
+                <div class="form-horizontal">
+                    <div class="control-group">
+                        <label class="control-label" for="edit-invoice-subscriber">Абонент</label>
+                        <div class="controls">
+                            <input type="text" id="edit-invoice-subscriber" value="" class="span3" readonly="readonly"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="edit-invoice-series">Серия</label>
+                        <div class="controls">
+                            <input type="text" id="edit-invoice-series" value="" class="span3" readonly="readonly"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="edit-invoice-number">Номер</label>
+                        <div class="controls">
+                            <input type="text" id="edit-invoice-number" value="" class="span3"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn" data-dismiss="modal">Отмена</a>
+                <a href="#" class="btn btn-primary save-invoice">Сохранить</a>
+            </div>
+        </div>
+
+		
+		<script>
+            $('a.save-invoice').click(function() {
+                var invoiceId = $('#edit-invoice-id').val();
+                var invoiceNumber = $('#edit-invoice-number').val();
+                var invoice = JSON.stringify({ Id: invoiceId, Number: invoiceNumber });
+                $.ajax({ url: '@Url.Action("ChangeInvoiceNumber", "Invoices")', type: 'POST', data: invoice, contentType: 'application/json' }).success(function(result) {
+                    if (result.Success) {
+                        window.location.reload();
+                    } else {
+                        alert(result.Message);
+                    }
+                }).fail(function() {
+                    alert('Произошла ошибка');
+                });
+            });
+
+			$('#changeInvoiceNumber').click(function () {
+                var invoiceId = $(this).attr('data-invoice-id');
+                var invoiceSeries = $(this).attr('data-invoice-series');
+                var invoiceNumber = $(this).attr('data-invoice-number');
+                var invoiceSubscriber = $(this).attr('data-invoice-subscriber');
+
+                $('#edit-invoice-id').val(invoiceId);
+                $('#edit-invoice-series').val(invoiceSeries);
+                $('#edit-invoice-number').val(invoiceNumber);
+                $('#edit-invoice-subscriber').val(invoiceSubscriber);
+
+                $('div#edit-invoice').modal('show');
+            })
+		</script>
+		
+        <div class="printCanvas portrait-page">
+            @Html.Partial("InvoicePartial")
+        </div>
+		
+    }
+}

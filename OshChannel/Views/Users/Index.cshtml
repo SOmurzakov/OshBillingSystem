@@ -1,0 +1,53 @@
+﻿@using OshBusinessModel.Da
+@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.Users.UserDictionaryDa[]
+
+@{
+    ViewBag.Title = "Пользователи системы";
+
+    var groupedByType = UserType.UserTypes.ToDictionary(key => key, value => Model.Where(user => user.Role == value.SemanticId).ToArray());
+}
+
+<ul class="breadcrumb">
+    Пользователи системы
+</ul>
+
+@Html.Partial("CreateUserButtonPartial")
+
+
+@{
+
+    foreach (var pair in groupedByType)
+    {
+        <h3 class="h2margin">@pair.Key.Plural</h3>
+
+        <table class="table table-striped table-bordered">
+            <tr>
+                <th style="width: 400px;">Имя</th>
+                <th style="width: 100px;">Телефон</th>
+                <th>Комментарии</th>
+            </tr>
+            @for (int i = 0; i < pair.Value.Length; i++)
+            {
+                var user = pair.Value[i];
+
+                <tr>
+                    <td>
+                        @Url.User(user.UserId, user.Name)
+                    </td>
+                    <td>
+                        @user.Phone
+                    </td>
+                    <td>
+                        @user.RemarksCombined
+                    </td>
+                </tr>
+            }
+                
+        </table>
+
+    }
+
+}
+

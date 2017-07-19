@@ -1,0 +1,155 @@
+﻿@using OshBusinessModel.Da.ShowContract
+@using OshBusinessModel.Data
+@using OshChannel.Helpers
+@model OshBusinessModel.Da.ShowContract.ShowContractModel
+
+@{
+    ViewBag.Title = Model != null ? Model.Details.ContractNumber : "Детали контракта";
+    string type = Model != null ? Model.Subscriber.Type : "";
+    bool isPersonal = type == "prs";
+
+    bool showMeters = Model != null && (Model.Meters.Length > 0 || (Model.Options.Length == 0 && Model.PossibleOptions.Length == 0));
+}
+
+
+@if (Auth.HasPermission(Permission.ContractsChange))
+{
+    <div class="pull-right">
+        <button class="btn btn-primary btn-mini" id="changePeopleRegistered">Изменить</button>
+    </div>
+
+    <div id="modal-changePeopleRegistered" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Изменить данные</h3>
+        </div>
+        <div class="modal-body" style="max-height: 1000px;">
+                
+            <div class="form-horizontal">
+                @if (isPersonal)
+                {
+                    <div class="control-group">
+                        <label class="control-label" for="peopleRegistered">Прописано человек</label>
+                        <div class="controls">
+                            <input type="text" id="peopleRegistered" value="@Model.Details.PeopleRegistered.ToString()" class="span1"/>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="control-group">
+                        <label class="control-label" for="fixedConsumption">Фикс. потр. (куб. м.)</label>
+                        <div class="controls">
+                            <label class="control-description" style="width: 30px;" for="fixedConsumption">Вода</label>
+                            <input type="text" style="width: 75px;" id="fixedConsumption" value="@Model.Details.FixedConsumption.ToString("0.##")"/>
+                            <label class="control-description" style="width: 40px;" for="fixedConsumptionSewage">Стоки</label>
+                            <input type="text" style="width: 75px;" id="fixedConsumptionSewage" value="@Model.Details.FixedConsumptionSewage.ToString("0.##")"/>
+                        </div>
+                    </div>
+                }
+                
+                <div class="control-group">
+                    <label class="control-label" for="hasSewage">Канализация</label>
+                    <div class="controls">
+                        <label class="checkbox">
+                            <input type="checkbox" id="hasSewage"@Html.If(Model.Details.HasSewage, " checked=\"checked\"")/>
+                            Есть 
+                        </label>
+                    </div>
+                </div>
+            
+                <div class="control-group">
+                    <label class="control-label" for="allowance">Льгота %</label>
+                    <div class="controls">
+                        <input type="text" id="allowance" value="@Model.Details.Allowance" class="span1"/>
+                    </div>
+                </div>
+            
+                <div class="control-group">
+                    <label class="control-label" for="allowanceReason">Основание льготы</label>
+                    <div class="controls">
+                        <input type="text" id="allowanceReason" value="@Model.Details.AllowanceReason" class="span3"/>
+                    </div>
+                </div>
+            
+                <hr />
+            
+                <div class="control-group">
+                    <label class="control-label" for="contractChangeRemarks">Основание к изменению</label>
+                    <div class="controls">
+                        <textarea id="peopleRegisteredChangeRemarks" rows="3" cols="50" class="span3"></textarea>
+                    </div>
+                </div>
+            </div>
+                    
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Отмета</button>
+            <button class="btn btn-primary" id="save-peopleRegistered">Сохранить</button>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function savePeopleRegistered() {
+            // contract
+            var contractId = @Model.Details.ContractId;
+            var type = '@Model.Subscriber.Type';
+            var peopleRegistered = type == 'prs' ? $('#peopleRegistered').val() : '0';
+            var fixedConsumption = type == 'prs' ? '0' : $('#fixedConsumption').val();
+            var fixedConsumptionSewage = type == 'prs' ? '0' : $('#fixedConsumptionSewage').val();
+            var hasSewage = $('#hasSewage').prop('checked') ? '1' : '0';
+            var allowance = $('#allowance').val();
+            var allowanceReason = $('#allowanceReason').val();
+            var changeRemarks = $('#peopleRegisteredChangeRemarks').val();
+
+            var contractDto =
+                {
+                    ContractId: contractId,
+                    PeopleRegistered: peopleRegistered,
+                    FixedConsumption: fixedConsumption,
+                    FixedConsumptionSewage: fixedConsumptionSewage,
+                    ChangeRemarks: changeRemarks,
+                    HasSewage: hasSewage,
+                    Allowance: allowance,
+                    AllowanceReason: allowanceReason
+                };
+
+            var json = JSON.stringify(contractDto);
+
+            $.ajax({
+                url: '@Url.Action("ChangeParametersAjax", "Contracts")',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: json,
+                success: function(result) {
+
+                    if (result['Success']) {
+                        location.reload();
+                    } else {
+                        alert(result['Message']);
+                    }
+
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert(jqXHR);
+                    alert(textStatus);
+                    alert(errorThrown);
+                }
+            });
+        }
+
+        $(function() {
+            $('#changePeopleRegistered').click(function() {
+                $('#modal-changePeopleRegistered').modal('show');
+            });
+
+            $('#save-peopleRegistered').click(function() {
+                savePeopleRegistered();
+            });
+        });
+
+    </script>
+}
+
+

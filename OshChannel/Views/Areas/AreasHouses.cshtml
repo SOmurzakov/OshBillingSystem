@@ -1,0 +1,85 @@
+﻿@model OshBusinessModel.Da.Areas.AreasHousesModel
+
+@{
+    ViewBag.Title = "Участки - дома";
+}
+
+<ul class="breadcrumb">
+    @ViewBag.Title
+</ul>
+
+<div class="areasCanvas">
+    
+    <p>Перемещайте адреса домов между участками</p>
+    
+    @foreach (var area in Model.Areas)
+    {
+        <div class="areasList">
+            <span>@area.Name @area.ControllerName</span>
+            
+            <ul class="areasListSortable connectedSortable droptrue" area-id="@area.Id">
+                @foreach(var house in Model.Houses.Where(h => h.AreaId == area.Id))
+                {
+                    <li address-street="@house.AddressStreet" address-building="@house.AddressBuilding" class="houseItem">@house.AddressStreet @house.AddressBuilding</li>
+                }
+            </ul>
+        </div>
+    }
+    
+    <div class="clearfix"></div>
+
+</div>
+
+<div class="form-actions">
+    <button class="btn btn-primary" id="save-houses">Сохранить</button>
+</div>
+
+<script type="text/javascript">
+    
+    function saveHouses() {
+        var houses = [];
+
+        $('.houseItem').each(function (index) {
+            var addressStreet = $(this).attr('address-street');
+            var addressBuilding = $(this).attr('address-building');
+            var parentUl = $(this).closest('ul');
+            var areaId = parentUl.attr('area-id');
+            houses.push({ AddressStreet: addressStreet, AddressBuilding: addressBuilding, AreaId: areaId });
+        });
+
+        var dto = { Houses: houses };
+        var json = JSON.stringify(dto);
+
+        $.ajax({
+            url: '@Url.Action("SaveAreasHousesAjax", "Areas")',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: json,
+            success: function (result) {
+                if (result['Success']) {
+                    alert('Данные сохранены успешно');
+                    location.reload();
+                } else {
+                    alert(result['Message']);
+                }
+            },
+            error: function (a, b, c) {
+                alert('Не удалось сохранить данные');
+            }
+        });
+
+    }
+
+    $(function () {
+        $('.areasListSortable').sortable({
+            connectWith: '.connectedSortable',
+            placeholder: 'areasListSortablePlaceholder',
+            dropOnEmpty: true
+        }).disableSelection();
+
+        $('#save-houses').click(function () {
+            saveHouses();
+        });
+    });
+</script>

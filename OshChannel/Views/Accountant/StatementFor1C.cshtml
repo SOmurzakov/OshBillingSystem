@@ -1,0 +1,29 @@
+﻿@model OshBusinessModel.Da.StatementFor1CDa
+
+@{
+    ViewBag.Title = "Выписка для 1С за " + @Model.Date.ToShortDateString();
+}
+
+<ul class="breadcrumb">
+    @ViewBag.Title
+    
+    @{
+        string delimiter = "/";
+        DateTime date = DateTime.Today;
+        
+        for (int i = 0; i < 7; i++)
+        {
+            @delimiter
+            <li><a href="@Url.Action("StatementFor1C", "Accountant", new {date})">@date.ToShortDateString()</a></li>
+            date = date.AddDays(-1);
+        }
+    }
+</ul>
+
+<p>Внесите следующую информацию в программу "1С Бухгалтерия" вручную:</p>
+
+<table class="table table-striped table-bordered table-condensed">
+    <tr><td>Дата</td><td class="reconciliationAmount">@Model.Date.ToShortDateString()</td></tr>
+    <tr><td>Дебит <br/>Выписано счетов на сумму</td><td class="reconciliationAmount">@Model.Debit.ToString("0.00") сом</td></tr>
+    <tr><td>Кредит <br/>Поступило средств на сумму</td><td class="reconciliationAmount">@Model.Credit.ToString("0.00") сом</td></tr>
+</table>

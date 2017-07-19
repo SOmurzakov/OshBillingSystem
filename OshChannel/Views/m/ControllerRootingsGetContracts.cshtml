@@ -1,0 +1,43 @@
+﻿@using OshChannel.Helpers
+@model OshBusinessModel.Da.Rootings.RootingsContractsModel
+
+@{
+    ViewBag.Title = "Обходной лист - контракты";
+    Layout = "~/Views/Shared/_LayoutMobile.cshtml";
+}
+
+@if (Model == null)
+{
+    <p>Контрактов не найдено</p>
+}
+else
+{
+    <h3 class="h2margin">Уч. @Model.AreaName, ул. @Model.AddressStreet @Model.AddressBuilding</h3>
+
+    <table width="100%" border="1">
+        <tr>
+            <th></th>
+            <th>Адрес</th>
+            <th>Контракт</th>
+            <th>Абонент</th>
+            <th>Тариф</th>
+            <th>Долг (сом)</th>
+            <th>Водомеры</th>
+            <th>Показания</th>
+        </tr>
+        @for (int i = 0; i < Model.Contracts.Length; i++)
+        {
+            var contract = Model.Contracts[i];
+            <tr>
+                <td>@(i + 1)</td>
+                <td>@contract.FullAddress</td>
+                <td>@Url.MobileContract(contract.ContractId, contract.ContractNumber)</td>
+                <td>@Url.MobileContract(contract.ContractId, contract.SubscriberName)</td>
+                <td>@contract.TariffName</td>
+                <td>@contract.Debt.ToString("0.00")</td>
+                <td>@(contract.MetersCount > 0 ? string.Format("{0} шт.", contract.MetersCount) : "Не установлены")</td>
+                <td>@(contract.MetersCount == 0 ? "" : contract.ValuesProvided ? "Переданы" : "Не переданы")</td>
+            </tr>
+        }
+    </table>
+}

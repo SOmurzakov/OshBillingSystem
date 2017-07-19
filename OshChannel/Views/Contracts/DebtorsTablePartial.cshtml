@@ -1,0 +1,61 @@
+﻿@using OshBusinessModel.Da.Debtors
+@model System.Collections.Generic.IEnumerable<OshBusinessModel.Da.Debtors.DebtorDa>
+
+@{
+    OshBusinessModel.Da.Debtors.DebtorDa total
+        = new DebtorDa()
+              {
+                  StartBalance = Model.Sum(c => c.StartBalance),
+                  BilledAmount = Model.Sum(c => c.BilledAmount),
+                  PayedCash = Model.Sum(c => c.PayedCash),
+                  PayedBank = Model.Sum(c => c.PayedBank),
+                  SubagentAdd = Model.Sum(c => c.SubagentAdd),
+                  SubagentCross = Model.Sum(c => c.SubagentCross),
+                  SubagentRecalc = Model.Sum(c => c.SubagentRecalc),
+                  EndBalance = Model.Sum(c => c.EndBalance),
+              };
+}
+<table class="table table-striped table-bordered">
+    <tr>
+        <th width="10%">Контракт</th>
+        <th>Абонент</th>
+        <th width="10%">Адрес</th>
+        <th width="5%">Тариф</th>
+        <th width="10%">Нач. мес.</th>
+        <th width="5%">Начисл.</th>
+        <th width="5%">Опл. нал.</th>
+        <th width="5%">Опл. банк</th>
+        <th width="5%">Перер.</th>
+        <th width="5%">Взаим.</th>
+        <th width="5%">Донач.</th>
+        <th width="10%">Кон. мес.</th>
+    </tr>
+    @foreach(var debtor in Model)
+    {
+        <tr>
+            <td>@Url.Contract(debtor.ContractId, debtor.ContractNumber)</td>
+            <td>@Url.Subscriber(debtor.SubscriberId, debtor.Name)</td>
+            <td>@debtor.FullAddress</td>
+            <td>@debtor.Tariff</td>
+            <td>@debtor.StartBalance.ToString("0.00")</td>
+            <td>@debtor.BilledAmount.ToString("0.00")</td>
+            <td>@debtor.PayedCash.ToString("0.00")</td>
+            <td>@debtor.PayedBank.ToString("0.00")</td>
+            <td>@debtor.SubagentRecalc.ToString("0.00")</td>
+            <td>@debtor.SubagentCross.ToString("0.00")</td>
+            <td>@debtor.SubagentAdd.ToString("0.00")</td>
+            <td>@debtor.EndBalance.ToString("0.00")</td>
+        </tr>
+    }
+    <tr>
+        <th colspan="4">Итого</th>
+            <td>@total.StartBalance.ToString("0.00")</td>
+            <td>@total.BilledAmount.ToString("0.00")</td>
+            <td>@total.PayedCash.ToString("0.00")</td>
+            <td>@total.PayedBank.ToString("0.00")</td>
+            <td>@total.SubagentRecalc.ToString("0.00")</td>
+            <td>@total.SubagentCross.ToString("0.00")</td>
+            <td>@total.SubagentAdd.ToString("0.00")</td>
+            <td>@total.EndBalance.ToString("0.00")</td>
+    </tr>
+</table>

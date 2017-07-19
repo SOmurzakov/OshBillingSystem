@@ -1,0 +1,100 @@
+﻿@model OshBusinessModel.Da.ContractStatement.ContractStatementModel
+
+@{
+    ViewBag.Title = "Выписка";
+
+    if (Model.BillingPeriods.Length == 0)
+    {
+        <h3 class="h2margin">Счета не выставлялись</h3>
+    }
+    else
+    {
+        <div class="well">
+
+            <h3 style="margin-bottom: 20px; margin-top: 0;">Выписка абонента</h3>
+    
+            <div class="pull-right">
+                <button class="btn btn-large btn-primary" id="applyFilter">Построить</button>
+            </div>
+
+            <div class="form-inline">
+    
+                <label for="contractId">Контракт: </label>
+        
+                <input type="text" id="contractId" value="@Model.ContractId" style="margin-right: 20px;"/>
+
+                <label for="startPeriodId">Период с:</label>
+        
+                <select id="startPeriodId" style="margin-right: 20px;">
+                    <option value="-1">Выберите период...</option>
+                    @foreach (var period in Model.BillingPeriods)
+                    {
+                        <option value="@period.BillingPeriodId"@Html.If(Model.StartPeriodId == period.BillingPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                    }
+                </select>
+    
+                <label for="endPeriodId">по: </label>
+        
+                <select id="endPeriodId" style="margin-right: 20px;">
+                    <option value="-1">Выберите период...</option>
+                    @foreach (var period in Model.BillingPeriods)
+                    {
+                        <option value="@period.BillingPeriodId"@Html.If(Model.EndPeriodId == period.BillingPeriodId, " selected=\"selected\"")>@period.BillingPeriodName</option>
+                    }
+                </select>
+        
+            </div>
+
+        </div>
+
+        <script type="text/javascript">
+            $(function() {
+                $('#applyFilter').click(function() {
+                    var contractId = $('#contractId').val();
+                    var startPeriodId = $('#startPeriodId').val();
+                    var endPeriodId = $('#endPeriodId').val();
+
+                    if (!contractId) {
+                        alert('Задайте номер контракта');
+                    } else if (startPeriodId <= 0) {
+                        alert('Задайте начало выписки');
+                    } else if (endPeriodId <= 0) {
+                        alert('Задайте конец выписки');
+                    } else {
+                        window.location = 'Statement?contractId=' + contractId + '&startPeriodId=' + startPeriodId + '&endPeriodId=' + endPeriodId;
+                    }
+                });
+            });
+        </script>
+        if (!Model.Found)
+        {
+            <h3 class="h2margin">Контракт не найден</h3>
+        }
+        else
+        {
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th>Период</th>
+                    <th>Нач. мес.</th>
+                    <th>Начислено</th>
+                    <th>Перерасчет</th>
+                    <th>Оплачено</th>
+                    <th>Кон. мес.</th>
+                </tr>
+                @foreach (var period in Model.Statements)
+                {
+                    <tr>
+                        <td>@period.PeriodName</td>
+                        <td>@period.StartBalance.ToString("0.00")</td>
+                        <td>@period.BilledAmount.ToString("0.00")</td>
+                        <td>@period.SubagentsAmount.ToString("0.00")</td>
+                        <td>@period.PayedAmount.ToString("0.00")</td>
+                        <td>@period.EndBalance.ToString("0.00")</td>
+                    </tr>
+                }
+            </table>
+        }
+    }
+
+}
+

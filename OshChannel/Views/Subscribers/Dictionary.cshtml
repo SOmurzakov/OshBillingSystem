@@ -1,0 +1,108 @@
+﻿@model OshBusinessModel.Da.SubscriberDictionaryDa
+
+@{
+    ViewBag.Title = "Справочник абонентов";
+
+    int pages = Model.SubscribersCount/Model.ItemsPerPage + (Model.SubscribersCount%Model.ItemsPerPage != 0 ? 1 : 0);
+
+    bool firstTable = true;
+    string firstC = "";
+}
+
+<h1 style="text-align: center;" class="h2margin">
+    @ViewBag.Title
+</h1>
+
+<div style="text-align: center;">Общее количество абонентов: @Model.SubscribersCount </div>
+
+@Html.Partial("ShortSearchComponentPartial", new ContractsSearchResult() { HideLinkToDictionary = true, })
+
+<div class="pagination pagination-centered">
+    
+    <ul>
+    
+        <li @Html.If(Model.CurPageNumber == 1, " class='disabled'")>@Url.SubscribersDictionaryPage(Model.SubscriberType, 1, "<< Первая", Model.CurPageNumber == 1)</li>
+        
+        @for (int i = Model.CurPageNumber - 5; i < Model.CurPageNumber + 5 + 1; i++ )
+        {
+            if (i >= 1 && i <= pages)
+            {
+                <li @Html.If(Model.CurPageNumber == i, " class='active'")>@Url.SubscribersDictionaryPage(Model.SubscriberType, i, i.ToString(), Model.CurPageNumber == i)</li>
+            }
+        }
+
+        <li @Html.If(Model.CurPageNumber == pages, " class='disabled'")>@Url.SubscribersDictionaryPage(Model.SubscriberType, pages, "Последняя >>", Model.CurPageNumber == pages)</li>
+        
+    </ul>
+
+</div>
+
+@*
+<div class="pagination pagination-centered">
+    <ul>
+        @foreach (var firstLetter in Model.FirstLetters)
+        {
+            <li><a href="@Url.Action("Dictionary", "Subscribers", new { firstLetter, })">@firstLetter.ToUpper()</a></li>
+        }
+    </ul>
+</div>
+
+<div class="pagination pagination-centered">
+    
+    <ul>
+
+        @for (int i = 0; i < 28; i++)
+        {
+            <li><a href="@Url.Action("Dictionary", "Subscribers", new {pageNumber = i+1, })">@(i+1)</a></li>
+        }
+    
+    </ul>
+
+</div>
+
+<div class="row nomargin">
+    
+    <input type="submit" class="btn btn-success" value="Создать"/>
+$1$
+    <input type="submit" class="btn btn-danger" value="Заблокировать"/>
+#1#
+
+    <div class="pull-right databaseFilter"><label>Фильтр: <input type="text" id="filter_value"/></label></div>
+</div>
+*@
+
+
+<table class="table table-striped table-bordered table-condensed">
+    
+    <tr>
+        <th style="width: 75px;">Контракт</th> 
+        <th style="width: 300px;">Абонент</th>
+        <th>Субъект</th>
+        <th>Адрес</th>
+        <th>Тариф</th>
+        <th>Начало мес.</th>
+        <th>Начислено</th>
+        <th>Оплачено</th>
+        <th>Тек. сальдо</th>
+        <th>Показ. счетч.</th>
+        <th>Посл. платеж</th>
+    </tr>
+
+    @foreach (var item in Model.Subscribers)
+    {
+        <tr>
+            <td>@Url.Contract(item.ContractId, item.ContractNumber)</td>
+            <td>@item.SubscriberName</td>
+            <td>@item.ContractName</td>
+            <td>@item.ContractAddress</td>
+            <td>@item.ContractTariff</td>
+            <td>@item.StartBalance.ToString("0.00")</td>
+            <td>@item.BilledAmount.ToString("0.00")</td>
+            <td>@item.PayedAmount.ToString("0.00")</td>
+            <td>@item.EndBalance.ToString("0.00")</td>
+            <td>@(item.LastMetersValuesDate != null ? item.LastMetersValuesDate.Value.ToShortDateString() : "")</td>
+            <td>@(item.LastPaymentDate != null ? item.LastPaymentDate.Value.ToShortDateString() : "")</td>
+        </tr>
+    }
+    
+</table>

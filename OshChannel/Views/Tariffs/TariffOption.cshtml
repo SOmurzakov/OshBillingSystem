@@ -1,0 +1,174 @@
+﻿@using OshChannel.Helpers
+@model OshBusinessModel.Da.Tariffs.TariffOptionDetailsModel
+
+@{
+    ViewBag.Title = "Детали тарифа";
+}
+
+@{
+    if (Model == null)
+    {
+        <h3>Тариф не найден</h3>
+    }
+    else
+    {
+        string enabled = Model.Details.Enabled ? "" : "(Архив)";
+        <h3 class="h2margin">@Model.Details.Name @enabled</h3>
+        
+        <div class="row">
+            <div class="span6">
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <td style="width: 175px;">Название</td>
+                        <td>@Model.Details.Name</td>
+                    </tr>
+                    <tr>
+                        <td>Контракты</td>
+                        <td>@Model.Details.ContractsCount шт. (<a href="#">Посмотреть</a>)</td>
+                    </tr>
+                    <tr>
+                        <td>Статья расхода (счет)</td>
+                        <td>@Model.Details.VariableBillName</td>
+                    </tr>
+                    <tr>
+                        <td>Расчетный показатель</td>
+                        <td>1 @Model.Details.VariableDescription</td>
+                    </tr>
+                    <tr>
+                        <td>Расход в день</td>
+                        <td>@Model.Details.LitersPerDay л.</td>
+                    </tr>
+                    <tr>
+                        <td>Канализация</td>
+                        <td>@(Model.Details.SewageAvailable ? "Возможна" : "Невозможна")</td>
+                    </tr>
+                </table>
+                
+                @{
+                       if (Auth.HasPermission(OshBusinessModel.Data.Permission.TariffsChangePrice))
+                       {
+                        <div class="form-actions">
+                            <button class="btn btn-primary" id="changePrice">Внести изменения</button>
+                        </div>
+                       }
+                }
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="span6">
+                <h3 class="h2margin">История изменений</h3>
+                
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <th>Дата</th>
+                        <th>Пользователь</th>
+                        <th>Расход в день</th>
+                    </tr>
+                    
+                    @foreach (var change in Model.Changes)
+                    {
+                        <tr>
+                            <td>@change.Date.ToShortDateString()</td>
+                            <td>@Url.User(change.UserId, change.UserName)</td>
+                            <td>@change.LitersPerDay л.</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+            <div class="span6">
+                <h3 class="h2margin">Тарифы</h3>
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <th>Название</th>
+                    </tr>
+                    @foreach (var tariff in Model.Tariffs)
+                    {
+                        string tariffEnabled = tariff.Enabled ? "" : "(Архив)";
+                        <tr>
+                            <td>
+                                <a href="@Url.Tariff(tariff.SemanticId)">@tariff.Name @tariffEnabled</a>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    
+    
+                    if (Auth.HasPermission(OshBusinessModel.Data.Permission.TariffsChangePrice))
+                    {
+            <div id="modal-changePrice" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">Внести изменения</h3>
+                </div>
+                <div class="modal-body">
+                
+                    <div class="form-horizontal">
+                    
+                        <div class="control-group">
+                            <label class="control-label" for="pricePerYear">Расход в день (л.)</label>
+                            <div class="controls">
+                                <input type="text" id="pricePerYear" value="@Model.Details.LitersPerDay"/>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Отмета</button>
+                    <button class="btn btn-primary" id="save-changePrice">Сохранить</button>
+                </div>
+            </div>
+
+            <script type="text/javascript">
+                function changePrice() {
+                    var tariffOptionId = '@Model.Details.SemanticId';
+                    var litersPerDay = $('#pricePerYear').val();
+
+                    var json = JSON.stringify({ TariffOptionId: tariffOptionId, LitersPerDay: litersPerDay });
+
+                    $.ajax({
+                        url: '@Url.Action("ChangeTariffOptionPriceAjax", "Tariffs")',
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: json,
+                        success: function (result) {
+
+                            if (result['Success']) {
+                                location.reload();
+                            } else {
+                                alert(result['Message']);
+                            }
+
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            alert(jqXHR);
+                            alert(textStatus);
+                            alert(errorThrown);
+                        }
+                    });
+                }
+
+                function showChangePriceDialog() {
+                    $('#modal-changePrice').modal('show');
+                }
+
+                $(function () {
+                    $('#changePrice').click(function () {
+                        showChangePriceDialog();
+                    });
+
+                    $('#save-changePrice').click(function () {
+                        changePrice();
+                    });
+                });
+            </script>
+                    }
+
+
+    }
+}

@@ -1,0 +1,81 @@
+﻿@using System.Globalization
+@using OshBusinessModel.Da.AllowanceReport
+@model OshBusinessModel.Da.AllowanceReport.WithoutAllowanceReport
+
+@{
+    ViewBag.Title = "Сведения об абонентах не имеющих льготы";
+}
+
+<div class="well"><h3>@ViewBag.Title</h3></div>
+
+<div class="print-only"><h3>@ViewBag.Title <span class="pull-right">@DateTime.Today.ToShortDateString()</span></h3></div>
+<table class="table table-bordered table-striped">
+    <tr>
+        <td rowspan="2">№</td>
+        <td rowspan="2">Контроллер</td>
+        @foreach (var tariff in Model.Tariffs)
+        {
+            <td colspan="2">@tariff.Name</td>
+        }
+        @foreach (var option in Model.TariffOptions)
+        {
+            <td rowspan="2">@option.Name</td>
+        }
+        <td colspan="2" class="bold">ИТОГО</td>
+    </tr>
+    <tr>
+        @foreach (var tariff in Model.Tariffs)
+        {
+            <td>Абон.</td>
+            <td>Чел.</td>
+        }
+        <td class="bold">Абон.</td>
+        <td class="bold">Чел.</td>
+    </tr>
+    @for (var i = 0; i < Model.Controllers.Length; i++)
+    {
+        var controller = Model.Controllers[i];
+        var allItems = Model.Items.Where(item => item.ControllerId == controller.ControllerId);
+        var allContracts = allItems.Sum(item => item.ContractsCount);
+        var allPeople = allItems.Sum(item => item.PeopleRegistered);
+
+        <tr>
+            <td>@(i + 1)</td>
+            <td>@controller.Name</td>
+            @foreach (var tariff in Model.Tariffs)
+            {
+                var reportItem = Model.Items.FirstOrDefault(item => item.ControllerId == controller.ControllerId && item.TariffId == tariff.TariffId) ?? new AllowanceReportItemDa();
+                <td>@reportItem.ContractsCount</td>
+                <td>@reportItem.PeopleRegistered</td>
+            }
+            @foreach (var option in Model.TariffOptions)
+            {
+                var reportItem = Model.ItemOptions.FirstOrDefault(item => item.ControllerId == controller.ControllerId && item.OptionId == option.OptionId) ?? new AllowanceReportItemOptionDa();
+                <td>@reportItem.Sum</td>
+            }
+            <td class="bold">@allContracts</td>
+            <td class="bold">@allPeople</td>
+        </tr>
+    }
+    <tr class="bold">
+        <td colspan="2">ИТОГО</td>
+        @foreach (var tariff in Model.Tariffs)
+        {
+            var x = tariff;
+            var allItems = Model.Items.Where(item => item.TariffId == x.TariffId);
+            var allContracts = allItems.Sum(item => item.ContractsCount);
+            var allPeople = allItems.Sum(item => item.PeopleRegistered);
+            <td>@allContracts</td>
+            <td>@allPeople</td>
+        }
+        @foreach (var option in Model.TariffOptions)
+        {
+            var x = option;
+            var allItems = Model.ItemOptions.Where(item => item.OptionId == x.OptionId);
+            var allSum = allItems.Sum(item => item.Sum);
+            <td>@allSum</td>
+        }
+        <td>@Model.Items.Sum(item => item.ContractsCount)</td>
+        <td>@Model.Items.Sum(item => item.PeopleRegistered)</td>
+    </tr>
+</table>
